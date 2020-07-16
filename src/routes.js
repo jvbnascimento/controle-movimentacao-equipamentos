@@ -11,6 +11,9 @@ const MovementController = require("./controllers/MovementController");
 routes.get("/users", UserController.listAllUsers);
 routes.get("/users/:user_id", UserController.listUser);
 routes.post("/users", UserController.create);
+routes.put("/users/:user_id", UserController.update);
+routes.put("/users/:user_id/password", UserController.updatePassword);
+routes.delete("/users/:user_id", UserController.delete);
 
 routes.get("/types", TypeController.listAllTypes);
 routes.get("/types/:type_id", TypeController.listType);

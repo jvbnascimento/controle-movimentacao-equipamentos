@@ -44,7 +44,7 @@ module.exports = {
             return res.status(404).send('Type not found!');
         }
         if (name_exists.length != 0) {
-            return res.status(400).send('Name already exists!');
+            return res.status(400).send('Name is already being used!');
         }
 
         type.name = name;
