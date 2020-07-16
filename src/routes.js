@@ -8,11 +8,15 @@ const DepartmentController = require("./controllers/DepartmentController");
 const HardwareController = require("./controllers/HardwareController");
 const MovementController = require("./controllers/MovementController");
 
-routes.get("/users", UserController.index);
-routes.post("/users", UserController.store);
+routes.get("/users", UserController.listAllUsers);
+routes.get("/users/:user_id", UserController.listUser);
+routes.post("/users", UserController.create);
 
-routes.get("/types", TypeController.index);
-routes.post("/types", TypeController.store);
+routes.get("/types", TypeController.listAllTypes);
+routes.get("/types/:type_id", TypeController.listType);
+routes.post("/types", TypeController.create);
+routes.put("/types/:type_id", TypeController.update);
+routes.delete("/types/:type_id", TypeController.delete);
 
 routes.get("/departments", DepartmentController.index);
 routes.post("/departments", DepartmentController.store);
