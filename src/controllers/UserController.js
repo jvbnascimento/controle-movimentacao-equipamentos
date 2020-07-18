@@ -53,7 +53,7 @@ module.exports = {
         if (!user) {
             return res.status(404).send('User not found!');
         }
-        if (email_exists.length != 0 && email_exists[0].email != email) {
+        if (email_exists.length != 0 && email_exists[0].email != user.email) {
             return res.status(400).send('Email is already being used!');
         }
         

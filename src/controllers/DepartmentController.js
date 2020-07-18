@@ -1,17 +1,79 @@
 const Department = require('../models/Department');
 
 module.exports = {
-	async index(req, res) {
+	async listAllDepartments(req, res) {
 		const departments = await Department.findAll();
 
 		return res.json({ departments });
 	},
 
-	async store(req, res) {
+	async listDepartment(req, res) {
+		const { department_id } = req.params;
+
+		const department = await Department.findByPk(department_id);
+
+		if (!department) {
+			return res.status(404).send('Department not found!');
+		}
+
+		return res.json({ department });
+	},
+
+	async create(req, res) {
 		const { name, boss } = req.body;
+
+		const name_exists = await Department.findAll({
+			where: {
+				name
+			}
+		});
+
+		if (name_exists.length != 0) {
+			return res.status(400).send('Name already exists!');
+		}
 
 		const department = await Department.create({ name, boss });
 
 		return res.json({ department });
+	},
+
+	async update(req, res) {
+		const { department_id } = req.params;
+		const { name, boss } = req.body;
+
+		const department = await Department.findByPk(department_id);
+		const name_exists = await Department.findAll({
+			where: {
+				name
+			}
+		});
+
+		if (!department) {
+			return res.status(404).send('Department not found!');
+		}
+		if (name_exists.length != 0 && name_exists[0].name != department.name) {
+			return res.status(400).send('Name is already being used!');
+		}
+
+		department.name = name;
+		department.boss = boss;
+
+		await department.save();
+
+		return res.json({ department });
+	},
+
+	async delete(req, res) {
+		const { department_id } = req.params;
+
+		const department = await Department.findByPk(department_id);
+
+		if (!department) {
+			return res.status(404).send('Department not found!');
+		}
+
+		department.destroy();
+
+		return res.status(204).json();
 	},
 }

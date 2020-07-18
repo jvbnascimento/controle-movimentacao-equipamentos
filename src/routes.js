@@ -21,8 +21,11 @@ routes.post("/types", TypeController.create);
 routes.put("/types/:type_id", TypeController.update);
 routes.delete("/types/:type_id", TypeController.delete);
 
-routes.get("/departments", DepartmentController.index);
-routes.post("/departments", DepartmentController.store);
+routes.get("/departments", DepartmentController.listAllDepartments);
+routes.get("/departments/:department_id", DepartmentController.listDepartment);
+routes.post("/departments", DepartmentController.create);
+routes.put("/departments/:department_id", DepartmentController.update);
+routes.delete("/departments/:department_id", DepartmentController.delete);
 
 routes.get("/hardwares", HardwareController.index);
 routes.post("/:type_id/hardwares", HardwareController.store);

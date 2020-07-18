@@ -8,9 +8,13 @@ module.exports = {
     },
     
 	async listType(req, res) {
-        const { type_id } = req.params;
-        
-        const type = await Type.findByPk(type_id);
+		const { type_id } = req.params;
+
+		const type = await Type.findByPk(type_id);
+		
+		if (!type) {
+			return res.status(404).send('Type not found!');
+		}
 
 		return res.json({ type });
 	},
