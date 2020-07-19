@@ -13,7 +13,7 @@ module.exports = {
 		const type = await Type.findByPk(type_id);
 		
 		if (!type) {
-			return res.status(404).send('Type not found!');
+			return res.status(404).json({ error: 'Type not found!' });
 		}
 
 		return res.json({ type });
@@ -27,7 +27,7 @@ module.exports = {
         });
 
         if (name_exists.length != 0) {
-            return res.status(400).send('Name already exists!');
+            return res.status(400).json({ error: 'Name already exists!' });
         }
 
 		const type = await Type.create({ name });
@@ -45,10 +45,10 @@ module.exports = {
         });
 
         if (!type) {
-            return res.status(404).send('Type not found!');
+            return res.status(404).json({ error: 'Type not found!' });
         }
         if (name_exists.length != 0) {
-            return res.status(400).send('Name is already being used!');
+            return res.status(400).json({ error: 'Name is already being used!' });
         }
 
         type.name = name;
@@ -64,7 +64,7 @@ module.exports = {
         const type = await Type.findByPk(type_id);
 
         if (!type) {
-            return res.status(404).send('Type not found!');
+            return res.status(404).json({ error : 'Type not found!' });
         }
         
         await type.destroy();

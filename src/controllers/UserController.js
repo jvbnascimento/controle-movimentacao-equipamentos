@@ -15,7 +15,7 @@ module.exports = {
         const user = await User.findByPk(user_id);
         
         if (!user) {
-            return res.status(404).send('User not found!');
+            return res.status(404).json({ error: 'User not found!' });
         }
 
 		return res.json({ user });
@@ -31,7 +31,7 @@ module.exports = {
         });
         
         if (email_exists) {
-            return res.status(400).send('Email already exists!');
+            return res.status(400).json({ error: 'Email already exists!' });
         }
 
 		const user = await User.create({ name, email, password });
@@ -51,10 +51,10 @@ module.exports = {
         });
 
         if (!user) {
-            return res.status(404).send('User not found!');
+            return res.status(404).json({ error: 'User not found!' });
         }
         if (email_exists.length != 0 && email_exists[0].email != user.email) {
-            return res.status(400).send('Email is already being used!');
+            return res.status(400).json({ error: 'Email is already being used!' });
         }
         
         user.name = name;
@@ -72,13 +72,13 @@ module.exports = {
         const user = await User.findByPk(user_id);
 
         if (!user) {
-            return res.status(404).send('User not found!');
+            return res.status(404).json({ error: 'User not found!' });
         }
         if (!await bcrypt.compare(password, user.password)) {
-            return res.status(400).send('Previous password is different from the current password!');
+            return res.status(400).json({ error: 'Previous password is different from the current password!' });
         }
         if (new_password != confirmed_new_password) {
-            return res.status(400).send('New password is different from confirmation!');
+            return res.status(400).json({ error: 'New password is different from confirmation!' });
         }
 
         const salt = bcrypt.genSaltSync();
@@ -95,7 +95,7 @@ module.exports = {
         const user = await User.findByPk(user_id);
         
         if (!user) {
-            return res.status(404).send('User not found!');
+            return res.status(404).json({ error: 'User not found!' });
         }
 
         await user.destroy();

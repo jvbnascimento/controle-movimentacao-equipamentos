@@ -13,7 +13,7 @@ module.exports = {
 		const department = await Department.findByPk(department_id);
 
 		if (!department) {
-			return res.status(404).send('Department not found!');
+			return res.status(404).json({ error: 'Department not found!' });
 		}
 
 		return res.json({ department });
@@ -29,7 +29,7 @@ module.exports = {
 		});
 
 		if (name_exists.length != 0) {
-			return res.status(400).send('Name already exists!');
+			return res.status(400).json({ error: 'Name already exists!' });
 		}
 
 		const department = await Department.create({ name, boss });
@@ -49,10 +49,10 @@ module.exports = {
 		});
 
 		if (!department) {
-			return res.status(404).send('Department not found!');
+			return res.status(404).json({ error: 'Department not found!' });
 		}
 		if (name_exists.length != 0 && name_exists[0].name != department.name) {
-			return res.status(400).send('Name is already being used!');
+			return res.status(400).json({ error: 'Name is already being used!' });
 		}
 
 		department.name = name;
@@ -69,7 +69,7 @@ module.exports = {
 		const department = await Department.findByPk(department_id);
 
 		if (!department) {
-			return res.status(404).send('Department not found!');
+			return res.status(404).json({ error: 'Department not found!' });
 		}
 
 		department.destroy();
