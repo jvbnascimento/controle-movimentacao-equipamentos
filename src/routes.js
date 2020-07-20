@@ -36,7 +36,11 @@ routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);
 
-routes.get("/movements", MovementController.index);
-routes.post("/movements", MovementController.store);
+routes.get("/movements", MovementController.listAllMovements);
+routes.get("/movements/:movement_id", MovementController.listMovementById);
+routes.get("/movements/data/:date_movement", MovementController.listAllMovementsByData);
+routes.post("/movements", MovementController.create);
+routes.put("/movements/:movement_id", MovementController.update);
+routes.delete("/movements/:movement_id", MovementController.delete);
 
 module.exports = routes;
