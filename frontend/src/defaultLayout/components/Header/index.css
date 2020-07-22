@@ -1,0 +1,59 @@
+.bg_color_verde_zimbra {
+	background-color: #308f8f;
+}
+.bg_color_verde_zimbra_hover {
+	background-color: #308f8f;
+	color: #eeeeee;
+}
+.bg_color_verde_zimbra_hover:hover {
+	background-color: #277373;
+	color: #111111;
+}
+.bg_color_verde_escuro_zimbra {
+	background-color: #277373;
+}
+
+.border_only_right {
+	border-right: 1px solid #ccc;
+}
+
+.font_color_white {
+	color: #eeeeee;
+}
+.font_color_white:hover {
+	color: #eeeeee;
+}
+.font_color_white_hover {
+	color: #eeeeee;
+}
+.font_color_white_hover:hover {
+	color: #111111;
+}
+
+.font_size_title {
+	font-size: 20px;
+}
+
+.margin_left_right_1 {
+	margin: 0 1px 0 1px;
+}
+
+.no_padding {
+	padding: 0;
+}
+.padding_all_10 {
+	padding: 10px;
+}
+.padding_all_20 {
+	padding: 20px;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.height_header {
+	height: 10vh;
+}

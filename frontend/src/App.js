@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import api from './services/api';
+
+import Header from './defaultLayout/components/Header';
+import Footer from './defaultLayout/components/Footer';
+import Sistema from './components/content/Sistema';
+
+
+class App extends Component {
+	state = {
+		tipos: [],
+		movements: [],
+	}
+
+	async componentDidMount() {
+		const responseTipos = await api.get('/types');
+		const responseMovements = await api.get('/movements')
+
+		this.setState({
+			tipos: responseTipos.data,
+			movements: responseMovements.data,
+		});
+	}
+
+	render() {
+		const { tipos, movements } = this.state;
+
+		return (
+			<>
+				<Header tipos={tipos.types}/>
+				<Sistema movements={movements.movements}/>
+				<Footer />
+			</>
+		);
+	}
 }
 
 export default App;

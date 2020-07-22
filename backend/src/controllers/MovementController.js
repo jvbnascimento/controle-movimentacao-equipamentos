@@ -21,7 +21,7 @@ module.exports = {
 				},
 				{
 					association: 'hardwares',
-					attributes: ['description'],
+					attributes: ['id_hardware', 'description'],
 					through: {
 						attributes: [],
 					},
