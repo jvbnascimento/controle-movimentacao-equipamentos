@@ -23,9 +23,15 @@
 .center {
 	display: flex;
 	justify-content: center;
-	align-items: center;
+    align-items: center;
+    width: auto;
 }
 
 .height_content {
+    width: auto;
 	height: 80vh;
+}
+
+.bg_color_cinza_zimbra {
+    background-color: #eeeeee;
 }

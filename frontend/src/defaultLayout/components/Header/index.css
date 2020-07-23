@@ -29,6 +29,12 @@
 .font_color_white_hover:hover {
 	color: #111111;
 }
+.font_color_verde_zimbra_hover {
+    color: #308f8f;
+}
+.font_color_verde_zimbra_hover:hover {
+    color: #277373;
+}
 
 .font_size_title {
 	font-size: 20px;

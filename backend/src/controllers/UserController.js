@@ -30,7 +30,7 @@ module.exports = {
             }
         });
         
-        if (email_exists) {
+        if (email_exists.length != 0) {
             return res.status(400).json({ error: 'Email already exists!' });
         }
 

@@ -13,7 +13,6 @@ class Hardware extends Model {
 			tableName: 'hardwares'
 		});
 		Hardware.removeAttribute('id');
-		// sequelize.sync({ force: true });
 	}
 
 	static associate(models) {
