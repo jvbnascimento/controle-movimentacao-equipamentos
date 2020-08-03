@@ -5,14 +5,46 @@ const sequelize = require('sequelize');
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
 		await queryInterface.createTable('hardwares', {
-			id_hardware: {
+			id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
 				primaryKey: true,
+				autoIncrement: true,
+			},
+			heritage: {
+				type: Sequelize.STRING,
+				allowNull: false,
 			},
 			description: {
 				type: Sequelize.STRING,
 				allowNull: false,
+			},
+			brand: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			warranty: {
+				type: Sequelize.STRING,
+				allowNull: false,
+			},
+			has_office: {
+				type: Sequelize.STRING,
+				allowNull: false
+			},
+			auction: {
+				type: Sequelize.BOOLEAN,
+				allowNull: false,
+			},
+			date_auction: {
+				type: Sequelize.DATE,
+				allowNull: true,
+			},
+			department_id: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				references: { model: 'departments', key: 'id' },
+				onUpdate: 'CASCADE',
+				onDelete: 'CASCADE',
 			},
 			type_id: {
 				type: Sequelize.INTEGER,

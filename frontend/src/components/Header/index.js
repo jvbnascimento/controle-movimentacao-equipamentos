@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import {
 	Navbar,
 	Nav,
@@ -15,25 +16,38 @@ import {
 
 import './index.css'
 
-const Header = (props) => {
+import api from '../../services/api';
+
+import { Link } from 'react-router-dom';
+
+export default function Header() {
+	const [listTypes, setTypes] = useState([]);
+
+	useEffect(() => {
+		async function getAllTypes() {
+			const response = await api.get('/types');
+			const data = response.data;
+			setTypes(data);
+		}
+
+		getAllTypes();
+	}, []);
+
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 
 	const toggle = () => setDropdownOpen(!dropdownOpen);
-
-	const tipos = props.tipos;
 
 	return (
 		<div className="height_header">
 			<Navbar className="bg_color_verde_zimbra no_padding">
 				<Nav className='mr_auto font_color_white'>
-					<NavItem className="bg_color_verde_escuro_zimbra padding_all_10 border_only_right">
-						<NavLink className="font_size_title font_color_white" href="#">Sistema</NavLink>
+					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right">
+						<Link className="font_size_title font_color_white" to="/">Sistema</Link>
 					</NavItem>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover" href="#">Equipamentos</NavLink>
+						<Link className="padding_all_20 font_color_white_hover" to="/hardware">Equipamentos</Link>
 					</NavItem>
-
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
 						<NavLink className="padding_all_20 font_color_white_hover" href="#">Movimentações</NavLink>
@@ -45,18 +59,18 @@ const Header = (props) => {
           				</DropdownToggle>
 
 						<DropdownMenu className="bg_color_verde_zimbra no_padding">
-							{tipos !== undefined ?
-								tipos.map(element => {
+							{listTypes.types !== undefined ?
+								listTypes.types.map(element => {
 									return (
-										<DropdownItem className="bg_color_verde_zimbra_hover" key={element.id}>
+										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
 											<NavItem className="no_padding">
 												<NavLink className="font_color_white_hover" href="#">{element.name}</NavLink>
 											</NavItem>
 										</DropdownItem>)
 								}) : ''
 							}
-							<DropdownItem divider />
-							<DropdownItem className="bg_color_verde_zimbra_hover">
+							<DropdownItem divider className="no_margin" />
+							<DropdownItem className="bg_color_verde_zimbra_hover no_padding">
 								<NavItem>
 									<NavLink className="font_color_white_hover" href="#">CRIA ITEM</NavLink>
 								</NavItem>
@@ -67,6 +81,10 @@ const Header = (props) => {
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
 						<NavLink className="padding_all_20 font_color_white_hover padding_all_10 center" href="#">Usuários</NavLink>
 					</NavItem>
+
+					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
+						<NavLink className="padding_all_20 font_color_white_hover padding_all_10 center" href="#">Sair</NavLink>
+					</NavItem>
 				</Nav>
 
 				<NavbarText className="text-right padding_all_20 center"> Nome do usuário Logado </NavbarText>
@@ -74,5 +92,3 @@ const Header = (props) => {
 		</div>
 	);
 }
-
-export default Header;

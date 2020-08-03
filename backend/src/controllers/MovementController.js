@@ -21,7 +21,7 @@ module.exports = {
 				},
 				{
 					association: 'hardwares',
-					attributes: ['id_hardware', 'description'],
+					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
@@ -52,7 +52,7 @@ module.exports = {
 				},
 				{
 					association: 'hardwares',
-					attributes: ['description'],
+					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
@@ -90,7 +90,7 @@ module.exports = {
 				},
 				{
 					association: 'hardwares',
-					attributes: ['description'],
+					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
@@ -178,7 +178,7 @@ module.exports = {
 			movement.destination_department_id = destination_department_id;
 			movement.responsible_id = responsible_id;
 
-			await movement.update();
+			await movement.save();
 
 			return res.json({ movement });
 		});

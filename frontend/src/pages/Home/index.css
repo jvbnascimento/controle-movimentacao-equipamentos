@@ -5,18 +5,18 @@
 .border {
 	border: 1px solid #ccc;
 }
-.border-only-right {
+.border_only_right {
 	border-right: 1px solid #ccc;
 }
 
-.padding-all-10 {
+.padding_all_10 {
 	padding: 10px;
 }
 
-.margin-top-bottom-10 {
+.margin_top_bottom_10 {
 	margin: 10px 0 10px 0;
 }
-.margin-top-bottom-20 {
+.margin_top_bottom_20 {
 	margin: 20px 0 20px 0;
 }
 
@@ -34,4 +34,19 @@
 
 .bg_color_cinza_zimbra {
     background-color: #eeeeee;
+}
+
+.bg_color_cinza_zimbra_hover {
+    background-color: #eeeeee;
+}
+
+
+.font_color_black {
+	color: #111111;
+}
+.font_color_black_hover {
+	color: #111111;
+}
+.font_color_black_hover:hover {
+	color: #308f8f;
 }

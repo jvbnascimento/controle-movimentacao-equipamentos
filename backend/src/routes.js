@@ -29,9 +29,9 @@ routes.delete("/departments/:department_id", DepartmentController.delete);
 
 routes.get("/hardwares/detailed", HardwareController.listAllDetailedHardwares);
 routes.get("/hardwares", HardwareController.listAllHardwares);
-routes.get("/hardwares/name/:description", HardwareController.listAllHardwaresByName);
+routes.get("/hardwares/description/:description", HardwareController.listAllHardwaresByName);
 routes.get("/hardwares/category/:name_category", HardwareController.listAllHardwaresByCategory);
-routes.get("/hardwares/:hardware_id", HardwareController.listHardware);
+routes.get("/hardwares/:heritage", HardwareController.listHardware);
 routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);

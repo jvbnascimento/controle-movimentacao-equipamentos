@@ -2,29 +2,37 @@ const { Op } = require("sequelize");
 
 const Hardware = require('../models/Hardware');
 const Type = require('../models/Type');
+const Department = require("../models/Department");
 
 module.exports = {
 	async listAllDetailedHardwares(req, res) {
 		const hardwares = await Hardware.findAll({
-			include: {
-				association: 'category',
-				attributes: ['name']
-			},
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
 		});
 
-		return res.json({ hardwares });
+		return res.json(hardwares);
 	},
 
 	async listAllHardwares(req, res) {
 		const hardwares = await Hardware.findAll({
-			attributes: ['id_hardware', 'description'],
-			include: {
-				association: 'category',
-				attributes: ['name']
-			},
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
 		});
 
-		return res.json({ hardwares });
+		return res.json(hardwares);
 	},
 
 	async listAllHardwaresByName(req, res) {
@@ -36,77 +44,131 @@ module.exports = {
 					[Op.iLike]: `%${description}%`
 				}
 			},
-			attributes: ['id_hardware', 'description'],
-			include: {
-				association: 'category',
-				attributes: ['name']
-			},
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
 		});
 
-		return res.json({ hardwares });
+		return res.json(hardwares);
 	},
 
 	async listAllHardwaresByCategory(req, res) {
 		const { name_category } = req.params;
 
 		const hardwares = await Hardware.findAll({
-			attributes: ['id_hardware', 'description'],
-			include: {
-				association: 'category',
-				attributes: ['name'],
-				where: {
-					name: {
-						[Op.iLike]: name_category
+			include: [
+				{
+					association: 'category',
+					where: {
+						name: {
+							[Op.iLike]: name_category
+						}
 					}
+				},
+				{
+					association: 'belongs',
 				}
-			},
+			],
 		});
 
-		return res.json({ hardwares });
+		return res.json(hardwares);
 	},
 	
 	async listHardware(req, res) {
-		const { hardware_id } = req.params;
+		const { heritage } = req.params;
 
-		const hardware = await Hardware.findByPk(hardware_id, {
-			include: {
-				association: 'category',
-				attributes: ['name']
+		const hardware = await Hardware.findAll({
+			where: {
+				heritage: {
+					[Op.iLike]: `%${heritage}%`
+				}
 			},
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
 		});
 
 		if (!hardware) {
 			return res.status(404).json({ error: 'Hardware not found' });
 		}
 
-		return res.json({ hardware });
+		return res.json(hardware);
 	},
 
 	async create(req, res) {
 		const { type_id } = req.params;
-		const { id_hardware, description } = req.body;
+		const {
+			heritage,
+			description,
+			brand,
+			warranty,
+			has_office,
+			auction,
+			date_auction,
+			department_id
+		} = req.body;
 
 		const type = await Type.findByPk(type_id);
+		const department = await Department.findByPk(department_id);
 
 		if (!type) {
 			return res.status(404).json({ error: 'Type not found' });
 		}
+		if (!department) {
+			return res.status(404).json({ error: 'Department not found' });
+		}
 
 		const hardware = await Hardware.create({
-			id_hardware,
+			heritage,
 			description,
+			brand,
+			warranty,
+			has_office,
+			auction,
+			date_auction,
+			department_id,
 			type_id
 		});
 
-		return res.json({ hardware });
+		return res.json(hardware);
 	},
 
 	async update(req, res) {
 		const { hardware_id } = req.params;
-		const { id_hardware, description, type_id } = req.body;
+		const {
+			heritage,
+			description,
+			brand,
+			warranty,
+			has_office,
+			auction,
+			date_auction,
+			department_id,
+			type_id
+		} = req.body;
 
-		const hardware = await Hardware.findByPk(hardware_id);
+		const hardware = await Hardware.findByPk(hardware_id, {
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
+		});
 		const type = await Type.findByPk(type_id);
+		const department = await Department.findByPk(department_id);
 
 		if (!hardware) {
 			return res.status(404).json({ error: 'Hardware not found' });
@@ -114,14 +176,23 @@ module.exports = {
 		if (!type) {
 			return res.status(404).json({ error: 'Type not found' });
 		}
+		if (!department) {
+			return res.status(404).json({ error: 'Department not found' });
+		}
 
-		hardware.id_hardware = id_hardware;
+		hardware.heritage = heritage;
 		hardware.description = description;
+		hardware.brand = brand;
+		hardware.warranty = warranty;
+		hardware.has_office = has_office;
+		hardware.auction = auction;
+		hardware.date_auction = date_auction;
+		hardware.department_id = department_id;
 		hardware.type_id = type_id;
 
 		await hardware.save();
 
-		return res.json({ hardware });
+		return res.json(hardware);
 	},
 
 	async delete(req, res) {

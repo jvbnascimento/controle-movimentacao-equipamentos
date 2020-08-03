@@ -23,6 +23,15 @@
 .font_color_white:hover {
 	color: #eeeeee;
 }
+.font_color_black {
+	color: #111111;
+}
+.font_color_black_hover {
+	color: #111111;
+}
+.font_color_black_hover:hover {
+	color: #308f8f;
+}
 .font_color_white_hover {
 	color: #eeeeee;
 }
@@ -40,6 +49,9 @@
 	font-size: 20px;
 }
 
+.no_margin {
+	margin: 0;
+}
 .margin_left_right_1 {
 	margin: 0 1px 0 1px;
 }

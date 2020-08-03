@@ -9,7 +9,7 @@ module.exports = {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
 				allowNull: false,
-				references: { model: 'hardwares', key: 'id_hardware' },
+				references: { model: 'hardwares', key: 'id' },
 				onUpdate: 'CASCADE',
 				onDelete: 'CASCADE',
 			},

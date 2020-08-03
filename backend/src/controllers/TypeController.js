@@ -4,7 +4,7 @@ module.exports = {
 	async listAllTypes(req, res) {
 		const types = await Type.findAll();
 
-		return res.json({ types });
+		return res.json(types);
     },
     
 	async listType(req, res) {
@@ -16,11 +16,11 @@ module.exports = {
 			return res.status(404).json({ error: 'Type not found!' });
 		}
 
-		return res.json({ type });
+		return res.json(type);
 	},
 
 	async create(req, res) {
-        const { name } = req.body;
+		const { name } = req.body;
         
         const name_exists = await Type.findAll({
             where: { name } 
@@ -32,7 +32,7 @@ module.exports = {
 
 		const type = await Type.create({ name });
 
-		return res.status(201).json({ type });
+		return res.status(201).json(type);
     },
     
     async update(req, res) {
@@ -55,7 +55,7 @@ module.exports = {
         
         await type.save();
 
-		return res.json({ type });
+		return res.json(type);
     },
     
     async delete(req, res) {

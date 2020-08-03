@@ -1,39 +1,29 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-import api from './services/api';
+import DefaultLayout from './containers/DefaultLayout';
 
-import Header from './defaultLayout/components/Header';
-import Footer from './defaultLayout/components/Footer';
-import Sistema from './components/content/Sistema';
+import ListMovement from './pages/Home';
+import Hardware from './pages/Hardware';
+import EditHardware from './pages/EditHardware';
 
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-class App extends Component {
-	state = {
-		tipos: [],
-		movements: [],
-	}
+export default function App() {
+	return (
+		<Router>
+			<Switch>
+				<Route path="/" exact>
+					<DefaultLayout container={<ListMovement />} />
+				</Route>
 
-	async componentDidMount() {
-		const responseTipos = await api.get('/types');
-		const responseMovements = await api.get('/movements')
+				<Route path="/hardware" exact>
+					<DefaultLayout container={<Hardware />} />
+				</Route>
 
-		this.setState({
-			tipos: responseTipos.data,
-			movements: responseMovements.data,
-		});
-	}
-
-	render() {
-		const { tipos, movements } = this.state;
-
-		return (
-			<>
-				<Header tipos={tipos.types}/>
-				<Sistema movements={movements.movements}/>
-				<Footer />
-			</>
-		);
-	}
+				<Route path="/hardware/edit/:heritage" exact>
+					<DefaultLayout container={<EditHardware />} />
+				</Route>
+			</Switch>
+		</Router>
+	);
 }
-
-export default App;

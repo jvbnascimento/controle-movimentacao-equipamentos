@@ -1,0 +1,76 @@
+.title {
+	font-size: 24px;
+}
+
+.border {
+	border: 1px solid #ccc;
+}
+.border_only_right {
+	border-right: 1px solid #ccc;
+}
+.border_only_bottom {
+	border-bottom: 1px solid #ccc;
+}
+
+.padding_all_10 {
+	padding: 10px;
+}
+.padding_all_30 {
+	padding: 30px;
+}
+
+.margin_top_bottom_10 {
+	margin: 10px 0 10px 0;
+}
+.margin_top_bottom_20 {
+	margin: 20px 0 20px 0;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+    align-items: center;
+    width: auto;
+}
+.center_vertical {
+	display: flex;
+	align-items: center;
+}
+
+.height_content {
+    width: auto;
+	height: 80vh;
+}
+
+.bg_color_cinza_zimbra {
+    background-color: #eeeeee;
+}
+.bg_color_cinza_zimbra_hover {
+    background-color: #eeeeee;
+}
+.bg_color_vermelho_danger {
+	background-color: #f5c6cb;
+}
+.bg_color_azul_info {
+	background-color: #bee5eb;
+}
+.bg_color_amarelo_warning {
+	background-color: #ffeeba;
+}
+
+
+.font_color_black {
+	color: #111111;
+}
+.font_color_black_hover {
+	color: #111111;
+}
+.font_color_black_hover:hover {
+	color: #308f8f;
+}
+.font_color_verde_zimbra_hover {
+    color: #308f8f;
+}
+.font_color_verde_zimbra_hover:hover {
+    color: #277373;
+}
