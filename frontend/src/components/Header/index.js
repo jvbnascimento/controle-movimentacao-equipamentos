@@ -59,8 +59,8 @@ export default function Header() {
           				</DropdownToggle>
 
 						<DropdownMenu className="bg_color_verde_zimbra no_padding">
-							{listTypes.types !== undefined ?
-								listTypes.types.map(element => {
+							{listTypes !== undefined ?
+								listTypes.map(element => {
 									return (
 										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
 											<NavItem className="no_padding">
