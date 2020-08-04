@@ -7,6 +7,9 @@ const Department = require("../models/Department");
 module.exports = {
 	async listAllDetailedHardwares(req, res) {
 		const hardwares = await Hardware.findAll({
+            order: [
+                ['heritage']
+            ],
 			include: [
 				{
 					association: 'category',

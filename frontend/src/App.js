@@ -5,6 +5,7 @@ import DefaultLayout from './containers/DefaultLayout';
 import ListMovement from './pages/Home';
 import Hardware from './pages/Hardware';
 import EditHardware from './pages/EditHardware';
+import CreateHardware from './pages/CreateHardware';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -22,6 +23,10 @@ export default function App() {
 
 				<Route path="/hardware/edit/:heritage" exact>
 					<DefaultLayout container={<EditHardware />} />
+				</Route>
+
+				<Route path="/hardware/create" exact>
+					<DefaultLayout container={<CreateHardware />} />
 				</Route>
 			</Switch>
 		</Router>

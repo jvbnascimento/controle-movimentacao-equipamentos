@@ -4,7 +4,7 @@ module.exports = {
 	async listAllDepartments(req, res) {
 		const departments = await Department.findAll();
 
-		return res.json({ departments });
+		return res.json(departments);
 	},
 
 	async listDepartment(req, res) {
@@ -16,7 +16,7 @@ module.exports = {
 			return res.status(404).json({ error: 'Department not found!' });
 		}
 
-		return res.json({ department });
+		return res.json(department);
 	},
 
 	async create(req, res) {
@@ -34,7 +34,7 @@ module.exports = {
 
 		const department = await Department.create({ name, boss });
 
-		return res.json({ department });
+		return res.json(department);
 	},
 
 	async update(req, res) {
@@ -60,7 +60,7 @@ module.exports = {
 
 		await department.save();
 
-		return res.json({ department });
+		return res.json(department);
 	},
 
 	async delete(req, res) {

@@ -105,7 +105,9 @@ export default function EditHardware() {
     function handleCategory(e) {
         setCategory(e.target.value);
     }
+
     
+
     return (
         <Container className="height_content center">
             <Row className="no_padding width_70">
@@ -183,19 +185,19 @@ export default function EditHardware() {
                                             <option key={1} value={false}>NÃO FOI PARA LEIÃO</option>
                                         </Input>
 
-                                        { auction === 'true' &&
+                                        {auction === 'true' &&
                                             <>
-                                            <Label className="margin_top_10" for="labelDateAuction">Data de saída para leilão</Label>
-                                            <Input
-                                              type="date"
-                                              name="date_auction"
-                                              id="labelDateAuction"
-                                              placeholder="Data de saída para leilão"
-                                              value={date_auction === null ? '' : date_auction}
-                                              onChange={handleDateAuction}
-                                              className="margin_bottom_20"
-                                            />
-                                            </> 
+                                                <Label className="margin_top_10" for="labelDateAuction">Data de saída para leilão</Label>
+                                                <Input
+                                                    type="date"
+                                                    name="date_auction"
+                                                    id="labelDateAuction"
+                                                    placeholder="Data de saída para leilão"
+                                                    value={date_auction === null ? '' : date_auction}
+                                                    onChange={handleDateAuction}
+                                                    className="margin_bottom_20"
+                                                />
+                                            </>
                                         }
 
                                         <Label className="margin_top_10" for="labelCategory">Tipo</Label>

@@ -79,11 +79,11 @@ export default function Header() {
 					</Dropdown>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover padding_all_10 center" href="#">Usuários</NavLink>
+						<NavLink className="padding_all_20 font_color_white_hover center" href="#">Usuários</NavLink>
 					</NavItem>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover padding_all_10 center" href="#">Sair</NavLink>
+						<NavLink className="padding_all_20 font_color_white_hover center" href="#">Sair</NavLink>
 					</NavItem>
 				</Nav>
 
