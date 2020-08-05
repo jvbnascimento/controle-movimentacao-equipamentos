@@ -96,148 +96,159 @@ export default function EditHardware() {
     }
 
     return (
-        <Container className="height_content center">
-            <Row className="no_padding width_70">
-                <Col>
-                    <Form className="margin_top_100">
-                        <FormGroup>
-                            <Label className="margin_top_10" for="labelHeritage">Tombamento</Label>
-                            <Input
-                                type="text"
-                                name="heritage"
-                                id="labelHeritage"
-                                placeholder="Tombamento"
-                                value={heritage}
-                                onChange={handleHeritage}
-                                className="margin_bottom_20"
-                            />
+        <div>
+            <Container className="center">
+                <Row className="width_70">
+                    <Col className="">
+                        <Form>
+                            <FormGroup>
+                                <Label className="margin_top_10" for="labelHeritage">Tombamento</Label>
+                                <Input
+                                    type="text"
+                                    name="heritage"
+                                    id="labelHeritage"
+                                    placeholder="Tombamento"
+                                    value={heritage}
+                                    onChange={handleHeritage}
+                                    className="margin_bottom_20"
+                                    required={true}
+                                />
 
-                            <Label className="margin_top_10" for="labelDescription">Descrição</Label>
-                            <Input
-                                type="text"
-                                name="description"
-                                id="labelDescription"
-                                placeholder="Descrição"
-                                defaultValue={description}
-                                onChange={handleDescription}
-                                className="margin_bottom_20"
-                            />
+                                <Label className="margin_top_10" for="labelDescription">Descrição</Label>
+                                <Input
+                                    type="text"
+                                    name="description"
+                                    id="labelDescription"
+                                    placeholder="Descrição"
+                                    defaultValue={description}
+                                    onChange={handleDescription}
+                                    className="margin_bottom_20"
+                                    required
+                                />
 
-                            <Label className="margin_top_10" for="labelBrand">Marca</Label>
-                            <Input
-                                type="text"
-                                name="brand"
-                                id="labelBrand"
-                                placeholder="Marca"
-                                defaultValue={brand}
-                                onChange={handleBrand}
-                                className="margin_bottom_20"
-                            />
+                                <Label className="margin_top_10" for="labelBrand">Marca</Label>
+                                <Input
+                                    type="text"
+                                    name="brand"
+                                    id="labelBrand"
+                                    placeholder="Marca"
+                                    defaultValue={brand}
+                                    onChange={handleBrand}
+                                    className="margin_bottom_20"
+                                    required
+                                />
 
-                            <Label className="margin_top_10" for="labelWarranty">Garantia</Label>
-                            <Input
-                                type="text"
-                                name="warranty"
-                                id="labelWarranty"
-                                placeholder="Garantia"
-                                defaultValue={warranty}
-                                onChange={handleWarranty}
-                                className="margin_bottom_20"
-                            />
+                                <Label className="margin_top_10" for="labelWarranty">Garantia</Label>
+                                <Input
+                                    type="text"
+                                    name="warranty"
+                                    id="labelWarranty"
+                                    placeholder="Garantia"
+                                    defaultValue={warranty}
+                                    onChange={handleWarranty}
+                                    className="margin_bottom_20"
+                                    required
+                                />
 
-                            <Label className="margin_top_10" for="labelHasOffice">Tem office</Label>
-                            <Input
-                                type="text"
-                                name="has_office"
-                                id="labelHasOffice"
-                                placeholder="Tem office?"
-                                defaultValue={has_office}
-                                onChange={handleHasOffice}
-                                className="margin_bottom_20"
-                            />
+                                <Label className="margin_top_10" for="labelHasOffice">Tem office</Label>
+                                <Input
+                                    type="text"
+                                    name="has_office"
+                                    id="labelHasOffice"
+                                    placeholder="Tem office?"
+                                    defaultValue={has_office}
+                                    onChange={handleHasOffice}
+                                    className="margin_bottom_20"
+                                    required
+                                />
 
-                            <Label className="margin_top_10" for="labelAuction">Leilão</Label>
-                            <Input
-                                type="select"
-                                name="auction"
-                                id="labelAuction"
-                                value={auction}
-                                onChange={handleAuction}
-                                className="margin_bottom_20"
-                            >
-                                <option key={0} value={true}>FOI PARA LEILÃO</option>
-                                <option key={1} value={false}>NÃO FOI PARA LEIÃO</option>
-                            </Input>
+                                <Label className="margin_top_10" for="labelAuction">Leilão</Label>
+                                <Input
+                                    type="select"
+                                    name="auction"
+                                    id="labelAuction"
+                                    value={auction}
+                                    onChange={handleAuction}
+                                    className="margin_bottom_20"
+                                    required
+                                >
+                                    <option key={0} value={true}>FOI PARA LEILÃO</option>
+                                    <option key={1} value={false}>NÃO FOI PARA LEIÃO</option>
+                                </Input>
 
-                            {auction === 'true' &&
-                                <>
-                                    <Label className="margin_top_10" for="labelDateAuction">Data de saída para leilão</Label>
-                                    <Input
-                                        type="date"
-                                        name="date_auction"
-                                        id="labelDateAuction"
-                                        placeholder="Data de saída para leilão"
-                                        value={date_auction === null ? '' : date_auction}
-                                        onChange={handleDateAuction}
-                                        className="margin_bottom_20"
-                                    />
-                                </>
-                            }
-
-                            <Label className="margin_top_10" for="labelCategory">Tipo</Label>
-                            <Input
-                                type="select"
-                                name="category"
-                                id="labelCategory"
-                                value={category}
-                                onChange={handleCategory}
-                                className="margin_bottom_20"
-                            >
-                                {
-                                    types !== undefined && types.length !== 0 ?
-                                        types.map(element => {
-                                            return (
-                                                <option
-                                                    key={element.id}
-                                                    value={element.id}
-                                                >{element.name}</option>
-                                            );
-                                        }) : ''
+                                {auction === 'true' &&
+                                    <>
+                                        <Label className="margin_top_10" for="labelDateAuction">Data de saída para leilão</Label>
+                                        <Input
+                                            type="date"
+                                            name="date_auction"
+                                            id="labelDateAuction"
+                                            placeholder="Data de saída para leilão"
+                                            value={date_auction === null ? '' : date_auction}
+                                            onChange={handleDateAuction}
+                                            className="margin_bottom_20"
+                                            required
+                                        />
+                                    </>
                                 }
-                            </Input>
 
-                            <Label className="margin_top_10" for="labelBelongs">Departamento</Label>
-                            <Input
-                                type="select"
-                                name="belongs"
-                                id="labelBelongs"
-                                value={belongs}
-                                onChange={handleBelongs}
-                                className="margin_bottom_20"
-                            >
-                                {
-                                    departments !== undefined && departments.length !== 0 ?
-                                        departments.map(element => {
-                                            return (
-                                                <option
-                                                    key={element.id}
-                                                    value={element.id}
-                                                >{element.name} | {element.boss}</option>
-                                            );
-                                        }) : ''
-                                }
-                            </Input>
+                                <Label className="margin_top_10" for="labelCategory">Tipo</Label>
+                                <Input
+                                    type="select"
+                                    name="category"
+                                    id="labelCategory"
+                                    value={category}
+                                    onChange={handleCategory}
+                                    className="margin_bottom_20"
+                                    required
+                                >
+                                    {
+                                        types !== undefined && types.length !== 0 ?
+                                            types.map(element => {
+                                                return (
+                                                    <option
+                                                        key={element.id}
+                                                        value={element.id}
+                                                    >{element.name}</option>
+                                                );
+                                            }) : ''
+                                    }
+                                </Input>
 
-                            <Row>
-                                <Col className="center margin_top_bottom_20">
-                                    <Button color="success" className="margin_left_right_20" onClick={createHardware}>Criar</Button>
-                                    <Button className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
-                                </Col>
-                            </Row>
-                        </FormGroup>
-                    </Form>
-                </Col>
-            </Row>
-        </Container >
+                                <Label className="margin_top_10" for="labelBelongs">Departamento</Label>
+                                <Input
+                                    type="select"
+                                    name="belongs"
+                                    id="labelBelongs"
+                                    value={belongs}
+                                    onChange={handleBelongs}
+                                    className="margin_bottom_20"
+                                    required
+                                >
+                                    {
+                                        departments !== undefined && departments.length !== 0 ?
+                                            departments.map(element => {
+                                                return (
+                                                    <option
+                                                        key={element.id}
+                                                        value={element.id}
+                                                    >{element.name} | {element.boss}</option>
+                                                );
+                                            }) : ''
+                                    }
+                                </Input>
+
+                                <Row>
+                                    <Col className="center margin_top_bottom_20">
+                                        <Button className="margin_left_right_20" onClick={createHardware}>Criar</Button>
+                                        <Button color="secondary" className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
+                                    </Col>
+                                </Row>
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                </Row>
+            </Container >
+        </div>
     );
 }

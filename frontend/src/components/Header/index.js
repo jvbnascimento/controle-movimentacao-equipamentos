@@ -63,8 +63,11 @@ export default function Header() {
 								listTypes.map(element => {
 									return (
 										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
-											<NavItem className="no_padding">
-												<NavLink className="font_color_white_hover" href="#">{element.name}</NavLink>
+											<NavItem className="center_vertical width_100 bg_color_verde_zimbra_hover">
+												<Link
+                                                    className="padding_all_10 font_color_white_hover"
+                                                    to={`/hardware/${element.name}`}
+                                                >{element.name}</Link>
 											</NavItem>
 										</DropdownItem>)
 								}) : ''

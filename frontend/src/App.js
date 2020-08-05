@@ -6,6 +6,7 @@ import ListMovement from './pages/Home';
 import Hardware from './pages/Hardware';
 import EditHardware from './pages/EditHardware';
 import CreateHardware from './pages/CreateHardware';
+import ListByCategory from './pages/ListByCategory';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -27,6 +28,10 @@ export default function App() {
 
 				<Route path="/hardware/create" exact>
 					<DefaultLayout container={<CreateHardware />} />
+				</Route>
+
+                <Route path="/hardware/:category" exact>
+					<DefaultLayout container={<ListByCategory />} />
 				</Route>
 			</Switch>
 		</Router>

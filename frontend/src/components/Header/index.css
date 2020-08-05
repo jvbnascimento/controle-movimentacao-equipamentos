@@ -72,6 +72,16 @@
 	align-items: center;
 }
 
+.center_vertical {
+	display: flex;
+	align-items: center;
+}
+
 .height_header {
 	height: 10vh;
+}
+
+.width_100 {
+    display: block;
+    width: 100%;
 }
