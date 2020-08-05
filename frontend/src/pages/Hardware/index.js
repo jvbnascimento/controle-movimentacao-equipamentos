@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect } from 'react';
-import { Form, FormGroup, Input, Container, Row, Col, ButtonGroup, Button } from 'reactstrap';
+import { Form, FormGroup, Input, Container, Row, Col, ButtonGroup, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
 import './index.css';
@@ -14,6 +14,21 @@ export default function Hardware() {
     const [hardware, setHardwares] = useState([]);
 
     const [cSelected, setCSelected] = useState([]);
+
+    const [modal, setModal] = useState(false);
+    const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
+
+
+    const toggle = (e) => {
+        setModal(!modal)
+
+        if (toggle) {
+            setHardwareToDelete([e.target.value, e.target.name]);
+        }
+        else {
+            setHardwareToDelete([-1, -1]);
+        }
+    };
 
     useEffect(() => {
         async function getAllHardwares() {
@@ -34,6 +49,12 @@ export default function Hardware() {
             cSelected.splice(index, 1);
         }
         setCSelected([...cSelected]);
+    }
+
+    async function deleteHardware() {
+        await api.delete(`/hardwares/${hardwareToDelete[0]}`);
+
+        window.location.reload();
     }
 
     return (
@@ -237,10 +258,12 @@ export default function Hardware() {
                                     className="padding_all_10 center"
                                     sm="1"
                                 >
-                                    <Link
-                                        className="font_color_verde_zimbra_hover"
-                                        to={`/hardware/deletar/${element.heritage}`}
-                                    >Deletar</Link>
+                                    <Button
+                                        onClick={toggle}
+                                        color="danger"
+                                        value={element.id}
+                                        name={element.heritage}
+                                    >Deletar</Button>
                                 </Col>
                             </Row>
                         );
@@ -255,6 +278,17 @@ export default function Hardware() {
                     </Row>
                 }
             </Container>
+            
+            <Modal isOpen={modal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>Tem certeza?</ModalHeader>
+                <ModalBody>
+                    Tem certeza que desejar deletar o equipamento de tombo {hardwareToDelete[1]}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={deleteHardware}>Sim</Button>
+                    <Button color="secondary" onClick={toggle}>Cancelar</Button>
+                </ModalFooter>
+            </Modal>
         </div>
     );
 }

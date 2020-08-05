@@ -26,7 +26,7 @@ export default function ListByCategory() {
 
     return (
         <div className='height_content'>
-            <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados ({listCategory.length}) </h3>
+            <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados - Categoria: {search.category} ({listCategory.length}) </h3>
 
             <Container className="margin_top_10" fluid={true}>
                 <Row className="border">

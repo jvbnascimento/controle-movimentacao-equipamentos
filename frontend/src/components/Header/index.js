@@ -35,7 +35,7 @@ export default function Header() {
 
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 
-	const toggle = () => setDropdownOpen(!dropdownOpen);
+    const toggle = () => setDropdownOpen(!dropdownOpen);
 
 	return (
 		<div className="height_header">
@@ -63,12 +63,14 @@ export default function Header() {
 								listTypes.map(element => {
 									return (
 										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
-											<NavItem className="center_vertical width_100 bg_color_verde_zimbra_hover">
-												<Link
-                                                    className="padding_all_10 font_color_white_hover"
-                                                    to={`/hardware/${element.name}`}
-                                                >{element.name}</Link>
-											</NavItem>
+											<Link
+                                                className="center_vertical font_color_white_hover"
+                                                to={`/hardware/${element.name}`}
+                                            >
+												<NavItem
+                                                    className="padding_all_10"
+                                                >{element.name}</NavItem>
+                                            </Link>
 										</DropdownItem>)
 								}) : ''
 							}
