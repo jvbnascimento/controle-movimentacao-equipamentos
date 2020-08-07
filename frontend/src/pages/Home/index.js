@@ -38,8 +38,8 @@ export default function ListMovement() {
 			<ListGroup>
 				<Container>
 					{
-						movements.movements !== undefined ?
-							movements.movements.map(element => {
+						movements !== undefined ?
+							movements.map(element => {
 								return (
 									<Row
 										className="center margin_top_bottom_20"

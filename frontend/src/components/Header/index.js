@@ -50,7 +50,7 @@ export default function Header() {
 					</NavItem>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover" href="#">Movimentações</NavLink>
+						<Link className="padding_all_20 font_color_white_hover" to="/movements">Movimentações</Link>
 					</NavItem>
 
 					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1" nav isOpen={dropdownOpen} toggle={toggle}>

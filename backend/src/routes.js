@@ -36,7 +36,7 @@ routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);
 
-routes.get("/movements", MovementController.listAllMovements);
+routes.get("/movements/:offset", MovementController.listAllMovements);
 routes.get("/movements/:movement_id", MovementController.listMovementById);
 routes.get("/movements/data/:date_movement", MovementController.listAllMovementsByData);
 routes.post("/movements", MovementController.create);

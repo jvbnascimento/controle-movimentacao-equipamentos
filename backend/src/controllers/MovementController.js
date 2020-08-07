@@ -5,31 +5,34 @@ const Department = require('../models/Department');
 
 module.exports = {
 	async listAllMovements(req, res) {
-		const movements = await Movement.findAll({
+        const { offset } = req.params
+
+		const movements = await Movement.findAndCountAll({
 			include: [
 				{
-					association: 'previous_department',
-					attributes: ['name', 'boss']
+					association: 'previous_department'
 				},
 				{
-					association: 'next_department',
-					attributes: ['name', 'boss']
+					association: 'next_department'
 				}, 
 				{
-					association: 'responsible',
-					attributes: ['name']
+					association: 'responsible'
 				},
 				{
 					association: 'hardwares',
-					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
 				}
-			]
+            ],
+            order: [
+                ['id', 'DESC']
+            ],
+            limit: 10,
+            offset,
 		});
 
-		return res.json({ movements });
+		return res.json(movements);
 	},
 
 	async listMovementById(req, res) {
@@ -64,7 +67,7 @@ module.exports = {
 			return res.status(404).json({ error: 'Movement not found!' });
 		}
 
-		return res.json({ movement });
+		return res.json(movement);
 	},
 
 	async listAllMovementsByData(req, res) {
@@ -98,7 +101,7 @@ module.exports = {
 			]
 		});
 
-		return res.json({ movements });
+		return res.json(movements);
 	},
 
 	async create(req, res) {
@@ -128,7 +131,7 @@ module.exports = {
 		});
 		await movement.addHardware(list_hardwares);
 
-		return res.json({ movement });
+		return res.json(movement);
 	},
 
 	async update(req, res) {
@@ -180,7 +183,7 @@ module.exports = {
 
 			await movement.save();
 
-			return res.json({ movement });
+			return res.json(movement);
 		});
 	},
 

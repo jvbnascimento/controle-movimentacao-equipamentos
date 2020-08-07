@@ -2,13 +2,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect } from 'react';
 import { Form, FormGroup, Input, Container, Row, Col, ButtonGroup, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
 import './index.css';
 
 import api from '../../services/api';
-
-import { Link } from 'react-router-dom';
 
 export default function Hardware() {
     const [hardware, setHardwares] = useState([]);
