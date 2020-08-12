@@ -39,22 +39,22 @@ export default function Header() {
 
 	return (
 		<div className="height_header">
-			<Navbar className="bg_color_verde_zimbra no_padding">
-				<Nav className='mr_auto font_color_white'>
-					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right">
-						<Link className="font_size_title font_color_white" to="/">Sistema</Link>
+			<Navbar className="bg_color_verde_zimbra no_padding height_header">
+				<Nav className='font_color_white'>
+					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right height_header">
+						<Link className="font_size_title font_color_white height_header" to="/">Sistema</Link>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<Link className="padding_all_20 font_color_white_hover" to="/hardware">Equipamentos</Link>
+					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
+						<Link className="center padding_all_20 font_color_white_hover height_header" to="/hardware">Equipamentos</Link>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<Link className="padding_all_20 font_color_white_hover" to="/movements">Movimentações</Link>
+					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
+						<Link className="center padding_all_20 font_color_white_hover height_header" to="/movements">Movimentações</Link>
 					</NavItem>
 
-					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1" nav isOpen={dropdownOpen} toggle={toggle}>
-						<DropdownToggle className="padding_all_20 font_color_white_hover" nav caret>
+					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownOpen} toggle={toggle}>
+						<DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
 							Tipos
           				</DropdownToggle>
 
@@ -83,16 +83,16 @@ export default function Header() {
 						</DropdownMenu>
 					</Dropdown>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover center" href="#">Usuários</NavLink>
+					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
+						<NavLink className="center padding_all_20 font_color_white_hover center height_header" href="#">Usuários</NavLink>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1">
-						<NavLink className="padding_all_20 font_color_white_hover center" href="#">Sair</NavLink>
+					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
+						<NavLink className="center padding_all_20 font_color_white_hover center height_header" href="#">Sair</NavLink>
 					</NavItem>
 				</Nav>
 
-				<NavbarText className="text-right padding_all_20 center"> Nome do usuário Logado </NavbarText>
+				<NavbarText className="text-right padding_all_20 center height_header"> Nome do usuário Logado </NavbarText>
 			</Navbar>
 		</div>
 	);

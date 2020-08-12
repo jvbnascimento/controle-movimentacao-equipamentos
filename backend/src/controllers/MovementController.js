@@ -5,7 +5,7 @@ const Department = require('../models/Department');
 
 module.exports = {
 	async listAllMovements(req, res) {
-        const { offset } = req.params
+        const { limit, offset } = req.params
 
 		const movements = await Movement.findAndCountAll({
 			include: [
@@ -21,14 +21,17 @@ module.exports = {
 				{
 					association: 'hardwares',
 					through: {
-						attributes: [],
-					},
+                        attributes: [],
+                    },
+                    include: {
+                        association: 'category'
+                    }
 				}
             ],
             order: [
                 ['id', 'DESC']
             ],
-            limit: 10,
+            limit,
             offset,
 		});
 
