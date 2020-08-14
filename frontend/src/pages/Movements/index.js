@@ -13,7 +13,8 @@ import {
     NavLink,
     Input,
     ButtonGroup,
-    Button
+    Button,
+    DropdownItem
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
@@ -29,10 +30,19 @@ export default function Movements() {
     const [pagesCount, setPageCounts] = useState(0);
 
     const [cSelected, setCSelected] = useState([]);
+    
+    const [heritage, setHeritage] = useState('');
+    const [brand, setBrand] = useState('');
+    const [warranty, setWarranty] = useState('');
+    const [has_office, setHasOffice] = useState('');
+    const [auction, setAuction] = useState('');
+    const [category, setCategory] = useState('');
+    const [department, setDepartment] = useState('');
+    const [date_movement, setDateMovement] = useState('');
 
     useEffect(() => {
         async function getAllMovements() {
-            const response = await api.get(`/movements/${pageSize}/${currentPage}`);
+            const response = await api.get(`/movements/detailed/${pageSize}/${currentPage}`);
             const data = await response.data;
 
             setPageCounts(Math.ceil(data.count / pageSize));
@@ -65,12 +75,32 @@ export default function Movements() {
 
     const onCheckboxBtnClick = (selected) => {
         const index = cSelected.indexOf(selected);
+
         if (index < 0) {
             cSelected.push(selected);
         } else {
             cSelected.splice(index, 1);
         }
+
         setCSelected([...cSelected]);
+    }
+
+    async function filteredSearch(e) {
+
+        // const body = e.target.value.split(";").map(element => {
+        //     return ({ body: element })
+        // });
+
+        // const parameters = cSelected.map(element => {
+        //     return ({ param: element });
+        // })
+
+        // const data = {
+        //     parameters,
+        //     body
+        // }
+
+        // const result = await api.get(`/movements/parameters?${JSON.stringify(data)}`);
     }
 
     return (
@@ -94,50 +124,50 @@ export default function Movements() {
                         <ButtonGroup className="margin_bottom_20">
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(1)}
-                                active={cSelected.includes(1)}
+                                onClick={() => onCheckboxBtnClick('heritage')}
+                                active={cSelected.includes('heritage')}
                                 title="Filtrar por tombamento"
                             >Tombamento</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(2)}
-                                active={cSelected.includes(2)}
+                                onClick={() => onCheckboxBtnClick('brand')}
+                                active={cSelected.includes('brand')}
                                 title="Filtrar por marca"
                             >Marca</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(3)}
-                                active={cSelected.includes(3)}
+                                onClick={() => onCheckboxBtnClick('warranty')}
+                                active={cSelected.includes('warranty')}
                                 title="Filtrar por garantia"
                             >Garantia</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(4)}
-                                active={cSelected.includes(4)}
+                                onClick={() => onCheckboxBtnClick('has_office')}
+                                active={cSelected.includes('has_office')}
                                 title="Filtrar por ferramenta office"
                             >Office</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(5)}
-                                active={cSelected.includes(5)}
+                                onClick={() => onCheckboxBtnClick('auction')}
+                                active={cSelected.includes('auction')}
                                 title="Filtrar por máquinas leiloadas"
                             >Leilão</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(6)}
-                                active={cSelected.includes(6)}
+                                onClick={() => onCheckboxBtnClick('category')}
+                                active={cSelected.includes('category')}
                                 title="Filtrar por categoria"
                             >Categoria</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(7)}
-                                active={cSelected.includes(7)}
+                                onClick={() => onCheckboxBtnClick('department')}
+                                active={cSelected.includes('department')}
                                 title="Filtrar por departamento"
                             >Departamento</Button>
                             <Button
                                 className="margin_left_right_05 border_color_verde_zimbra_hover"
-                                onClick={() => onCheckboxBtnClick(8)}
-                                active={cSelected.includes(8)}
+                                onClick={() => onCheckboxBtnClick('date_movement')}
+                                active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
                             >Data</Button>
                         </ButtonGroup>
@@ -148,15 +178,23 @@ export default function Movements() {
                     <Col>
                         <Container>
                             <Row>
-                                <Col>
-                                    <Input
-                                        type="text"
-                                        name="equipment"
-                                        id="equipement"
-                                        placeholder="Procurar"
-                                        className="width_100"
-                                    />
-                                </Col>
+                                {
+                                    cSelected !== undefined && cSelected.length !== 0 ?
+                                        cSelected.map((element, index) => {
+                                            return (
+                                                <Col key={index}>
+                                                    <Input
+                                                        type="text"
+                                                        name={element}
+                                                        placeholder={element.toUpperCase()}
+                                                        className=""
+                                                        // onChange={handleValueInput}
+                                                    />
+                                                </Col>
+                                            );
+                                        })
+                                        : ''
+                                }
                             </Row>
                         </Container>
                     </Col>
@@ -204,61 +242,110 @@ export default function Movements() {
                             return (
                                 <Container key={element.id}>
                                     <Row className="center margin_top_bottom_20">
-                                        <Col xs="8">
+                                        <Col>
                                             <NavLink
                                                 href="#"
                                                 className="font_color_black_hover no_padding"
                                             >
-                                                <Row>
-                                                    <Col>
-                                                        <ListGroupItem>
-                                                            <Row>
-                                                                <Col
-                                                                    sm="auto"
-                                                                    className="border_only_right"
-                                                                >{element.id}</Col>
-                                                                <Col sm="auto">{format_date(element.date_movement)}</Col>
-                                                            </Row>
-                                                        </ListGroupItem>
-                                                    </Col>
-                                                </Row>
-
-                                                <Row>
-                                                    <Col>
-                                                        <ListGroupItem>
-                                                            <Row>
+                                                <ListGroupItem>
+                                                    <Row>
+                                                        <Col
+                                                            sm="auto"
+                                                            className="center border_only_right"
+                                                        >{element.id}</Col>
+                                                        <Col>
+                                                            <Row className="margin_bottom_20">
                                                                 <Col>
-                                                                    {
-                                                                        element.hardwares.map(hardware => {
-                                                                            return (
-                                                                                <Row key={hardware.id}>
-                                                                                    <Col className="text-center">
-                                                                                        <Row>
-                                                                                            <Col>{hardware.category.name}</Col>    
-                                                                                        </Row>
-                                                                                        <Row>
-                                                                                            <Col>{hardware.heritage}</Col>
-                                                                                        </Row>
-                                                                                    </Col>
+                                                                    <Row>
+                                                                        <Col className="center border_only_right">
+                                                                            <Row>
+                                                                                <Col
+                                                                                    sm="auto"
+                                                                                >{format_date(element.date_movement)}</Col>
+                                                                            </Row>
+                                                                        </Col>
 
-                                                                                    <Col className="center">
-                                                                                        <strong>SAIU DE:&nbsp;</strong>
-                                                                                        <span>{element.previous_department.name}</span>
-                                                                                    </Col>
-
-                                                                                    <Col className="center">
-                                                                                        <strong>PARA:&nbsp;</strong>
-                                                                                        <span>{element.next_department.name}</span>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            )
-                                                                        })
-                                                                    }
+                                                                        <Col className="center">
+                                                                            <Row>
+                                                                                <Col sm="auto">
+                                                                                    <strong>{element.responsible.name}</strong>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                    </Row>
                                                                 </Col>
                                                             </Row>
-                                                        </ListGroupItem>
-                                                    </Col>
-                                                </Row>
+
+                                                            <DropdownItem divider />
+
+                                                            <Row className="margin_top_20">
+                                                                <Col>
+
+                                                                    <Row>
+                                                                        <Col>
+                                                                            {
+                                                                                element.hardwares.map((hardware, index) => {
+                                                                                    if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
+                                                                                        return (
+                                                                                            <div key={hardware.id}>
+                                                                                                <Row className="margin_top_10">
+                                                                                                    <Col className="text-center border_only_right">
+                                                                                                        <Row>
+                                                                                                            <Col>{hardware.category.name}</Col>
+                                                                                                        </Row>
+                                                                                                        <Row>
+                                                                                                            <Col>{hardware.heritage}</Col>
+                                                                                                        </Row>
+                                                                                                    </Col>
+
+                                                                                                    <Col className="center border_only_right">
+                                                                                                        <strong>SAIU DE:&nbsp;</strong>
+                                                                                                        <span>{element.previous_department.name}</span>
+                                                                                                    </Col>
+
+                                                                                                    <Col className="center">
+                                                                                                        <strong>PARA:&nbsp;</strong>
+                                                                                                        <span>{element.next_department.name}</span>
+                                                                                                    </Col>
+                                                                                                </Row>
+
+                                                                                                <DropdownItem divider />
+                                                                                            </div>
+                                                                                        )
+                                                                                    }
+                                                                                    return (
+                                                                                        <Row key={hardware.id} className="margin_top_10">
+                                                                                            <Col className="text-center border_only_right">
+                                                                                                <Row>
+                                                                                                    <Col>{hardware.category.name}</Col>
+                                                                                                </Row>
+                                                                                                <Row>
+                                                                                                    <Col>{hardware.heritage}</Col>
+                                                                                                </Row>
+                                                                                            </Col>
+
+                                                                                            <Col className="center border_only_right">
+                                                                                                <strong>SAIU DE:&nbsp;</strong>
+                                                                                                <span>{element.previous_department.name}</span>
+                                                                                            </Col>
+
+                                                                                            <Col className="center">
+                                                                                                <strong>PARA:&nbsp;</strong>
+                                                                                                <span>{element.next_department.name}</span>
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    );
+                                                                                })
+                                                                            }
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </Col>
+                                                            </Row>
+
+                                                        </Col>
+                                                    </Row>
+                                                </ListGroupItem>
                                             </NavLink>
                                         </Col>
                                     </Row>
@@ -276,62 +363,63 @@ export default function Movements() {
 
             </ListGroup>
 
-            {movements.rows !== undefined && movements.rows.length !== 0 ?
-                <Pagination
-                    className="margin-top-bottom-10 center"
-                    aria-label="Page navigation example"
-                >
-                    <PaginationItem disabled={currentPage <= 0}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            first
-                            href="#"
-                            onClick={e => handleCurrentPage(e, 0)}
-                        />
-                    </PaginationItem>
+            {
+                movements.rows !== undefined && movements.rows.length !== 0 ?
+                    <Pagination
+                        className="margin-top-bottom-10 center"
+                        aria-label="Page navigation example"
+                    >
+                        <PaginationItem disabled={currentPage <= 0}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                first
+                                href="#"
+                                onClick={e => handleCurrentPage(e, 0)}
+                            />
+                        </PaginationItem>
 
-                    <PaginationItem disabled={currentPage <= 0}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            previous
-                            href="#"
-                            onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-                        />
-                    </PaginationItem>
+                        <PaginationItem disabled={currentPage <= 0}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                previous
+                                href="#"
+                                onClick={e => handleCurrentPage(e, currentPage - pageSize)}
+                            />
+                        </PaginationItem>
 
-                    {
-                        [...Array(pagesCount)].map((page, i) => {
-                            return (
-                                <PaginationItem active={(i * pageSize) === (currentPage)} key={i}>
-                                    <PaginationLink
-                                        className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                        href="#"
-                                        onClick={e => handleCurrentPage(e, (i * pageSize))}
-                                    > {i + 1} </PaginationLink>
-                                </PaginationItem>
-                            );
-                        })
-                    }
+                        {
+                            [...Array(pagesCount)].map((page, i) => {
+                                return (
+                                    <PaginationItem active={(i * pageSize) === (currentPage)} key={i}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (i * pageSize))}
+                                        > {i + 1} </PaginationLink>
+                                    </PaginationItem>
+                                );
+                            })
+                        }
 
-                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            next
-                            href="#"
-                            onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-                        />
-                    </PaginationItem>
+                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                next
+                                href="#"
+                                onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
+                            />
+                        </PaginationItem>
 
-                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            last
-                            href="#"
-                            onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-                        />
-                    </PaginationItem>
-                </Pagination>
-                : ''
+                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                last
+                                href="#"
+                                onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
+                            />
+                        </PaginationItem>
+                    </Pagination>
+                    : ''
             }
         </div>
     );

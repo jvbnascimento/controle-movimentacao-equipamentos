@@ -2,6 +2,8 @@ const Movement = require('../models/Movement');
 const Hardware = require('../models/Hardware');
 const User = require('../models/User');
 const Department = require('../models/Department');
+const { Op } = require('sequelize');
+const { param } = require('../routes');
 
 module.exports = {
 	async listAllMovements(req, res) {
@@ -46,22 +48,21 @@ module.exports = {
 			include: [
 				{
 					association: 'previous_department',
-					attributes: ['name', 'boss']
 				},
 				{
 					association: 'next_department',
-					attributes: ['name', 'boss']
 				}, 
 				{
 					association: 'responsible',
-					attributes: ['name']
 				},
 				{
 					association: 'hardwares',
-					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
+                    include: {
+                        association: 'category'
+                    }
 				}
 			]
 		});
@@ -80,31 +81,105 @@ module.exports = {
 			where: {
 				date_movement
 			},
-			attributes: ['date_movement'],
 			include: [
 				{
 					association: 'previous_department',
-					attributes: ['name', 'boss']
 				},
 				{
 					association: 'next_department',
-					attributes: ['name', 'boss']
 				}, 
 				{
 					association: 'responsible',
-					attributes: ['name']
 				},
 				{
 					association: 'hardwares',
-					attributes: ['heritage', 'description'],
 					through: {
 						attributes: [],
 					},
+                    include: {
+                        association: 'category'
+                    }
 				}
 			]
 		});
 
 		return res.json(movements);
+    },
+    
+    async listAllMovementsByHeritage(req, res) {
+        const { heritage } = req.params
+
+		const movements = await Movement.findAll({
+			include: [
+				{
+					association: 'previous_department'
+				},
+				{
+					association: 'next_department'
+				}, 
+				{
+					association: 'responsible'
+				},
+				{
+                    association: 'hardwares',
+                    where: { 
+                        heritage: {
+                            [Op.iLike]: `%${heritage}%`
+                        }
+                    },
+					through: {
+                        attributes: [],
+                    },
+                    include: {
+                        association: 'category'
+                    }
+				}
+            ],
+            order: [
+                ['id', 'DESC']
+            ]
+		});
+
+		return res.json(movements);
+    },
+    
+    async listAllMovementsByAdvancedSearch(req, res) {
+        // const { parameters } = req.params
+
+        // const transformParameters = JSON.parse(parameters);
+
+		// const movements = await Movement.findAll({
+		// 	include: [
+		// 		{
+		// 			association: 'previous_department'
+		// 		},
+		// 		{
+		// 			association: 'next_department'
+		// 		}, 
+		// 		{
+		// 			association: 'responsible'
+		// 		},
+		// 		{
+        //             association: 'hardwares',
+        //             where: { 
+        //                 heritage: {
+        //                     [Op.iLike]: `%${heritage}%`
+        //                 }
+        //             },
+		// 			through: {
+        //                 attributes: [],
+        //             },
+        //             include: {
+        //                 association: 'category'
+        //             }
+		// 		}
+        //     ],
+        //     order: [
+        //         ['id', 'DESC']
+        //     ]
+		// });
+
+		return res.json({teste: "teste"});
 	},
 
 	async create(req, res) {
@@ -119,7 +194,9 @@ module.exports = {
 		const list_hardwares = [];
 		
 		hardwares.forEach(async (element) => {
-			const hardware = await Hardware.findByPk(element.id);
+            const hardware = await Hardware.findByPk(element.id);
+            hardware.department_id = destination_department_id;
+            await hardware.save();
 
 			if (hardware) {
 				list_hardwares.push(hardware);

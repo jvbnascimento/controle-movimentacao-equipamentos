@@ -23,3 +23,7 @@
 .margin_bottom_20 {
     margin-bottom: 20px;
 }
+
+.border_only_bottom {
+    border-bottom: 1px solid #ccc;
+}

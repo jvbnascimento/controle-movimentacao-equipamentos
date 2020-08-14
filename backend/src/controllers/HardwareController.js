@@ -82,7 +82,7 @@ module.exports = {
 		return res.json(hardwares);
 	},
 	
-	async listHardware(req, res) {
+	async listHardwareByHeritage(req, res) {
 		const { heritage } = req.params;
 
 		const hardware = await Hardware.findAll({
@@ -91,6 +91,51 @@ module.exports = {
 					[Op.iLike]: `%${heritage}%`
 				}
 			},
+			include: [
+				{
+					association: 'category',
+				},
+				{
+					association: 'belongs',
+				}
+			],
+		});
+
+		if (!hardware) {
+			return res.status(404).json({ error: 'Hardware not found' });
+		}
+
+		return res.json(hardware);
+    },
+
+    async listHardwareByDepartment(req, res) {
+		const { department_id } = req.params;
+
+		const hardware = await Hardware.findAll({
+			include: [
+				{
+					association: 'category',
+				},
+				{
+                    association: 'belongs',
+                    where: {
+                        id: parseInt(department_id)
+                    },
+                },
+			],
+		});
+
+		if (!hardware) {
+			return res.status(404).json({ error: 'Hardware not found' });
+		}
+
+		return res.json(hardware);
+    },
+    
+	async listHardwareById(req, res) {
+		const { hardware_id } = req.params;
+
+		const hardware = await Hardware.findByPk(hardware_id, {
 			include: [
 				{
 					association: 'category',

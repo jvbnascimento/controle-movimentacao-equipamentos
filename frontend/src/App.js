@@ -8,6 +8,7 @@ import EditHardware from './pages/EditHardware';
 import CreateHardware from './pages/CreateHardware';
 import ListByCategory from './pages/ListByCategory';
 import Movements from './pages/Movements';
+import CreateMovement from './pages/CreateMovement';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -37,6 +38,10 @@ export default function App() {
 
                 <Route path="/movements" exact>
 					<DefaultLayout container={<Movements />} />
+				</Route>
+
+                <Route path="/movement/create" exact>
+					<DefaultLayout container={<CreateMovement />} />
 				</Route>
 			</Switch>
 		</Router>

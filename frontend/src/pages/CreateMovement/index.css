@@ -1,0 +1,10 @@
+.center_between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.max_height {
+    display: block;
+    height: 100px;
+    overflow-y: auto;
+}
