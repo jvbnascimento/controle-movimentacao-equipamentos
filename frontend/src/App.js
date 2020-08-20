@@ -24,7 +24,7 @@ export default function App() {
 					<DefaultLayout container={<Hardware />} />
 				</Route>
 
-				<Route path="/hardware/edit/:heritage" exact>
+				<Route path="/hardware/edit/:id" exact>
 					<DefaultLayout container={<EditHardware />} />
 				</Route>
 

@@ -8,8 +8,6 @@ import './index.css';
 
 import api from '../../services/api';
 
-// import { Link } from 'react-router-dom';
-
 export default function EditHardware() {
     const hardware_id = useParams();
 
@@ -28,22 +26,22 @@ export default function EditHardware() {
 
     useEffect(() => {
         async function getHardware() {
-            const response = await api.get(`/hardwares/${hardware_id.heritage}`);
+            const response = await api.get(`/hardwares/${hardware_id.id}`);
             const data = await response.data;
 
-            setHeritage(data[0].heritage);
-            setDescription(data[0].description);
-            setBrand(data[0].brand);
-            setWarranty(data[0].warranty);
-            setHasOffice(data[0].has_office);
-            setAuction(data[0].auction);
-            setDateAuction(data[0].date_auction);
-            setCategory(data[0].category.id);
+            setHeritage(data.heritage);
+            setDescription(data.description);
+            setBrand(data.brand);
+            setWarranty(data.warranty);
+            setHasOffice(data.has_office);
+            setAuction(data.auction);
+            setDateAuction(data.date_auction);
+            setCategory(data.category.id);
 
             setHardware(data);
         }
         getHardware();
-    }, [hardware_id.heritage]);
+    }, [hardware_id.id]);
 
     useEffect(() => {
         async function getAllTypes() {
@@ -106,17 +104,15 @@ export default function EditHardware() {
         setCategory(e.target.value);
     }
 
-    
-
     return (
         <Container className="height_content center">
             <Row className="no_padding width_70">
                 <Col>
                     <Form>
                         {
-                            hardware[0] !== undefined ?
+                            hardware !== undefined ?
                                 <>
-                                    <FormGroup key={hardware[0].id}>
+                                    <FormGroup key={hardware.id}>
                                         <Label className="margin_top_10" for="labelHeritage">Tombamento</Label>
                                         <Input
                                             type="text"

@@ -14,7 +14,8 @@ import {
     Input,
     ButtonGroup,
     Button,
-    DropdownItem
+    DropdownItem,
+    Tooltip
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
@@ -30,22 +31,13 @@ export default function Movements() {
     const [pagesCount, setPageCounts] = useState(0);
 
     const [cSelected, setCSelected] = useState([]);
-    
-    const [heritage, setHeritage] = useState('');
-    const [brand, setBrand] = useState('');
-    const [warranty, setWarranty] = useState('');
-    const [has_office, setHasOffice] = useState('');
-    const [auction, setAuction] = useState('');
-    const [category, setCategory] = useState('');
-    const [department, setDepartment] = useState('');
-    const [date_movement, setDateMovement] = useState('');
 
     useEffect(() => {
         async function getAllMovements() {
             const response = await api.get(`/movements/detailed/${pageSize}/${currentPage}`);
             const data = await response.data;
 
-            setPageCounts(Math.ceil(data.count / pageSize));
+            setPageCounts(Math.ceil((data.count) / pageSize));
 
             setMovements(data);
         }
@@ -85,22 +77,31 @@ export default function Movements() {
         setCSelected([...cSelected]);
     }
 
-    async function filteredSearch(e) {
+    const [tooltipOpen, setTooltipOpen] = useState(false);
 
-        // const body = e.target.value.split(";").map(element => {
-        //     return ({ body: element })
-        // });
+    const toggle = () => setTooltipOpen(!tooltipOpen);
 
-        // const parameters = cSelected.map(element => {
-        //     return ({ param: element });
-        // })
+    async function filteredSearch(data) {
+        const result = await api.get(`/movements/parameters/${data}`);
 
-        // const data = {
-        //     parameters,
-        //     body
-        // }
+        console.log(result)
+    }
 
-        // const result = await api.get(`/movements/parameters?${JSON.stringify(data)}`);
+    function handleValueInput(e) {
+        const body = e.target.value.split(";").map(element => {
+            return ({ body: element })
+        });
+
+        const parameters = cSelected.map(element => {
+            return ({ param: element });
+        })
+
+        const data = {
+            parameters,
+            body
+        }
+
+        filteredSearch(JSON.stringify(data));
     }
 
     return (
@@ -178,23 +179,20 @@ export default function Movements() {
                     <Col>
                         <Container>
                             <Row>
-                                {
-                                    cSelected !== undefined && cSelected.length !== 0 ?
-                                        cSelected.map((element, index) => {
-                                            return (
-                                                <Col key={index}>
-                                                    <Input
-                                                        type="text"
-                                                        name={element}
-                                                        placeholder={element.toUpperCase()}
-                                                        className=""
-                                                        // onChange={handleValueInput}
-                                                    />
-                                                </Col>
-                                            );
-                                        })
-                                        : ''
-                                }
+                                <Col className="center">
+                                    <Input
+                                        type="text"
+                                        name="filter"
+                                        placeholder="Procurar"
+                                        className="background_color_white_zimbra"
+                                        onChange={handleValueInput}
+                                    />
+                                </Col>
+                                <Col sm="1" className="center">
+                                    <span id="TooltipExample">!</span>
+                                    <Tooltip placement="right" isOpen={tooltipOpen} target="TooltipExample" toggle={toggle}>
+                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.</Tooltip>
+                                </Col>
                             </Row>
                         </Container>
                     </Col>
@@ -207,7 +205,7 @@ export default function Movements() {
                         <Container>
                             <Row>
                                 <Col sm="16">
-                                    <h1 className="text-center"> Últimas movimentações </h1>
+                                    <h1 className="text-center"> Últimas movimentações ({movements.count}) </h1>
                                 </Col>
                             </Row>
 

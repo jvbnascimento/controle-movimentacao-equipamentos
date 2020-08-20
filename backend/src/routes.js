@@ -29,7 +29,7 @@ routes.delete("/departments/:department_id", DepartmentController.delete);
 
 routes.get("/hardwares/detailed", HardwareController.listAllDetailedHardwares);
 routes.get("/hardwares", HardwareController.listAllHardwares);
-routes.get("/hardwares/description/:description", HardwareController.listAllHardwaresByName);
+routes.get("/hardwares/description/:description", HardwareController.listAllHardwaresByDescription);
 routes.get("/hardwares/category/:name_category", HardwareController.listAllHardwaresByCategory);
 routes.get("/hardwares/heritage/:heritage", HardwareController.listHardwareByHeritage);
 routes.get("/hardwares/department/:department_id", HardwareController.listHardwareByDepartment);
@@ -38,7 +38,7 @@ routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);
 
-// routes.get("/movements/:movement_id", MovementController.listMovementById);
+routes.get("/movements/:movement_id", MovementController.listMovementById);
 routes.get("/movements/detailed/:limit/:offset", MovementController.listAllMovements);
 routes.get("/movements/data/:date_movement", MovementController.listAllMovementsByData);
 routes.get("/movements/heritage/:heritage", MovementController.listAllMovementsByHeritage);

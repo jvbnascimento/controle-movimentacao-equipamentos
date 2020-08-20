@@ -250,7 +250,7 @@ export default function Hardware() {
                                 >
                                     <Link
                                         className="font_color_verde_zimbra_hover"
-                                        to={`/hardware/edit/${element.heritage}`}
+                                        to={`/hardware/edit/${element.id}`}
                                     >Editar</Link>
                                 </Col>
                                 <Col

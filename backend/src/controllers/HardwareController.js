@@ -38,7 +38,7 @@ module.exports = {
 		return res.json(hardwares);
 	},
 
-	async listAllHardwaresByName(req, res) {
+	async listAllHardwaresByDescription(req, res) {
 		const { description } = req.params;
 
 		const hardwares = await Hardware.findAll({
@@ -89,7 +89,7 @@ module.exports = {
 			where: {
 				heritage: {
 					[Op.iLike]: `%${heritage}%`
-				}
+                }
 			},
 			include: [
 				{
@@ -151,7 +151,7 @@ module.exports = {
 		}
 
 		return res.json(hardware);
-	},
+    },
 
 	async create(req, res) {
 		const { type_id } = req.params;
