@@ -109,7 +109,7 @@ export default function CreateMovement() {
 
     return (
         <div className="height_content">
-            <h1 className="text-center margin_top_10"> Criar uma nova movimentação </h1>
+            <h1 className="margin_top_bottom_20 text-center"> Criar uma nova movimentação </h1>
             <Container className="center">
                 <Row className="width_70">
                     <Col>

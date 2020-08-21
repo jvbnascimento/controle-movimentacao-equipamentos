@@ -9,6 +9,8 @@ import CreateHardware from './pages/CreateHardware';
 import ListByCategory from './pages/ListByCategory';
 import Movements from './pages/Movements';
 import CreateMovement from './pages/CreateMovement';
+import Login from './pages/Login';
+import Logout from './pages/Logout';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
@@ -42,6 +44,14 @@ export default function App() {
 
                 <Route path="/movement/create" exact>
 					<DefaultLayout container={<CreateMovement />} />
+				</Route>
+
+                <Route path="/login" exact>
+					<Login />
+				</Route>
+
+                <Route path="/logout" exact>
+					<Logout />
 				</Route>
 			</Switch>
 		</Router>

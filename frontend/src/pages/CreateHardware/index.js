@@ -99,7 +99,8 @@ export default function EditHardware() {
         <div>
             <Container className="center">
                 <Row className="width_70">
-                    <Col className="">
+                    <Col>
+                        <h2 className="margin_top_bottom_20 text-center">Cadastrar novo equipamento</h2>
                         <Form>
                             <FormGroup>
                                 <Label className="margin_top_10" for="labelHeritage">Tombamento</Label>

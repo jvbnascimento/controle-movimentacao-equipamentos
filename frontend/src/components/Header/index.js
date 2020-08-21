@@ -21,7 +21,9 @@ import api from '../../services/api';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
-	const [listTypes, setTypes] = useState([]);
+    const [listTypes, setTypes] = useState([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const user = JSON.parse(localStorage.getItem('user'));
 
 	useEffect(() => {
 		async function getAllTypes() {
@@ -31,10 +33,8 @@ export default function Header() {
 		}
 
 		getAllTypes();
-	}, []);
-
-	const [dropdownOpen, setDropdownOpen] = useState(false);
-
+    }, []);
+    
     const toggle = () => setDropdownOpen(!dropdownOpen);
 
 	return (
@@ -88,11 +88,11 @@ export default function Header() {
 					</NavItem>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<NavLink className="center padding_all_20 font_color_white_hover center height_header" href="#">Sair</NavLink>
+						<Link className="center padding_all_20 font_color_white_hover center height_header" to="/logout">Sair</Link>
 					</NavItem>
 				</Nav>
 
-				<NavbarText className="text-right padding_all_20 center height_header"> Nome do usuário Logado </NavbarText>
+				<NavbarText className="text-right padding_all_20 center height_header"> {user.name} </NavbarText>
 			</Navbar>
 		</div>
 	);

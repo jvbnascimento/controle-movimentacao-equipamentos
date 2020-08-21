@@ -7,6 +7,8 @@ const TypeController = require("./controllers/TypeController");
 const DepartmentController = require("./controllers/DepartmentController");
 const HardwareController = require("./controllers/HardwareController");
 const MovementController = require("./controllers/MovementController");
+const LoginController = require("./controllers/LoginController");
+const LogoutController = require("./controllers/LogoutController");
 
 routes.get("/users", UserController.listAllUsers);
 routes.get("/users/:user_id", UserController.listUser);
@@ -46,5 +48,7 @@ routes.get("/movements/parameters/:parameters", MovementController.listAllMoveme
 routes.post("/movements", MovementController.create);
 routes.put("/movements/:movement_id", MovementController.update);
 routes.delete("/movements/:movement_id", MovementController.delete);
+
+routes.post("/login/verify/:user", LoginController.loginAuth);
 
 module.exports = routes;

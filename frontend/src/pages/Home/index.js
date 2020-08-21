@@ -30,7 +30,7 @@ export default function ListMovement() {
 		const new_horario = horario[0];
 	
 		return (new_data + " " + new_horario);
-	}
+    }
 
 	return (
 		<div className='height_content'>

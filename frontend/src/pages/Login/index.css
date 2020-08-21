@@ -1,0 +1,34 @@
+.height_container {
+    height: 100vh;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.width_70 {
+    width: 20vw;
+}
+
+.border_radius_20 {
+    border-radius: 20px;
+}
+
+.bg_color_white_zimbra {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.padding_all_10_10_40_10 {
+    padding: 10px 10px 40px 10px;
+}
+
+.margin_left_20 {
+    margin-left: 20px;
+}
+
+.center_vertical {
+    display: flex;
+    align-items: center;
+}

@@ -233,6 +233,65 @@ export default function Movements() {
                 </Row>
             </Container>
 
+            {
+                movements.rows !== undefined && movements.rows.length !== 0 ?
+                    <Pagination
+                        className="margin_top_20 center"
+                        aria-label="Page navigation example"
+                    >
+                        <PaginationItem disabled={currentPage <= 0}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                first
+                                href="#"
+                                onClick={e => handleCurrentPage(e, 0)}
+                            />
+                        </PaginationItem>
+
+                        <PaginationItem disabled={currentPage <= 0}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                previous
+                                href="#"
+                                onClick={e => handleCurrentPage(e, currentPage - pageSize)}
+                            />
+                        </PaginationItem>
+
+                        {
+                            [...Array(pagesCount)].map((page, i) => {
+                                return (
+                                    <PaginationItem active={(i * pageSize) === (currentPage)} key={i}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (i * pageSize))}
+                                        > {i + 1} </PaginationLink>
+                                    </PaginationItem>
+                                );
+                            })
+                        }
+
+                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                next
+                                href="#"
+                                onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
+                            />
+                        </PaginationItem>
+
+                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                            <PaginationLink
+                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                last
+                                href="#"
+                                onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
+                            />
+                        </PaginationItem>
+                    </Pagination>
+                    : ''
+            }
+
             <ListGroup>
                 {
                     movements.rows !== undefined && movements.rows.length !== 0 ?
