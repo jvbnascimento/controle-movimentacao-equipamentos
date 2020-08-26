@@ -18,12 +18,14 @@ import './index.css'
 
 import api from '../../services/api';
 
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 export default function Header() {
     const [listTypes, setTypes] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem('user'));
+
+    const history = useHistory();
 
 	useEffect(() => {
 		async function getAllTypes() {
@@ -36,6 +38,14 @@ export default function Header() {
     }, []);
     
     const toggle = () => setDropdownOpen(!dropdownOpen);
+
+    function backLogin() {
+        history.push('/login');
+    }
+
+    if (!user) {
+        backLogin();
+    }
 
 	return (
 		<div className="height_header">
@@ -91,8 +101,13 @@ export default function Header() {
 						<Link className="center padding_all_20 font_color_white_hover center height_header" to="/logout">Sair</Link>
 					</NavItem>
 				</Nav>
-
-				<NavbarText className="text-right padding_all_20 center height_header"> {user.name} </NavbarText>
+                            
+                { 
+                    !user ? 
+                        backLogin() 
+                    : 
+				    <NavbarText className="text-right padding_all_20 center height_header"> {user.name} </NavbarText>
+                }
 			</Navbar>
 		</div>
 	);

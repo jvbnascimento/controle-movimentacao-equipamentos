@@ -10,7 +10,6 @@ import {
     Pagination,
     PaginationItem,
     PaginationLink,
-    NavLink,
     Input,
     ButtonGroup,
     Button,
@@ -300,8 +299,10 @@ export default function Movements() {
                                 <Container key={element.id}>
                                     <Row className="center margin_top_bottom_20">
                                         <Col>
-                                            <NavLink
-                                                href="#"
+                                            <Link
+                                                to={
+                                                    `/movement/edit/${element.id}`
+                                                }
                                                 className="font_color_black_hover no_padding"
                                             >
                                                 <ListGroupItem>
@@ -403,7 +404,7 @@ export default function Movements() {
                                                         </Col>
                                                     </Row>
                                                 </ListGroupItem>
-                                            </NavLink>
+                                            </Link>
                                         </Col>
                                     </Row>
                                 </Container>

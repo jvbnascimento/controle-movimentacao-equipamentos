@@ -15,11 +15,13 @@ export default function CreateMovement() {
     const [listHardwares, setListHardwares] = useState([]);
 
     const [date_movement, setDateMovement] = useState('');
-    const [responsible, setReponsible] = useState(1);
+    const [responsible, setReponsible] = useState('');
     const [destination_department, setDestinationDepartment] = useState('');
     const [origin_department, setOriginDepartment] = useState('');
 
     const history = useHistory();
+
+    const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         async function getAllHardwares() {
@@ -33,12 +35,16 @@ export default function CreateMovement() {
     }, [origin_department]);
 
     useEffect(() => {
+        setReponsible(user.name);
+    }, [user.name]);
+
+    useEffect(() => {
         async function getAllDepartments() {
             const response = await api.get('/departments');
             const data = await response.data;
 
             setDestinationDepartment(data[0].id);
-            setOriginDepartment(data[0].id);
+            setOriginDepartment(data[1].id);
             setDepartments(data);
         }
 
@@ -86,22 +92,29 @@ export default function CreateMovement() {
     }
     function handleDestinationDepartment(e) {
         setDestinationDepartment(parseInt(e.target.value));
+        
     }
     function handleOriginDepartment(e) {
         setOriginDepartment(parseInt(e.target.value));
+
+        const destinationDepartmentId = departments.filter(department => {
+            return department && department.id !== parseInt(e.target.value);
+        });
+
+        setDestinationDepartment(destinationDepartmentId[0].id);
     }
 
     async function createMovement() {
-        const id_hardwares = listHardwares.map(element => { return { "id" : element.id } });
+        const id_hardwares = listHardwares.map(element => { return { "id": element.id } });
 
         const data = {
             date_movement,
-            responsible_id: responsible,
+            responsible_id: parseInt(user.id),
             destination_department_id: destination_department,
             origin_department_id: origin_department,
             hardwares: id_hardwares
         }
-        
+
         await api.post('/movements', data);
 
         history.goBack();
@@ -110,8 +123,9 @@ export default function CreateMovement() {
     return (
         <div className="height_content">
             <h1 className="margin_top_bottom_20 text-center"> Criar uma nova movimentação </h1>
-            <Container className="center">
-                <Row className="width_70">
+
+            <Container className="width_40">
+                <Row>
                     <Col>
                         <Label className="margin_top_10" for="labelDate">Data da movimentação</Label>
                         <Input
@@ -130,7 +144,7 @@ export default function CreateMovement() {
                             name="responsible_id"
                             id="labelResponsible"
                             placeholder="Responsável"
-                            defaultValue={responsible}
+                            value={responsible}
                             onChange={handleResponsible}
                             className="margin_bottom_20"
                             readOnly
@@ -148,7 +162,9 @@ export default function CreateMovement() {
                         >
                             {
                                 departments !== undefined && departments.length !== 0 ?
-                                    departments.map(element => {
+                                    departments.filter(department => {
+                                        return department && department.id !== origin_department;
+                                    }).map(element => {
                                         return (
                                             <option
                                                 key={element.id}
@@ -167,7 +183,6 @@ export default function CreateMovement() {
                             value={origin_department}
                             onChange={handleOriginDepartment}
                             className="margin_bottom_20"
-                            required
                         >
                             {
                                 departments !== undefined && departments.length !== 0 ?
@@ -178,7 +193,8 @@ export default function CreateMovement() {
                                                 value={element.id}
                                             >{element.name} | {element.boss}</option>
                                         );
-                                    }) : ''
+                                    })
+                                    : ''
                             }
                         </Input>
 
@@ -186,7 +202,7 @@ export default function CreateMovement() {
                             <FormGroup>
                                 <Label className="margin_top_10" for="labelAddHardware">Adicionar equipamentos</Label>
                                 <Row className="center_between">
-                                    <Col sm="10">
+                                    <Col sm="9">
                                         <Input
                                             type="select"
                                             name="hardwares"
@@ -233,13 +249,11 @@ export default function CreateMovement() {
                                                         <ListGroupItem key={hardware.id}>
                                                             <Row>
                                                                 <Col sm="auto" className="center border_only_right">{hardware.heritage}</Col>
-                                                                <Col className="">{hardware.description}</Col>
+                                                                <Col>{hardware.description}</Col>
                                                                 <Col sm="auto" className="center">
                                                                     <Button
                                                                         value={hardware.id}
-                                                                        onClick={removeHardware}>
-                                                                        Remover
-                                                        </Button>
+                                                                        onClick={removeHardware}>Remover</Button>
                                                                 </Col>
                                                             </Row>
                                                         </ListGroupItem>
@@ -256,7 +270,7 @@ export default function CreateMovement() {
                             <Col className="center margin_top_bottom_20">
                                 <Button
                                     className="margin_left_right_20"
-                                onClick={createMovement}
+                                    onClick={createMovement}
                                 >Criar</Button>
                                 <Button color="secondary" className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
                             </Col>

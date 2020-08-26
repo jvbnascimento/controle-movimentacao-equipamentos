@@ -18,7 +18,6 @@
 	display: flex;
 	justify-content: center;
     align-items: center;
-    width: auto;
 }
 .center_vertical {
 	display: flex;

@@ -8,3 +8,15 @@
     height: 100px;
     overflow-y: auto;
 }
+
+.width_40 {
+    width: 40vw;
+}
+
+.width_50 {
+    width: 50vw;
+}
+
+.width_60 {
+    width: 60vw;
+}

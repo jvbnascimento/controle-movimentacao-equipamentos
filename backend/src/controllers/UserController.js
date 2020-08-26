@@ -6,7 +6,7 @@ module.exports = {
 	async listAllUsers(req, res) {
 		const users = await User.findAll();
 
-		return res.json({ users });
+		return res.json(users);
     },
     
     async listUser(req, res) {
@@ -18,7 +18,7 @@ module.exports = {
             return res.status(404).json({ error: 'User not found!' });
         }
 
-		return res.json({ user });
+		return res.json(user);
 	},
 
 	async create(req, res) {
@@ -36,7 +36,7 @@ module.exports = {
 
 		const user = await User.create({ name, email, password });
 
-		return res.json({ user });
+		return res.json(user);
     },
 
     async update(req, res) {
@@ -62,7 +62,7 @@ module.exports = {
 
         await user.save();
 
-        return res.json({ user });
+        return res.json(user);
     },
     
     async updatePassword(req, res) {
@@ -86,7 +86,7 @@ module.exports = {
 
         await user.save();
 
-        return res.json({ user });
+        return res.json(user);
 	},
     
     async delete(req, res) {

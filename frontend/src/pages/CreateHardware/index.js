@@ -97,8 +97,8 @@ export default function EditHardware() {
 
     return (
         <div>
-            <Container className="center">
-                <Row className="width_70">
+            <Container className="center" fluid={true}>
+                <Row>
                     <Col>
                         <h2 className="margin_top_bottom_20 text-center">Cadastrar novo equipamento</h2>
                         <Form>
@@ -249,7 +249,7 @@ export default function EditHardware() {
                         </Form>
                     </Col>
                 </Row>
-            </Container >
+            </Container>
         </div>
     );
 }

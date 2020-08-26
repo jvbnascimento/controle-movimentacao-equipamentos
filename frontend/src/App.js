@@ -9,6 +9,7 @@ import CreateHardware from './pages/CreateHardware';
 import ListByCategory from './pages/ListByCategory';
 import Movements from './pages/Movements';
 import CreateMovement from './pages/CreateMovement';
+import EditMovement from './pages/EditMovement';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 
@@ -44,6 +45,10 @@ export default function App() {
 
                 <Route path="/movement/create" exact>
 					<DefaultLayout container={<CreateMovement />} />
+				</Route>
+
+                <Route path="/movement/edit/:id" exact>
+					<DefaultLayout container={<EditMovement />} />
 				</Route>
 
                 <Route path="/login" exact>
