@@ -14,8 +14,6 @@ import {
 	NavbarText
 } from 'reactstrap';
 
-import './index.css'
-
 import api from '../../services/api';
 
 import { Link, useHistory } from 'react-router-dom';

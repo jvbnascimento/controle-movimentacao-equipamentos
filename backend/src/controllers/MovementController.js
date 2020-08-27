@@ -44,7 +44,6 @@ module.exports = {
         const { movement_id } = req.params;
 
         const movement = await Movement.findByPk(movement_id, {
-            attributes: ['date_movement'],
             include: [
                 {
                     association: 'previous_department',
@@ -329,7 +328,6 @@ module.exports = {
         await Movement.findByPk(movement_id, {
             include: {
                 association: 'hardwares',
-                attributes: []
             }
         }).then(async (movement) => {
             await movement.setHardwares([]);

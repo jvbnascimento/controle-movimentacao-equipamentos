@@ -3,8 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, ListGroupItem, ListGroup, Pagination, PaginationItem, PaginationLink, NavLink } from 'reactstrap';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function ListMovement() {
@@ -12,7 +10,7 @@ export default function ListMovement() {
 
 	useEffect(() => {
 		async function getAllMovements() {
-			const response = await api.get('/movements');
+			const response = await api.get('/users');
 			const data = await response.data;
 
 			setMovements(data);
@@ -34,7 +32,7 @@ export default function ListMovement() {
 
 	return (
 		<div className='height_content'>
-			<h1 className="text-center"> Últimas movimentações </h1>
+			{/* <h1 className="text-center"> Últimas movimentações </h1>
 			<ListGroup>
 				<Container>
 					{
@@ -150,7 +148,7 @@ export default function ListMovement() {
 						href="#"
 					/>
 				</PaginationItem>
-			</Pagination>
+			</Pagination> */}
 		</div>
 	);
 }

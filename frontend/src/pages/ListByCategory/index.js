@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Container, Row, Col } from 'reactstrap';
 
-// import './index.css';
-
 import api from '../../services/api';
 
 export default function ListByCategory() {

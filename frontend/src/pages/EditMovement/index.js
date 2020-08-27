@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Form, FormGroup, Label, Input, Container, Row, Col, Button, ListGroup, ListGroupItem } from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 
-import './index.css';
+import { Link } from 'react-router-dom';
 
 import api from '../../services/api';
 
@@ -86,28 +87,19 @@ export default function EditHardware() {
     }
 
     async function updateMovement() {
-        // const type_id = category;
-        // const department_id = hardware[0].belongs.id;
-        // const id = hardware[0].id;
+        const id_hardwares = listHardwares.map(element => { return { "id": element.id } });
 
-        // const new_data = {
-        //     id,
-        //     heritage,
-        //     description,
-        //     brand,
-        //     warranty,
-        //     has_office,
-        //     auction,
-        //     date_auction,
-        //     type_id,
-        //     department_id
-        // }
+        const data = {
+            date_movement,
+            responsible_id: parseInt(responsible_id),
+            destination_department_id: parseInt(destination_department_id),
+            origin_department_id: parseInt(origin_department_id),
+            hardwares: id_hardwares
+        }
 
-        // const response = await api.put(`/hardwares/${id}`, new_data);
-        // const data = await response.data;
+        await api.put(`/movements/${movement.id}`, data);
 
-        // setHardware([data]);
-        // history.goBack();
+        history.goBack();
     };
 
     function handleDateMovement(e) {
@@ -164,14 +156,29 @@ export default function EditHardware() {
     }
 
     return (
-        <Container className="height_content center">
-            <Row className="no_padding width_60">
-                <Col>
-                    <Form>
+        <div className="margin_top_10">
+            <Container className="margin_bottom_30" fluid={true}>
+                <Row className="text-right">
+                    <Col>
+                        <Link
+                            to="/movement/create"
+                            className="font_color_verde_zimbra_hover"
+                            title="Apagar movimentação"
+                        >
+                            <RiDeleteBin6Line size="40" />
+                        </Link>
+                    </Col>
+                </Row>
+            </Container>
+
+            <Container className="center">
+                <Row className="no_padding width_60">
+                    <Col>
+                        <h3 className="text-center margin_top_bottom_20">Editar dados da movimentação {movement.id}</h3>
                         {
                             movement !== undefined ?
-                                <>
-                                    <FormGroup key={movement.id}>
+                                <Row key={movement.id}>
+                                    <Col>
                                         <Label className="margin_top_10" for="labelDateMovement">Data da movimentação</Label>
                                         <Input
                                             type="date"
@@ -253,91 +260,93 @@ export default function EditHardware() {
                                                     : ''
                                             }
                                         </Input>
-                                    </FormGroup>
 
-                                    <Form onSubmit={addHardware}>
-                                        <FormGroup>
-                                            <Label className="margin_top_10" for="labelAddHardware">Adicionar equipamentos</Label>
-                                            <Row className="center_between">
-                                                <Col sm="9">
-                                                    <Input
-                                                        type="select"
-                                                        name="hardwares"
-                                                        id="labelAddHardware"
-                                                        className="margin_bottom_20"
-                                                    >
-                                                        <option
-                                                            key={0}
-                                                            value={0}
-                                                        >SELECIONAR EQUIPAMENTO</option>
-                                                        {
-                                                            hardwares !== undefined && hardwares.length !== 0 ?
-                                                                hardwares.filter(({ id: id1 }) => !listHardwares.some(({ id: id2 }) => (id1 === id2))).map(element => {
+
+                                        <Form onSubmit={addHardware}>
+                                            <FormGroup>
+                                                <Label className="margin_top_10" for="labelAddHardware">Adicionar equipamentos</Label>
+                                                <Row className="center_between">
+                                                    <Col sm="9">
+                                                        <Input
+                                                            type="select"
+                                                            name="hardwares"
+                                                            id="labelAddHardware"
+                                                            className="margin_bottom_20"
+                                                        >
+                                                            <option
+                                                                key={0}
+                                                                value={0}
+                                                            >SELECIONAR EQUIPAMENTO</option>
+                                                            {
+                                                                hardwares !== undefined && hardwares.length !== 0 ?
+                                                                    hardwares.filter(({ id: id1 }) => !listHardwares.some(({ id: id2 }) => (id1 === id2))).map(element => {
+                                                                        return (
+                                                                            <option
+                                                                                key={element.id}
+                                                                                value={element.id}
+                                                                            >{element.heritage.replace("-", "")} | {element.description}</option>
+                                                                        );
+                                                                    })
+                                                                    : ''
+                                                            }
+                                                        </Input>
+                                                    </Col>
+
+                                                    <Col sm="auto">
+                                                        <Button
+                                                            title="Cadastrar novo equipamento"
+                                                        ><BsPlusCircleFill size="20" /></Button>
+                                                    </Col>
+                                                </Row>
+                                            </FormGroup>
+                                        </Form>
+
+
+                                        {
+                                            listHardwares !== undefined && listHardwares.length !== 0 ?
+                                                <>
+                                                    <Label className="margin_top_10" for="labelDepartment">Lista de equipamentos para movimentação</Label>
+                                                    <ListGroup>
+                                                        <div className="max_height">
+                                                            {
+                                                                listHardwares.map(hardware => {
                                                                     return (
-                                                                        <option
-                                                                            key={element.id}
-                                                                            value={element.id}
-                                                                        >{element.heritage.replace("-", "")} | {element.description}</option>
-                                                                    );
+                                                                        <ListGroupItem key={hardware.id}>
+                                                                            <Row>
+                                                                                <Col sm="auto" className="center border_only_right">{hardware.heritage}</Col>
+                                                                                <Col>{hardware.description}</Col>
+                                                                                <Col sm="auto" className="center">
+                                                                                    <Button
+                                                                                        value={hardware.id}
+                                                                                        onClick={removeHardware}>Remover</Button>
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </ListGroupItem>
+                                                                    )
                                                                 })
-                                                                : ''
-                                                        }
-                                                    </Input>
-                                                </Col>
+                                                            }
+                                                        </div>
+                                                    </ListGroup>
+                                                </>
+                                                : ''
+                                        }
 
-                                                <Col sm="auto">
-                                                    <Button
-                                                        title="Cadastrar novo equipamento"
-                                                    ><BsPlusCircleFill size="20" /></Button>
-                                                </Col>
-                                            </Row>
-                                        </FormGroup>
-                                    </Form>
-
-                                    {
-                                        listHardwares !== undefined && listHardwares.length !== 0 ?
-                                            <>
-                                                <Label className="margin_top_10" for="labelDepartment">Lista de equipamentos para movimentação</Label>
-                                                <ListGroup>
-                                                    <div className="max_height">
-                                                        {
-                                                            listHardwares.map(hardware => {
-                                                                return (
-                                                                    <ListGroupItem key={hardware.id}>
-                                                                        <Row>
-                                                                            <Col sm="auto" className="center border_only_right">{hardware.heritage}</Col>
-                                                                            <Col>{hardware.description}</Col>
-                                                                            <Col sm="auto" className="center">
-                                                                                <Button
-                                                                                    value={hardware.id}
-                                                                                    onClick={removeHardware}>Remover</Button>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </ListGroupItem>
-                                                                )
-                                                            })
-                                                        }
-                                                    </div>
-                                                </ListGroup>
-                                            </>
-                                            : ''
-                                    }
-
-                                    <Row>
-                                        <Col className="center margin_top_bottom_20">
-                                            <Button
-                                                className="margin_left_right_20"
-                                                onClick={updateMovement}
-                                            >Editar</Button>
-                                            <Button color="secondary" className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
-                                        </Col>
-                                    </Row>
-                                </>
+                                        <Row>
+                                            <Col className="center margin_top_bottom_20">
+                                                <Button
+                                                    className="margin_left_right_20"
+                                                    onClick={updateMovement}
+                                                >Editar</Button>
+                                                <Button color="secondary" className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                </Row>
                                 : ''
                         }
-                    </Form>
-                </Col>
-            </Row>
-        </Container >
+                    </Col>
+                </Row>
+            </Container >
+        </div>
     );
 }

@@ -5,8 +5,6 @@ import { useHistory } from 'react-router-dom';
 import { Form, FormGroup, Label, Input, Container, Row, Col, Button, ListGroup, ListGroupItem } from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function CreateMovement() {

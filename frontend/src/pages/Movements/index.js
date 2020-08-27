@@ -19,8 +19,6 @@ import {
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function Movements() {
@@ -104,8 +102,8 @@ export default function Movements() {
     }
 
     return (
-        <div className='height_content'>
-            <Container className="margin_top_10 margin_bottom_30" fluid={true}>
+        <div className="margin_top_10">
+            <Container className="margin_bottom_30" fluid={true}>
                 <Row>
                     <Col>
                         <Link

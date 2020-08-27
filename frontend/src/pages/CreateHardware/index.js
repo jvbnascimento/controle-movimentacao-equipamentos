@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Form, FormGroup, Label, Input, Container, Row, Col, Button } from 'reactstrap';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function EditHardware() {

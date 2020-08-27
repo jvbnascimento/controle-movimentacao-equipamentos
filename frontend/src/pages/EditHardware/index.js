@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Form, FormGroup, Label, Input, Container, Row, Col, Button } from 'reactstrap';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function EditHardware() {
@@ -105,9 +103,10 @@ export default function EditHardware() {
     }
 
     return (
-        <Container className="height_content center">
-            <Row className="no_padding width_70">
+        <Container className="center">
+            <Row className="no_padding">
                 <Col>
+                    <h3 className="text-center margin_top_bottom_20">Editar dados do equipamento {hardware.heritage}</h3>
                     <Form>
                         {
                             hardware !== undefined ?

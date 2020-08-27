@@ -5,8 +5,6 @@ import { Form, FormGroup, Input, Container, Row, Col, ButtonGroup, Button, Modal
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
-import './index.css';
-
 import api from '../../services/api';
 
 export default function Hardware() {
