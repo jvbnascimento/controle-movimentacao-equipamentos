@@ -1,34 +1,35 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, ListGroupItem, ListGroup, Pagination, PaginationItem, PaginationLink, NavLink } from 'reactstrap';
+import React from 'react';
+// import { Container, Row, Col, ListGroupItem, ListGroup, Pagination, PaginationItem, PaginationLink, NavLink } from 'reactstrap';
 
-import api from '../../services/api';
+// import api from '../../services/api';
+// , { useState, useEffect }
 
 export default function ListMovement() {
-	const [movements, setMovements] = useState([]);
+	// const [movements, setMovements] = useState([]);
 
-	useEffect(() => {
-		async function getAllMovements() {
-			const response = await api.get('/users');
-			const data = await response.data;
+	// useEffect(() => {
+	// 	async function getAllMovements() {
+	// 		const response = await api.get('/users');
+	// 		const data = await response.data;
 
-			setMovements(data);
-		}
+	// 		setMovements(data);
+	// 	}
 
-		getAllMovements();
-	}, []);
+	// 	getAllMovements();
+	// }, []);
 
-	function format_date(date) {
-		const data_auxiliar = date.split("T");
-		const data = data_auxiliar[0].split("-");
-		const horario = data_auxiliar[1].split(".");
+	// function format_date(date) {
+	// 	const data_auxiliar = date.split("T");
+	// 	const data = data_auxiliar[0].split("-");
+	// 	const horario = data_auxiliar[1].split(".");
 	
-		const new_data = data[2] + "/" + data[1] + "/" + data[0];
-		const new_horario = horario[0];
+	// 	const new_data = data[2] + "/" + data[1] + "/" + data[0];
+	// 	const new_horario = horario[0];
 	
-		return (new_data + " " + new_horario);
-    }
+	// 	return (new_data + " " + new_horario);
+    // }
 
 	return (
 		<div className='height_content'>

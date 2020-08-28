@@ -44,7 +44,7 @@ routes.get("/movements/:movement_id", MovementController.listMovementById);
 routes.get("/movements/detailed/:limit/:offset", MovementController.listAllMovements);
 routes.get("/movements/data/:date_movement", MovementController.listAllMovementsByData);
 routes.get("/movements/heritage/:heritage", MovementController.listAllMovementsByHeritage);
-routes.get("/movements/parameters/:parameters", MovementController.listAllMovementsByAdvancedSearch);
+routes.get("/movements/:limit/:offset/filters", MovementController.listAllMovementsByAdvancedSearch);
 routes.post("/movements", MovementController.create);
 routes.put("/movements/:movement_id", MovementController.update);
 routes.delete("/movements/:movement_id", MovementController.delete);

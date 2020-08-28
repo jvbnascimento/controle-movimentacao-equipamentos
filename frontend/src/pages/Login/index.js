@@ -50,48 +50,56 @@ export default function Login() {
     }
 
     return (
-        <Container className="height_container center" fluid={true}>
-            <Row className="width_70 border border_radius_20 padding_all_10_10_40_10 bg_color_white_zimbra">
-                <h2 className="text-center margin_top_bottom_20">Entre com suas credenciais</h2>
-
+        <Container className="height_container center width_30">
+            <Row className="border border_radius_20 padding_all_10_10_40_10 bg_color_white_zimbra">
                 <Col>
-                    <Form onSubmit={authenticate}>
-                        <FormGroup>
-                            <Label for="loginEmail">Email</Label>
-                            <Input
-                                type="email"
-                                name="email"
-                                id="loginEmail"
-                                placeholder="Email"
-                                value={useLogin}
-                                onChange={handleLogin}
-                            />
-                        </FormGroup>
+                    <Row>
+                        <Col>
+                            <h2 className="text-center margin_top_bottom_20">Entre com suas credenciais</h2>
+                        </Col>
+                    </Row>
 
-                        <FormGroup>
-                            <Label for="loginPassword">Senha</Label>
-                            <Input
-                                type="password"
-                                name="password"
-                                id="loginPassword"
-                                placeholder="Senha"
-                                value={usePassword}
-                                onChange={handlePassword}
-                            />
-                        </FormGroup>
+                    <Row>
+                        <Col>
+                            <Form onSubmit={authenticate}>
+                                <FormGroup>
+                                    <Label for="loginEmail">Email</Label>
+                                    <Input
+                                        type="email"
+                                        name="email"
+                                        id="loginEmail"
+                                        placeholder="Email"
+                                        value={useLogin}
+                                        onChange={handleLogin}
+                                    />
+                                </FormGroup>
 
-                        <FormGroup check>
-                            <Label check>
-                                <Input type="checkbox" />{' '}
+                                <FormGroup>
+                                    <Label for="loginPassword">Senha</Label>
+                                    <Input
+                                        type="password"
+                                        name="password"
+                                        id="loginPassword"
+                                        placeholder="Senha"
+                                        value={usePassword}
+                                        onChange={handlePassword}
+                                    />
+                                </FormGroup>
+
+                                <FormGroup check>
+                                    <Label check>
+                                        <Input type="checkbox" />{' '}
                                 Lembrar-me
                             </Label>
-                        </FormGroup>
+                                </FormGroup>
 
-                        <FormGroup className="center_vertical margin_top_20">
-                            <Button className="">Acessar</Button>
-                            <Link to="#" className="font_color_black margin_left_20">Esqueceu a senha?</Link>
-                        </FormGroup>
-                    </Form>
+                                <FormGroup className="center_vertical margin_top_20">
+                                    <Button className="">Acessar</Button>
+                                    <Link to="#" className="font_color_black margin_left_20">Esqueceu a senha?</Link>
+                                </FormGroup>
+                            </Form>
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
         </Container>

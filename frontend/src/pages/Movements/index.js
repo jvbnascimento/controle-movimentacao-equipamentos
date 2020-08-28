@@ -23,15 +23,18 @@ import api from '../../services/api';
 
 export default function Movements() {
     const [movements, setMovements] = useState([]);
+    
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
 
+    const [querySearch, setQuerySearch] = useState('');
+
     const [cSelected, setCSelected] = useState([]);
 
     useEffect(() => {
-        async function getAllMovements() {
-            const response = await api.get(`/movements/detailed/${pageSize}/${currentPage}`);
+        async function filteredSearch() {
+            const response = await api.get(`/movements/${pageSize}/${currentPage}/filters?${querySearch}`);
             const data = await response.data;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
@@ -39,8 +42,8 @@ export default function Movements() {
             setMovements(data);
         }
 
-        getAllMovements();
-    }, [currentPage, pageSize]);
+        filteredSearch();
+    }, [querySearch, currentPage, pageSize]);
 
     function handleCurrentPage(e, index) {
         setCurrentPage(index);
@@ -78,27 +81,28 @@ export default function Movements() {
 
     const toggle = () => setTooltipOpen(!tooltipOpen);
 
-    async function filteredSearch(data) {
-        const result = await api.get(`/movements/parameters/${data}`);
-
-        console.log(result)
-    }
 
     function handleValueInput(e) {
         const body = e.target.value.split(";").map(element => {
-            return ({ body: element })
+            return (element)
         });
 
         const parameters = cSelected.map(element => {
-            return ({ param: element });
-        })
+            return (element);
+        });
 
-        const data = {
-            parameters,
-            body
-        }
+        let string = '';
 
-        filteredSearch(JSON.stringify(data));
+        parameters.map((element, index) => {
+            if (index > 0) {
+                return (string += "&" + element + "=" + body[index]);
+            }
+            else {
+                return (string += element + "=" + body[index]);
+            }
+        });
+
+        setQuerySearch(string);
     }
 
     return (
@@ -408,13 +412,131 @@ export default function Movements() {
                                 </Container>
                             )
                         }) :
-                        <Row
-                            className="center margin_top_bottom_20"
-                        >
-                            <Col xs="8" className="text-center">
-                                <h3>Ainda não há movimentações</h3>
-                            </Col>
-                        </Row>
+                        movements !== undefined && movements.length !== 0 ?
+                            movements.map(element => {
+                                return (
+                                    <Container key={element.id}>
+                                        <Row className="center margin_top_bottom_20">
+                                            <Col>
+                                                <Link
+                                                    to={
+                                                        `/movement/edit/${element.id}`
+                                                    }
+                                                    className="font_color_black_hover no_padding"
+                                                >
+                                                    <ListGroupItem>
+                                                        <Row>
+                                                            <Col
+                                                                sm="auto"
+                                                                className="center border_only_right"
+                                                            >{element.id}</Col>
+                                                            <Col>
+                                                                <Row className="margin_bottom_20">
+                                                                    <Col>
+                                                                        <Row>
+                                                                            <Col className="center border_only_right">
+                                                                                <Row>
+                                                                                    <Col
+                                                                                        sm="auto"
+                                                                                    >{format_date(element.date_movement)}</Col>
+                                                                                </Row>
+                                                                            </Col>
+
+                                                                            <Col className="center">
+                                                                                <Row>
+                                                                                    <Col sm="auto">
+                                                                                        <strong>{element.responsible_name}</strong>
+                                                                                    </Col>
+                                                                                </Row>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <DropdownItem divider />
+
+                                                                <Row className="margin_top_20">
+                                                                    <Col>
+
+                                                                        <Row>
+                                                                            <Col>
+                                                                                {
+                                                                                    element.hardwares.map((hardware, index) => {
+                                                                                        if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
+                                                                                            return (
+                                                                                                <div key={hardware.id}>
+                                                                                                    <Row className="margin_top_10">
+                                                                                                        <Col className="text-center border_only_right">
+                                                                                                            <Row>
+                                                                                                                <Col>{hardware.category.name}</Col>
+                                                                                                            </Row>
+                                                                                                            <Row>
+                                                                                                                <Col>{hardware.heritage}</Col>
+                                                                                                            </Row>
+                                                                                                        </Col>
+
+                                                                                                        <Col className="center border_only_right">
+                                                                                                            <strong>SAIU DE:&nbsp;</strong>
+                                                                                                            <span>{element.previous_department.name}</span>
+                                                                                                        </Col>
+
+                                                                                                        <Col className="center">
+                                                                                                            <strong>PARA:&nbsp;</strong>
+                                                                                                            <span>{element.next_department.name}</span>
+                                                                                                        </Col>
+                                                                                                    </Row>
+
+                                                                                                    <DropdownItem divider />
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                        return (
+                                                                                            <Row key={hardware.id} className="margin_top_10">
+                                                                                                <Col className="text-center border_only_right">
+                                                                                                    <Row>
+                                                                                                        <Col>{hardware.category.name}</Col>
+                                                                                                    </Row>
+                                                                                                    <Row>
+                                                                                                        <Col>{hardware.heritage}</Col>
+                                                                                                    </Row>
+                                                                                                </Col>
+
+                                                                                                <Col className="center border_only_right">
+                                                                                                    <strong>SAIU DE:&nbsp;</strong>
+                                                                                                    <span>{element.previous_department.name}</span>
+                                                                                                </Col>
+
+                                                                                                <Col className="center">
+                                                                                                    <strong>PARA:&nbsp;</strong>
+                                                                                                    <span>{element.next_department.name}</span>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        );
+                                                                                    })
+                                                                                }
+                                                                            </Col>
+                                                                        </Row>
+
+                                                                    </Col>
+                                                                </Row>
+
+                                                            </Col>
+                                                        </Row>
+                                                    </ListGroupItem>
+                                                </Link>
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                )
+                            })
+                            :
+                            <Row
+                                className="center margin_top_bottom_20"
+                            >
+                                <Col xs="8" className="text-center">
+                                    <h3>Ainda não há movimentações</h3>
+                                </Col>
+                            </Row>
                 }
 
             </ListGroup>
@@ -422,7 +544,7 @@ export default function Movements() {
             {
                 movements.rows !== undefined && movements.rows.length !== 0 ?
                     <Pagination
-                        className="margin-top-bottom-10 center"
+                        className="margin_top_bottom_20 center"
                         aria-label="Page navigation example"
                     >
                         <PaginationItem disabled={currentPage <= 0}>

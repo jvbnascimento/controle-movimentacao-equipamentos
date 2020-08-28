@@ -125,13 +125,13 @@ export default function Hardware() {
                             <FormGroup>
                                 <Container>
                                     <Row>
-                                        <Col>
+                                        <Col className="center">
                                             <Input
                                                 type="text"
                                                 name="equipment"
                                                 id="equipement"
                                                 placeholder="Procurar"
-                                                className="width_100"
+                                                className="width_50"
                                             />
                                         </Col>
                                     </Row>
