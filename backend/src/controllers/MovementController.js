@@ -265,7 +265,6 @@ module.exports = {
                 limit,
                 offset,
                 distinct: true,
-				// subQuery: false,
             });
 
             // const params = [];
@@ -386,8 +385,8 @@ module.exports = {
             return res.json(movements);
         }
         catch (e) {
-            // return res.json({ error: "Não foi possível realizar a execução da Query" });
-            return res.json(e);
+            return res.json({ error: "Não foi possível realizar a execução da Query" });
+            // return res.json(e);
         }
 
     },
@@ -454,14 +453,25 @@ module.exports = {
                 association: 'hardwares',
             }
         }).then(async (movement) => {
-            await movement.setHardwares([]);
-
-            hardwares.forEach(async (element) => {
+            movement.hardwares.map(async (element) => {
                 const hardware = await Hardware.findByPk(element.id);
 
                 if (hardware) {
-                    await movement.addHardwares(hardware);
+                    hardware.department_id = origin_department_id;
+                    await hardware.save();
                 }
+            });
+
+            await movement.setHardwares([]);
+
+            hardwares.map(async (element) => {
+                const hardware = await Hardware.findByPk(element.id);
+
+                if (hardware) {
+					hardware.department_id = destination_department_id;
+					await hardware.save();
+					await movement.addHardware(hardware);
+				}
             });
 
             movement.date_movement = date_movement;

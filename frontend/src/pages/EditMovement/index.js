@@ -32,9 +32,9 @@ export default function EditHardware() {
 	const [listHardwares, setListHardwares] = useState([]);
 
 	const [date_movement, setDateMovement] = useState('');
-	const [origin_department_id, setOriginDepartmentId] = useState('');
-	const [destination_department_id, setDestinationDepartmentId] = useState('');
-	const [responsible_id, setResponsibleId] = useState('');
+	const [origin_department_id, setOriginDepartmentId] = useState(1);
+	const [destination_department_id, setDestinationDepartmentId] = useState(1);
+	const [responsible_id, setResponsibleId] = useState(1);
 	const [hardwares, setHardwares] = useState([]);
 
 	const [modal, setModal] = useState(false);
