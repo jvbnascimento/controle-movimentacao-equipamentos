@@ -2,7 +2,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Form, FormGroup, Label, Input, Container, Row, Col, Button, ListGroup, ListGroupItem } from 'reactstrap';
+import {
+	Form,
+	FormGroup,
+	Label,
+	Input,
+	Container,
+	Row,
+	Col,
+	Button,
+	ListGroup,
+	ListGroupItem
+} from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
 import api from '../../services/api';
@@ -13,9 +24,9 @@ export default function CreateMovement() {
     const [listHardwares, setListHardwares] = useState([]);
 
     const [date_movement, setDateMovement] = useState('');
-    const [responsible, setReponsible] = useState('');
-    const [destination_department, setDestinationDepartment] = useState('');
-    const [origin_department, setOriginDepartment] = useState('');
+    const [responsible, setReponsible] = useState(1);
+    const [destination_department, setDestinationDepartment] = useState(1);
+    const [origin_department, setOriginDepartment] = useState(1);
 
     const history = useHistory();
 
@@ -111,7 +122,7 @@ export default function CreateMovement() {
             destination_department_id: destination_department,
             origin_department_id: origin_department,
             hardwares: id_hardwares
-        }
+		}
 
         await api.post('/movements', data);
 
@@ -213,7 +224,12 @@ export default function CreateMovement() {
                                             >SELECIONAR EQUIPAMENTO</option>
                                             {
                                                 hardwares !== undefined && hardwares.length !== 0 ?
-                                                    hardwares.filter(({ id: id1 }) => !listHardwares.some(({ id: id2 }) => (id1 === id2))).map(element => {
+                                                    hardwares.filter(
+														({ id: id1 }) => 
+														!listHardwares.some(
+															({ id: id2 }) => (id1 === id2)
+														)
+													).map(element => {
                                                         return (
                                                             <option
                                                                 key={element.id}
@@ -228,8 +244,13 @@ export default function CreateMovement() {
 
                                     <Col sm="auto">
                                         <Button
-                                            title="Cadastrar novo equipamento"
-                                        ><BsPlusCircleFill size="20" /></Button>
+											className="
+												bg_color_transparent
+												font_color_verde_zimbra_hover
+												no_border
+											"
+                                            title="Adicionar equipamento"
+                                        ><BsPlusCircleFill size="30" /></Button>
                                     </Col>
                                 </Row>
                             </FormGroup>
@@ -267,10 +288,17 @@ export default function CreateMovement() {
                         <Row>
                             <Col className="center margin_top_bottom_20">
                                 <Button
-                                    className="margin_left_right_20"
+                                    className="
+										margin_left_right_20
+										bg_color_verde_zimbra
+									"
                                     onClick={createMovement}
                                 >Criar</Button>
-                                <Button color="secondary" className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
+								<Button
+									color="secondary"
+									className="margin_left_right_20"
+									onClick={() => { history.goBack() }}
+								>Voltar</Button>
                             </Col>
                         </Row>
                     </Col>

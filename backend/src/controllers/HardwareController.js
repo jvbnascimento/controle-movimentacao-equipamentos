@@ -123,6 +123,9 @@ module.exports = {
                     },
                 },
 			],
+			order: [
+				['heritage']
+			],
 		});
 
 		if (!hardware) {

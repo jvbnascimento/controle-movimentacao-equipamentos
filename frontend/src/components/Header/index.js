@@ -47,7 +47,7 @@ export default function Header() {
 
 	return (
 		<div className="height_header">
-			<Navbar className="bg_color_verde_zimbra no_padding height_header">
+			<Navbar className="bg_color_verde_zimbra_no_effect no_padding height_header">
 				<Nav className='font_color_white'>
 					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right height_header">
 						<Link className="font_size_title font_color_white height_header" to="/">Sistema</Link>
@@ -104,7 +104,14 @@ export default function Header() {
                     !user ? 
                         backLogin() 
                     : 
-				    <NavbarText className="text-right padding_all_20 center height_header"> {user.name} </NavbarText>
+					<NavbarText className="
+						text-right
+						padding_all_20
+						center
+						height_header"
+					>
+						<strong>{user.name}</strong>
+					</NavbarText>
                 }
 			</Navbar>
 		</div>

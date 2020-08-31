@@ -40,7 +40,8 @@ module.exports = {
             ],
             limit,
             offset,
-            distinct: true
+			distinct: true,
+			subQuery: false
         });
 
         return res.json(movements);
@@ -220,24 +221,24 @@ module.exports = {
                 include: [
                     {
                         model: Department,
-                        as: "previous_department",
-                        required: true
+						as: "previous_department",
+						required: false,
                     },
                     {
                         model: Department,
-                        as: "next_department",
-                        required: true
+						as: "next_department",
+						required: false,
                     },
                     {
                         model: User,
-                        as: "responsible",
-                        required: true
+						as: "responsible",
+						required: false,
                     },
                     {
                         model: Hardware,
                         as: "hardwares",
-                        required: true,
-                        where: hardwareFilters,
+                        required: false,
+						where: hardwareFilters,
                         through: {
                             attributes: []
                         },
@@ -245,26 +246,26 @@ module.exports = {
                             {
                                 model: Type,
                                 as: "category",
-                                required: true,
-                                where: categoryFilters
+                                required: false,
+								where: categoryFilters,
                             },
                             {
                                 model: Department,
                                 as: "belongs",
-                                required: true,
-                                where: belongsFilters
+                                required: false,
+								where: belongsFilters,
                             },
                         ]
                     }
-                ],
-                where: movementFilters,
+				],
+				where: movementFilters,
                 order: [
                     ['id', 'DESC']
                 ],
                 limit,
                 offset,
                 distinct: true,
-                subQuery: false
+				// subQuery: false,
             });
 
             // const params = [];
@@ -398,27 +399,26 @@ module.exports = {
             destination_department_id,
             responsible_id,
             hardwares,
-        } = req.body;
+		} = req.body;
 
-        const list_hardwares = [];
-
-        hardwares.forEach(async (element) => {
-            const hardware = await Hardware.findByPk(element.id);
-            hardware.department_id = destination_department_id;
-            await hardware.save();
-
-            if (hardware) {
-                list_hardwares.push(hardware);
-            }
-        });
-
-        const movement = await Movement.create({
+        const movement = Movement.create({
             date_movement,
             origin_department_id,
             destination_department_id,
             responsible_id
-        });
-        await movement.addHardware(list_hardwares);
+        }).then(async (movement) => {
+			hardwares.map(async (element) => {
+				const hardware = await Hardware.findByPk(element.id);
+
+				if (hardware) {
+					hardware.department_id = destination_department_id;
+					await hardware.save();
+					await movement.addHardware(hardware);
+				}
+			});
+		}).catch((err) => {
+			return err;
+		});
 
         return res.json(movement);
     },
@@ -445,7 +445,7 @@ module.exports = {
         if (!await User.findByPk(responsible_id)) {
             return res.status(404).json({ error: 'User not found!' });
         }
-        if (hardwares.length == 0) {
+        if (hardwares.length === 0) {
             return res.status(400).json({ error: 'Hardware list cannot be empty!' });
         }
 
@@ -460,7 +460,7 @@ module.exports = {
                 const hardware = await Hardware.findByPk(element.id);
 
                 if (hardware) {
-                    await movement.addHardware(hardware);
+                    await movement.addHardwares(hardware);
                 }
             });
 

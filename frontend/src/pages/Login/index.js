@@ -94,8 +94,8 @@ export default function Login() {
                                 </FormGroup>
 
                                 <FormGroup className="center_vertical margin_top_20">
-                                    <Button className="">Acessar</Button>
-                                    <Link to="#" className="font_color_black margin_left_20">Esqueceu a senha?</Link>
+                                    <Button className="bg_color_verde_zimbra">Acessar</Button>
+                                    <Link to="#" className="font_color_white_hover margin_left_20">Esqueceu a senha?</Link>
                                 </FormGroup>
                             </Form>
                         </Col>

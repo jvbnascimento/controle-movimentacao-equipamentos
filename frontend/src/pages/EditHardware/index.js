@@ -9,23 +9,23 @@ import api from '../../services/api';
 export default function EditHardware() {
     const hardware_id = useParams();
 
-    const [hardware, setHardware] = useState([]);
+    const [hardware, setHardware] = useState(Object);
     const [types, setTypes] = useState([]);
-    const [heritage, setHeritage] = useState([]);
-    const [description, setDescription] = useState([]);
-    const [brand, setBrand] = useState([]);
-    const [warranty, setWarranty] = useState([]);
-    const [has_office, setHasOffice] = useState([]);
-    const [auction, setAuction] = useState([]);
-    const [date_auction, setDateAuction] = useState([]);
-    const [category, setCategory] = useState([]);
+    const [heritage, setHeritage] = useState('');
+    const [description, setDescription] = useState('');
+    const [brand, setBrand] = useState('');
+    const [warranty, setWarranty] = useState('');
+    const [has_office, setHasOffice] = useState('SEM OFFICE');
+    const [auction, setAuction] = useState('true');
+    const [date_auction, setDateAuction] = useState(null);
+    const [category, setCategory] = useState(1);
 
     const history = useHistory();
 
     useEffect(() => {
         async function getHardware() {
             const response = await api.get(`/hardwares/${hardware_id.id}`);
-            const data = await response.data;
+			const data = await response.data;
 
             setHeritage(data.heritage);
             setDescription(data.description);
@@ -54,8 +54,8 @@ export default function EditHardware() {
 
     async function updateHardware() {
         const type_id = category;
-        const department_id = hardware[0].belongs.id;
-        const id = hardware[0].id;
+        const department_id = hardware.belongs.id;
+		const id = hardware.id;
 
         const new_data = {
             id,
@@ -70,10 +70,8 @@ export default function EditHardware() {
             department_id
         }
 
-        const response = await api.put(`/hardwares/${id}`, new_data);
-        const data = await response.data;
-
-        setHardware([data]);
+        await api.put(`/hardwares/${id}`, new_data);
+		
         history.goBack();
     };
 
@@ -219,8 +217,17 @@ export default function EditHardware() {
 
                                         <Row>
                                             <Col className="center margin_top_bottom_20">
-                                                <Button color="success" className="margin_left_right_20" onClick={updateHardware}>Salvar</Button>
-                                                <Button className="margin_left_right_20" onClick={() => { history.goBack() }}>Voltar</Button>
+												<Button
+													className="
+													margin_left_right_20
+													bg_color_verde_zimbra
+												"
+													onClick={updateHardware}
+												>Salvar</Button>
+												<Button
+													className="margin_left_right_20"
+													onClick={()=> { history.goBack() }}
+												>Voltar</Button>
                                             </Col>
                                         </Row>
                                     </FormGroup>

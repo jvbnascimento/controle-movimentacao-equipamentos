@@ -125,49 +125,81 @@ export default function Movements() {
                     <Col className="center">
                         <ButtonGroup className="margin_bottom_20">
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+								className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('heritage')}
                                 active={cSelected.includes('heritage')}
                                 title="Filtrar por tombamento"
                             >Tombamento</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('brand')}
                                 active={cSelected.includes('brand')}
                                 title="Filtrar por marca"
                             >Marca</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('warranty')}
                                 active={cSelected.includes('warranty')}
                                 title="Filtrar por garantia"
                             >Garantia</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('has_office')}
                                 active={cSelected.includes('has_office')}
                                 title="Filtrar por ferramenta office"
                             >Office</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('auction')}
                                 active={cSelected.includes('auction')}
                                 title="Filtrar por máquinas leiloadas"
                             >Leilão</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('category')}
                                 active={cSelected.includes('category')}
                                 title="Filtrar por categoria"
                             >Categoria</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('department')}
                                 active={cSelected.includes('department')}
                                 title="Filtrar por departamento"
                             >Departamento</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick('date_movement')}
                                 active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
@@ -249,7 +281,7 @@ export default function Movements() {
                             />
                         </PaginationItem>
 
-                        <PaginationItem disabled={currentPage <= 0}>
+                        <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
                             <PaginationLink
                                 className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
                                 previous
@@ -261,9 +293,13 @@ export default function Movements() {
                         {
                             [...Array(pagesCount)].map((page, i) => {
                                 return (
-                                    <PaginationItem active={(i * pageSize) === (currentPage)} key={i}>
+									<PaginationItem key={i}>
                                         <PaginationLink
-                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            className={
+												(i * pageSize) === (currentPage) ?
+												"bg_color_cinza_zimbra_active" : 
+												"bg_color_cinza_zimbra" 
+											}
                                             href="#"
                                             onClick={e => handleCurrentPage(e, (i * pageSize))}
                                         > {i + 1} </PaginationLink>
@@ -568,9 +604,13 @@ export default function Movements() {
                         {
                             [...Array(pagesCount)].map((page, i) => {
                                 return (
-                                    <PaginationItem active={(i * pageSize) === (currentPage)} key={i}>
+                                    <PaginationItem key={i}>
                                         <PaginationLink
-                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            className={
+												(i * pageSize) === (currentPage) ?
+												"bg_color_cinza_zimbra_active" : 
+												"bg_color_cinza_zimbra" 
+											}
                                             href="#"
                                             onClick={e => handleCurrentPage(e, (i * pageSize))}
                                         > {i + 1} </PaginationLink>

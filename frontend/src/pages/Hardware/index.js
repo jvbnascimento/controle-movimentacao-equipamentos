@@ -55,7 +55,7 @@ export default function Hardware() {
     }
 
     return (
-        <div className="height_content">
+        <div>
             <Container className="margin_top_10 margin_bottom_30" fluid={true}>
                 <Row>
                     <Col>
@@ -74,43 +74,71 @@ export default function Hardware() {
                     <Col className="center">
                         <ButtonGroup className="margin_bottom_20">
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(1)}
                                 active={cSelected.includes(1)}
                                 title="Filtrar por tombamento"
                             >Tombamento</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(2)}
                                 active={cSelected.includes(2)}
                                 title="Filtrar por marca"
                             >Marca</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(3)}
                                 active={cSelected.includes(3)}
                                 title="Filtrar por garantia"
                             >Garantia</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(4)}
                                 active={cSelected.includes(4)}
                                 title="Filtrar por ferramenta office"
                             >Office</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(5)}
                                 active={cSelected.includes(5)}
                                 title="Filtrar por máquinas leiloadas"
                             >Leilão</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(6)}
                                 active={cSelected.includes(6)}
                                 title="Filtrar por categoria"
                             >Categoria</Button>
                             <Button
-                                className="margin_left_right_05 border_color_verde_zimbra_hover"
+                                className="
+									margin_left_right_05
+									border_color_verde_zimbra_hover
+									bg_color_verde_zimbra
+								"
                                 onClick={() => onCheckboxBtnClick(7)}
                                 active={cSelected.includes(7)}
                                 title="Filtrar por departamento"
@@ -144,7 +172,7 @@ export default function Hardware() {
 
             <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados </h3>
 
-            <Container className="margin_top_10" fluid={true}>
+            <Container className="margin_top_bottom_20" fluid={true}>
                 <Row className="border">
                     <Col className="border_only_right padding_all_10 center_vertical" sm="1">
                         <strong>Tombamento</strong>
@@ -277,13 +305,16 @@ export default function Hardware() {
             </Container>
             
             <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>Tem certeza?</ModalHeader>
+                <ModalHeader toggle={toggle}>Deletar equipamento</ModalHeader>
                 <ModalBody>
-                    Tem certeza que desejar deletar o equipamento de tombo {hardwareToDelete[1]}
+                    Tem certeza que desejar&nbsp;
+					<strong className="font_color_danger">DELETAR</strong>
+					&nbsp;o equipamento de tombo&nbsp;
+					<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={deleteHardware}>Sim</Button>
-                    <Button color="secondary" onClick={toggle}>Cancelar</Button>
+                    <Button color="danger" onClick={deleteHardware}>Sim</Button>
+                    <Button className="bg_color_verde_zimbra" onClick={toggle}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
         </div>
