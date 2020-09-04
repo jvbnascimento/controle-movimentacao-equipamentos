@@ -106,7 +106,7 @@ export default function Movements() {
     }
 
     return (
-        <div className="margin_top_10">
+        <div className={movements.rows !== undefined && movements.rows.length <= 1 ? "height_content" : "padding_all_10"}>
             <Container className="margin_bottom_30" fluid={true}>
                 <Row>
                     <Col>

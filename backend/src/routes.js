@@ -35,6 +35,7 @@ routes.get("/hardwares/description/:description", HardwareController.listAllHard
 routes.get("/hardwares/category/:name_category", HardwareController.listAllHardwaresByCategory);
 routes.get("/hardwares/heritage/:heritage", HardwareController.listHardwareByHeritage);
 routes.get("/hardwares/department/:department_id", HardwareController.listHardwareByDepartment);
+routes.get("/hardwares/department/:department_name/category", HardwareController.listHardwareByDepartmentGroupCategory);
 routes.get("/hardwares/:hardware_id", HardwareController.listHardwareById);
 routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);

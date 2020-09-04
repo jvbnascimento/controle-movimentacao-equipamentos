@@ -20,7 +20,11 @@ import { Link, useHistory } from 'react-router-dom';
 
 export default function Header() {
     const [listTypes, setTypes] = useState([]);
+    const [listDepartments, setDepartments] = useState([]);
+    
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [dropdownOpen2, setDropdownOpen2] = useState(false);
+
     const user = JSON.parse(localStorage.getItem('user'));
 
     const history = useHistory();
@@ -34,8 +38,19 @@ export default function Header() {
 
 		getAllTypes();
     }, []);
+
+	useEffect(() => {
+		async function getAllDepartments() {
+			const response = await api.get('/departments');
+			const data = response.data;
+			setDepartments(data);
+		}
+
+		getAllDepartments();
+    }, []);
     
     const toggle = () => setDropdownOpen(!dropdownOpen);
+    const toggle2 = () => setDropdownOpen2(!dropdownOpen2);
 
     function backLogin() {
         history.push('/login');
@@ -62,6 +77,36 @@ export default function Header() {
 					</NavItem>
 
 					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownOpen} toggle={toggle}>
+						<DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
+							Departamentos
+          				</DropdownToggle>
+
+						<DropdownMenu className="bg_color_verde_zimbra no_padding max_height_500">
+							{listDepartments !== undefined ?
+								listDepartments.map(element => {
+									return (
+										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
+											<Link
+                                                className="center_vertical font_color_white_hover"
+                                                to={`/department/${element.name.replace("/", "-")}`}
+                                            >
+												<NavItem
+                                                    className="padding_all_10"
+                                                >{element.name}</NavItem>
+                                            </Link>
+										</DropdownItem>)
+								}) : ''
+							}
+							<DropdownItem divider className="no_margin" />
+							<DropdownItem className="bg_color_verde_zimbra_hover no_padding">
+								<NavItem>
+									<NavLink className="font_color_white_hover" href="#">CRIA ITEM</NavLink>
+								</NavItem>
+							</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+
+					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownOpen2} toggle={toggle2}>
 						<DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
 							Tipos
           				</DropdownToggle>

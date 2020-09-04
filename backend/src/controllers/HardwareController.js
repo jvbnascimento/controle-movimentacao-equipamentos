@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const Hardware = require('../models/Hardware');
 const Type = require('../models/Type');
 const Department = require("../models/Department");
+const { belongsTo } = require("../models/Department");
 
 module.exports = {
 	async listAllDetailedHardwares(req, res) {
@@ -133,6 +134,47 @@ module.exports = {
 		}
 
 		return res.json(hardware);
+    },
+
+    async listHardwareByDepartmentGroupCategory(req, res) {
+        const { department_name } = req.params;
+        
+        // const hardware = await Hardware.findAll({
+        //     include: {
+        //         association: 'category',
+        //         attributes: ['name']
+        //     },
+        //     attributes: [
+        //         'description'
+        //     ],
+        //     group: [
+        //         'Hardware.description', 'category.id'
+        //     ]
+        // });
+
+		const hardwares = await Hardware.findAndCountAll({
+			include: [
+				{
+                    association: 'category',
+				},
+				{
+                    association: 'belongs',
+                    where: {
+                        name: department_name.replace("-", "/")
+                    },
+                },
+			],
+			order: [
+				['heritage']
+            ]
+        });
+
+		if (!hardwares) {
+			return res.status(404).json({ error: 'Hardwares not found' });
+		}
+
+        return res.json(hardwares);
+        // return;
     },
     
 	async listHardwareById(req, res) {

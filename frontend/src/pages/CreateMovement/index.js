@@ -130,8 +130,10 @@ export default function CreateMovement() {
     }
 
     return (
-        <div className="height_content">
-            <h1 className="margin_top_bottom_20 text-center"> Criar uma nova movimentação </h1>
+        <div 
+            className={listHardwares.length === 0 ? "height_content" : ""}
+        >
+            <h1 className="text-center"> Criar uma nova movimentação </h1>
 
             <Container className="width_40">
                 <Row>
@@ -261,7 +263,7 @@ export default function CreateMovement() {
                                 <>
                                     <Label className="margin_top_10" for="labelDepartment">Lista de equipamentos para movimentação</Label>
                                     <ListGroup>
-                                        <div className="max_height">
+                                        <div className="max_height_100">
                                             {
                                                 listHardwares.map(hardware => {
                                                     return (

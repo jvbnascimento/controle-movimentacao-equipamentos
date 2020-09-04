@@ -15,21 +15,10 @@ import {
 
 import api from '../../services/api';
 
-export default function ListByCategory() {
+export default function Department() {
     const search = useParams();
 
     const [listCategory, setListCategory] = useState([]);
-
-    useEffect(() => {
-        async function getAll() {
-            const response = await api.get(`/hardwares/category/${search.category}`);
-            const data = await response.data;
-
-            setListCategory(data);
-        }
-
-        getAll();
-    }, [search.category]);
 
     const [modal, setModal] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
@@ -46,6 +35,17 @@ export default function ListByCategory() {
         }
     };
 
+    useEffect(() => {
+        async function getAll() {
+            const response = await api.get(`/hardwares/department/${search.name}/category`);
+            const data = await response.data;
+
+            setListCategory(data);
+        }
+
+        getAll();
+    }, [search.name]);
+
     async function deleteHardware() {
         await api.delete(`/hardwares/${hardwareToDelete[0]}`);
 
@@ -53,10 +53,10 @@ export default function ListByCategory() {
     }
 
     return (
-        <div className='height_content'>
-            <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados - Categoria: {search.category} ({listCategory.length}) </h3>
+        <div className={listCategory.rows !== undefined && listCategory.rows.length <= 8 ? "height_content" : ""}>
+            <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados - Departamento: {search.name} ({listCategory.count}) </h3>
 
-            <Container className="margin_top_10" fluid={true}>
+            <Container className="margin_top_20" fluid={true}>
                 <Row className="border">
                     <Col className="border_only_right padding_all_10 center_vertical" sm="1">
                         <strong>Tombamento</strong>
@@ -87,8 +87,8 @@ export default function ListByCategory() {
                     </Col>
                 </Row>
 
-                {listCategory !== undefined && listCategory.length !== 0 ?
-                    listCategory.map(element => {
+                {listCategory.rows !== undefined && listCategory.rows.length !== 0 ?
+                    listCategory.rows.map(element => {
                         return (
                             <Row
                                 key={element.id}
@@ -98,38 +98,13 @@ export default function ListByCategory() {
                                     className="border_only_right padding_all_10 center_vertical"
                                     sm="1"
                                 >{element.heritage}</Col>
-                                {
-                                    element.auction ?
-                                        <Col
-                                            className="
-                                            border_only_right
-                                            padding_all_10 center_vertical
-                                            bg_color_vermelho_danger
-                                        "
-                                            sm="3"
-                                        > {element.description} </Col>
-                                        :
-                                        element.belongs.name === "COTEC/INFRA" ?
-                                            <Col
-                                                className="
+                                <Col
+                                    className="
                                         border_only_right
-                                        padding_all_10
-                                        center_vertical
-                                        bg_color_azul_info
+                                        padding_all_10 center_vertical
                                     "
-                                                sm="3"
-                                            > {element.description}</Col>
-                                            :
-                                            <Col
-                                                className="
-                                        border_only_right
-                                        padding_all_10
-                                        center_vertical
-                                        bg_color_amarelo_warning
-                                    "
-                                                sm="3"
-                                            > {element.description}</Col>
-                                }
+                                    sm="3"
+                                > {element.description} </Col>
                                 <Col
                                     className="border_only_right padding_all_10 center_vertical"
                                     sm="1"

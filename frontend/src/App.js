@@ -10,6 +10,7 @@ import ListByCategory from './pages/ListByCategory';
 import Movements from './pages/Movements';
 import CreateMovement from './pages/CreateMovement';
 import EditMovement from './pages/EditMovement';
+import Department from './pages/Department';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 
@@ -49,6 +50,10 @@ export default function App() {
 
                 <Route path="/movement/edit/:id" exact>
 					<DefaultLayout container={<EditMovement />} />
+				</Route>
+
+                <Route path="/department/:name" exact>
+					<DefaultLayout container={<Department />} />
 				</Route>
 
                 <Route path="/login" exact>

@@ -25,7 +25,7 @@ export default function EditHardware() {
     useEffect(() => {
         async function getHardware() {
             const response = await api.get(`/hardwares/${hardware_id.id}`);
-			const data = await response.data;
+            const data = await response.data;
 
             setHeritage(data.heritage);
             setDescription(data.description);

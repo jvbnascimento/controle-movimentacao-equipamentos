@@ -2,7 +2,11 @@ const Department = require('../models/Department');
 
 module.exports = {
 	async listAllDepartments(req, res) {
-		const departments = await Department.findAll();
+		const departments = await Department.findAll({
+            order: [
+                'name'
+            ]
+        });
 
 		return res.json(departments);
 	},

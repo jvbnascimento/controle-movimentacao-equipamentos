@@ -237,7 +237,7 @@ module.exports = {
                     {
                         model: Hardware,
                         as: "hardwares",
-                        required: false,
+                        required: true,
 						where: hardwareFilters,
                         through: {
                             attributes: []
