@@ -106,7 +106,11 @@ export default function Movements() {
     }
 
     return (
-        <div className={movements.rows !== undefined && movements.rows.length <= 1 ? "height_content" : "padding_all_10"}>
+        <div className={
+			movements.rows !== undefined &&
+			movements.rows.length <= 1 ?
+			"height_content" : "padding_all_10"
+		}>
             <Container className="margin_bottom_30" fluid={true}>
                 <Row>
                     <Col>
@@ -223,8 +227,14 @@ export default function Movements() {
                                 </Col>
                                 <Col sm="1" className="center">
                                     <span id="TooltipExample">!</span>
-                                    <Tooltip placement="right" isOpen={tooltipOpen} target="TooltipExample" toggle={toggle}>
-                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.</Tooltip>
+                                    <Tooltip
+										placement="right" 
+										isOpen={tooltipOpen}
+										target="TooltipExample"
+										toggle={toggle}
+									>
+                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.
+									</Tooltip>
                                 </Col>
                             </Row>
                         </Container>
@@ -238,7 +248,9 @@ export default function Movements() {
                         <Container>
                             <Row>
                                 <Col sm="16">
-                                    <h1 className="text-center"> Últimas movimentações ({movements.count}) </h1>
+                                    <h1 className="text-center">
+										Últimas movimentações ({movements.count})
+									</h1>
                                 </Col>
                             </Row>
 
@@ -267,7 +279,8 @@ export default function Movements() {
             </Container>
 
             {
-                movements.rows !== undefined && movements.rows.length !== 0 ?
+				movements.rows !== undefined &&
+				movements.rows.length !== 0 ?
                     <Pagination
                         className="margin_top_20 center"
                         aria-label="Page navigation example"
@@ -331,7 +344,8 @@ export default function Movements() {
 
             <ListGroup>
                 {
-                    movements.rows !== undefined && movements.rows.length !== 0 ?
+					movements.rows !== undefined &&
+					movements.rows.length !== 0 ?
                         movements.rows.map(element => {
                             return (
                                 <Container key={element.id}>
