@@ -136,21 +136,8 @@ module.exports = {
 		return res.json(hardware);
     },
 
-    async listHardwareByDepartmentGroupCategory(req, res) {
-        const { department_name } = req.params;
-        
-        // const hardware = await Hardware.findAll({
-        //     include: {
-        //         association: 'category',
-        //         attributes: ['name']
-        //     },
-        //     attributes: [
-        //         'description'
-        //     ],
-        //     group: [
-        //         'Hardware.description', 'category.id'
-        //     ]
-        // });
+    async listHardwareByDepartmentName(req, res) {
+        const { department_name, limit, offset } = req.params;
 
 		const hardwares = await Hardware.findAndCountAll({
 			include: [
@@ -166,7 +153,11 @@ module.exports = {
 			],
 			order: [
 				['heritage']
-            ]
+			],
+			limit,
+			offset,
+			distinct: true,
+			subQuery: false
         });
 
 		if (!hardwares) {
@@ -174,7 +165,6 @@ module.exports = {
 		}
 
         return res.json(hardwares);
-        // return;
     },
     
 	async listHardwareById(req, res) {
