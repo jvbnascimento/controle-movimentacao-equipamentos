@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     Container,
     Row,
@@ -11,17 +11,17 @@ import {
     Label,
     Input,
 } from 'reactstrap';
-import { Link, useHistory } from 'react-router-dom';
+
 
 import './index.css';
 
-import api from '../../services/api';
+import AuthContext from '../../contexts/auth';
 
 export default function Login() {
     const [useLogin, setUseLogin] = useState('');
     const [usePassword, setUsePassword] = useState('');
 
-    const history = useHistory();
+    const {signIn} = useContext(AuthContext);
 
     async function authenticate(e) {
         e.preventDefault();
@@ -34,12 +34,7 @@ export default function Login() {
             password
         }
 
-        const response = await api.post(`/login/verify/${JSON.stringify(user)}`);
-
-        if (response.status === 200) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-            history.push('/');
-        }
+        signIn(JSON.stringify(user));
     }
 
     function handleLogin(e) {
@@ -94,8 +89,12 @@ export default function Login() {
                                 </FormGroup>
 
                                 <FormGroup className="center_vertical margin_top_20">
-                                    <Button className="bg_color_verde_zimbra">Acessar</Button>
-                                    <Link to="#" className="font_color_white_hover margin_left_20">Esqueceu a senha?</Link>
+                                    <Button
+                                        className="bg_color_verde_zimbra"
+                                    >
+                                        Acessar
+                                    </Button>
+                                    {/* <Link to="#" className="font_color_white_hover margin_left_20">Esqueceu a senha?</Link> */}
                                 </FormGroup>
                             </Form>
                         </Col>

@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import {
 	Navbar,
@@ -11,12 +12,12 @@ import {
 	DropdownItem,
 	DropdownToggle,
 	DropdownMenu,
-	NavbarText
+    NavbarText,
+    Button
 } from 'reactstrap';
 
 import api from '../../services/api';
-
-import { Link, useHistory } from 'react-router-dom';
+import AuthContext from '../../contexts/auth';
 
 export default function Header() {
     const [listTypes, setTypes] = useState([]);
@@ -24,8 +25,8 @@ export default function Header() {
     
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownOpen2, setDropdownOpen2] = useState(false);
-
-    const user = JSON.parse(localStorage.getItem('user'));
+    
+    const {signOut, user} = useContext(AuthContext);
 
     const history = useHistory();
 
@@ -52,12 +53,9 @@ export default function Header() {
     const toggle = () => setDropdownOpen(!dropdownOpen);
     const toggle2 = () => setDropdownOpen2(!dropdownOpen2);
 
-    function backLogin() {
-        history.push('/login');
-    }
-
-    if (!user) {
-        backLogin();
+    function signOutBackLogin() {
+        signOut();
+        history.push('/');
     }
 
 	return (
@@ -141,23 +139,25 @@ export default function Header() {
 					</NavItem>
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<Link className="center padding_all_20 font_color_white_hover center height_header" to="/logout">Sair</Link>
+						<Button
+                            className="center padding_all_20 font_color_white_hover center height_header"
+                            onClick={signOutBackLogin}
+                        >
+                            Sair
+                        </Button>
 					</NavItem>
 				</Nav>
                             
-                { 
-                    !user ? 
-                        backLogin() 
-                    : 
-					<NavbarText className="
-						text-right
-						padding_all_20
-						center
-						height_header"
-					>
-						<strong>{user.name}</strong>
-					</NavbarText>
-                }
+                <NavbarText
+                    className="
+                        text-right
+                        padding_all_20
+                        center
+                        height_header
+                    "
+                >
+                    <strong>{user.name}</strong>
+                </NavbarText>
 			</Navbar>
 		</div>
 	);

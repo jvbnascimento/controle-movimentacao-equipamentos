@@ -24,6 +24,6 @@ module.exports = {
             return res.status(400).json({ error: "Password is wrong!" });
         }
 
-		return res.status(200).json(verifyUser);
+        return res.status(200).json({ user: verifyUser });
 	},
 }

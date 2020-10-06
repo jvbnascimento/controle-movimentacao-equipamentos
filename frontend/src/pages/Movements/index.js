@@ -283,7 +283,6 @@ export default function Movements() {
 				movements.rows.length !== 0 ?
                     <Pagination
                         className="margin_top_20 center"
-                        aria-label="Page navigation example"
                     >
                         <PaginationItem disabled={currentPage <= 0}>
                             <PaginationLink
@@ -361,13 +360,13 @@ export default function Movements() {
                                                     <Row>
                                                         <Col
                                                             sm="auto"
-                                                            className="center border_only_right"
+                                                            className="center border_only_right border_color_gray"
                                                         >{element.id}</Col>
                                                         <Col>
                                                             <Row className="margin_bottom_20">
                                                                 <Col>
                                                                     <Row>
-                                                                        <Col className="center border_only_right">
+                                                                        <Col className="center border_only_right border_color_gray">
                                                                             <Row>
                                                                                 <Col
                                                                                     sm="auto"
@@ -399,7 +398,7 @@ export default function Movements() {
                                                                                         return (
                                                                                             <div key={hardware.id}>
                                                                                                 <Row className="margin_top_10">
-                                                                                                    <Col className="text-center border_only_right">
+                                                                                                    <Col className="text-center border_only_right border_color_gray">
                                                                                                         <Row>
                                                                                                             <Col>{hardware.category.name}</Col>
                                                                                                         </Row>
@@ -408,7 +407,7 @@ export default function Movements() {
                                                                                                         </Row>
                                                                                                     </Col>
 
-                                                                                                    <Col className="center border_only_right">
+                                                                                                    <Col className="center border_only_right border_color_gray">
                                                                                                         <strong>SAIU DE:&nbsp;</strong>
                                                                                                         <span>{element.previous_department.name}</span>
                                                                                                     </Col>
@@ -425,7 +424,7 @@ export default function Movements() {
                                                                                     }
                                                                                     return (
                                                                                         <Row key={hardware.id} className="margin_top_10">
-                                                                                            <Col className="text-center border_only_right">
+                                                                                            <Col className="text-center border_only_right border_color_gray">
                                                                                                 <Row>
                                                                                                     <Col>{hardware.category.name}</Col>
                                                                                                 </Row>
@@ -434,7 +433,7 @@ export default function Movements() {
                                                                                                 </Row>
                                                                                             </Col>
 
-                                                                                            <Col className="center border_only_right">
+                                                                                            <Col className="center border_only_right border_color_gray">
                                                                                                 <strong>SAIU DE:&nbsp;</strong>
                                                                                                 <span>{element.previous_department.name}</span>
                                                                                             </Col>
@@ -478,13 +477,19 @@ export default function Movements() {
                                                         <Row>
                                                             <Col
                                                                 sm="auto"
-                                                                className="center border_only_right"
-                                                            >{element.id}</Col>
+                                                                className="
+                                                                    center
+                                                                    border_only_right
+                                                                    border_color_gray
+                                                                "
+                                                            >
+                                                                {element.id}
+                                                            </Col>
                                                             <Col>
                                                                 <Row className="margin_bottom_20">
                                                                     <Col>
                                                                         <Row>
-                                                                            <Col className="center border_only_right">
+                                                                            <Col className="center border_only_right border_color_gray">
                                                                                 <Row>
                                                                                     <Col
                                                                                         sm="auto"
@@ -516,7 +521,7 @@ export default function Movements() {
                                                                                             return (
                                                                                                 <div key={hardware.id}>
                                                                                                     <Row className="margin_top_10">
-                                                                                                        <Col className="text-center border_only_right">
+                                                                                                        <Col className="text-center border_only_right border_color_gray">
                                                                                                             <Row>
                                                                                                                 <Col>{hardware.category.name}</Col>
                                                                                                             </Row>
@@ -525,7 +530,7 @@ export default function Movements() {
                                                                                                             </Row>
                                                                                                         </Col>
 
-                                                                                                        <Col className="center border_only_right">
+                                                                                                        <Col className="center border_only_right border_color_gray">
                                                                                                             <strong>SAIU DE:&nbsp;</strong>
                                                                                                             <span>{element.previous_department.name}</span>
                                                                                                         </Col>
@@ -542,7 +547,7 @@ export default function Movements() {
                                                                                         }
                                                                                         return (
                                                                                             <Row key={hardware.id} className="margin_top_10">
-                                                                                                <Col className="text-center border_only_right">
+                                                                                                <Col className="text-center border_only_right border_color_gray">
                                                                                                     <Row>
                                                                                                         <Col>{hardware.category.name}</Col>
                                                                                                     </Row>
@@ -551,7 +556,7 @@ export default function Movements() {
                                                                                                     </Row>
                                                                                                 </Col>
 
-                                                                                                <Col className="center border_only_right">
+                                                                                                <Col className="center border_only_right border_color_gray">
                                                                                                     <strong>SAIU DE:&nbsp;</strong>
                                                                                                     <span>{element.previous_department.name}</span>
                                                                                                 </Col>

@@ -3,23 +3,74 @@ const { Op } = require("sequelize");
 const Hardware = require('../models/Hardware');
 const Type = require('../models/Type');
 const Department = require("../models/Department");
-const { belongsTo } = require("../models/Department");
 
 module.exports = {
 	async listAllDetailedHardwares(req, res) {
-		const hardwares = await Hardware.findAll({
+        const { limit, offset } = req.params;
+
+        const filters = req.query;
+
+        let hardwareFilters = {}
+        let belongsFilters = {}
+        let categoryFilters = {}
+
+        if (filters.heritage) {
+            hardwareFilters.heritage = {
+                [Op.like]: `%${filters.heritage}%`
+            }
+        }
+        if (filters.brand) {
+            hardwareFilters.brand = {
+                [Op.like]: `%${filters.brand.toUpperCase()}%`
+            }
+        }
+        if (filters.warranty) {
+            hardwareFilters.warranty = {
+                [Op.like]: `%${filters.warranty.toUpperCase()}%`
+            }
+        }
+        if (filters.has_office) {
+            hardwareFilters.has_office = {
+                [Op.like]: `%${filters.has_office.toUpperCase()}%`
+            }
+        }
+        if (filters.auction) {
+            hardwareFilters.auction = {
+                [Op.eq]: `${filters.auction}`
+            }
+        }
+        if (filters.category) {
+            categoryFilters.name = {
+                [Op.like]: `%${filters.category.toUpperCase()}%`
+            }
+        }
+        if (filters.belongs) {
+            belongsFilters.name = {
+                [Op.like]: `${filters.belongs.toUpperCase()}`
+            }
+        }
+
+		const hardwares = await Hardware.findAndCountAll({
+            include: [
+                {
+                    association: 'category',
+                    required: true,
+                    where: categoryFilters,
+                },
+                {
+                    association: 'belongs',
+                    required: true,
+                    where: belongsFilters,
+                },
+            ],
+            where: hardwareFilters,
             order: [
                 ['heritage']
             ],
-			include: [
-				{
-					association: 'category',
-				},
-				{
-					association: 'belongs',
-				}
-			],
-		});
+            limit,
+            offset,
+            distinct: true,
+        });
 
 		return res.json(hardwares);
 	},

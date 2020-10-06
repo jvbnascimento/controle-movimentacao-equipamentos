@@ -29,7 +29,7 @@ routes.post("/departments", DepartmentController.create);
 routes.put("/departments/:department_id", DepartmentController.update);
 routes.delete("/departments/:department_id", DepartmentController.delete);
 
-routes.get("/hardwares/detailed", HardwareController.listAllDetailedHardwares);
+routes.get("/hardwares/:limit/:offset/filters", HardwareController.listAllDetailedHardwares);
 routes.get("/hardwares", HardwareController.listAllHardwares);
 routes.get("/hardwares/description/:description", HardwareController.listAllHardwaresByDescription);
 routes.get("/hardwares/category/:name_category", HardwareController.listAllHardwaresByCategory);

@@ -173,23 +173,35 @@ body, html, #root {
 	border: 0;
 }
 .border {
-	border: 1px solid #ccc;
+    border: 1px solid;
 }
 .border_only_right {
-	border-right: 1px solid #ccc;
+	border-right: 1px solid;
 }
 .border_only_bottom {
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid;
 }
 /* BORDER COLORS */
 .border_color_black {
-    border-color: #111111;
+    border-color: #111111 !important;
+}
+.border_color_gray {
+    border-color: #ccc !important;
 }
 .border_color_verde_zimbra_hover {
-    border-color: #308f8f;
+    border-color: #308f8f !important;
 }
 .border_color_verde_zimbra_hover:hover {
-    border-color: #277373;
+    border-color: #277373 !important;
+}
+.border_color_vermelho_danger {
+    border-color: #f5c6cb !important;
+}
+.border_color_azul_info {
+    border-color: #bee5eb !important;
+}
+.border_color_amarelo_warning {
+	border-color: #ffeeba !important;
 }
 /* FONT SIZE */
 .font_size_title {

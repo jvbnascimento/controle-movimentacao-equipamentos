@@ -231,16 +231,44 @@ export default function Department() {
 						<Container className="margin_top_20 width_70" fluid={true}>
 							<ListGroupItem>
 								<Row>
-									<Col className="border_only_right padding_all_10 center" sm="2">
+                                    <Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10 center
+                                            border_color_gray
+                                        "
+                                        sm="2"
+                                    >
 										<strong>Tombamento</strong>
 									</Col>
-									<Col className="border_only_right padding_all_10 center" sm="4">
+                                    <Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10
+                                            center
+                                            border_color_gray
+                                        "
+                                        sm="4"
+                                    >
 										<strong>Descrição</strong>
 									</Col>
-									<Col className="border_only_right padding_all_10 center" sm="2">
+									<Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10
+                                            center
+                                            border_color_gray
+                                        "
+                                        sm="2">
 										<strong>Categoria</strong>
 									</Col>
-									<Col className="padding_all_10 center" sm="4">
+									<Col
+                                        className="
+                                            padding_all_10
+                                            center
+                                        "
+                                        sm="4"
+                                    >
 										<strong>Ações</strong>
 									</Col>
 								</Row>
@@ -257,22 +285,38 @@ export default function Department() {
 													className="no_padding"
 												>
 													<Col
-														className="border_only_right padding_all_10 center_vertical"
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center_vertical
+                                                            border_color_gray
+                                                        "
 														sm="2"
 													>{element.heritage}</Col>
 													<Col
 														className="
-                                        border_only_right
-                                        padding_all_10 center_vertical
-                                    "
+                                                            border_only_right
+                                                            padding_all_10 center_vertical
+                                                            border_color_gray
+                                                        "
 														sm="4"
 													>{element.description}</Col>
 													<Col
-														className="border_only_right padding_all_10 center_vertical"
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center_vertical
+                                                            border_color_gray
+                                                        "
 														sm="2"
 													>{element.category.name}</Col>
 													<Col
-														className="border_only_right padding_all_10 center"
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center
+                                                            border_color_gray
+                                                        "
 														sm="2"
 													>
 														<Link
