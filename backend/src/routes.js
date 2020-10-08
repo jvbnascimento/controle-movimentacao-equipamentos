@@ -25,6 +25,7 @@ routes.delete("/types/:type_id", TypeController.delete);
 
 routes.get("/departments", DepartmentController.listAllDepartments);
 routes.get("/departments/:department_id", DepartmentController.listDepartment);
+routes.get("/departments/name/:department_name", DepartmentController.listDepartmentByName);
 routes.post("/departments", DepartmentController.create);
 routes.put("/departments/:department_id", DepartmentController.update);
 routes.delete("/departments/:department_id", DepartmentController.delete);
@@ -50,6 +51,6 @@ routes.post("/movements", MovementController.create);
 routes.put("/movements/:movement_id", MovementController.update);
 routes.delete("/movements/:movement_id", MovementController.delete);
 
-routes.post("/login/verify/:user", LoginController.loginAuth);
+routes.post("/login/verify/", LoginController.loginAuth);
 
 module.exports = routes;

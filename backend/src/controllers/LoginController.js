@@ -5,8 +5,7 @@ const bcrypt = require('bcrypt');
 
 module.exports = {
 	async loginAuth(req, res) {
-        const { user } = req.params;
-        const { login, password }  = JSON.parse(user);
+        const { login, password } = req.body;
 
 		const verifyUser = await User.findOne({
             where: {
@@ -17,13 +16,13 @@ module.exports = {
         });
 
         if (!verifyUser) {
-            return res.status(404).json({ error: "Email doesn't exist!" });
+            return res.json({ error: "Email não cadastrado.", status: 404 });
         }
 
         if (!await bcrypt.compare(password, verifyUser.password)) {
-            return res.status(400).json({ error: "Password is wrong!" });
+            return res.json({ error: "Senha incorreta!", status: 400 });
         }
 
-        return res.status(200).json({ user: verifyUser });
+        return res.json({ user: verifyUser, status: 200 });
 	},
 }

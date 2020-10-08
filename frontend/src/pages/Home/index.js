@@ -1,13 +1,31 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React from 'react';
-// import { Container, Row, Col, ListGroupItem, ListGroup, Pagination, PaginationItem, PaginationLink, NavLink } from 'reactstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import {
+    Container,
+    Alert
+} from 'reactstrap';
+// Row,
+//     Col,
+//     ListGroupItem,
+//     ListGroup,
+//     Pagination,
+//     PaginationItem,
+//     PaginationLink,
+//     NavLink,
+import AuthContext from '../../contexts/auth';
 
 // import api from '../../services/api';
 // , { useState, useEffect }
 
 export default function ListMovement() {
-	// const [movements, setMovements] = useState([]);
+    // const [movements, setMovements] = useState([]);
+    
+    const [visible, setVisible] = useState(false);
+
+    const onDismiss = () => setVisible(false);
+
+    const {message} = useContext(AuthContext);
 
 	// useEffect(() => {
 	// 	async function getAllMovements() {
@@ -15,7 +33,16 @@ export default function ListMovement() {
 	// 		const data = await response.data;
 
 	// 		setMovements(data);
-	// 	}
+    // 	}
+    useEffect(() => {
+        function verifyMessage() {
+            if (message[0] !== '') {
+                setVisible(true);
+            }
+        }
+
+        verifyMessage();
+    }, [message]);
 
 	// 	getAllMovements();
 	// }, []);
@@ -30,9 +57,20 @@ export default function ListMovement() {
 	
 	// 	return (new_data + " " + new_horario);
     // }
-
 	return (
 		<div className='height_content'>
+            <Container className="width_30">
+                <Alert color={
+                        message[1] === 200 ?
+                        "success" :
+                        "danger"
+                    }
+                    isOpen={visible}
+                    toggle={onDismiss}
+                >
+                    {message[0]}
+                </Alert>
+            </Container>
 			{/* <h1 className="text-center"> Últimas movimentações </h1>
 			<ListGroup>
 				<Container>

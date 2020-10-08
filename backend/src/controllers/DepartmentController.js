@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const Department = require('../models/Department');
 
 module.exports = {
@@ -18,6 +20,22 @@ module.exports = {
 
 		if (!department) {
 			return res.status(404).json({ error: 'Department not found!' });
+		}
+
+		return res.json(department);
+    },
+    
+    async listDepartmentByName(req, res) {
+		const { department_name } = req.params;
+
+		const department = await Department.findOne({
+            where: {
+                name: department_name.replace("-", "/")
+            },
+        });
+
+		if (!department) {
+			return res.json({ error: 'Department not found!', status: 404 });
 		}
 
 		return res.json(department);

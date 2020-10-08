@@ -140,7 +140,7 @@ export default function Header() {
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
 						<Button
-                            className="center padding_all_20 font_color_white_hover center height_header"
+                            className="bg_color_verde_zimbra_hover center padding_all_20 center height_header no_border no_margin no_transition"
                             onClick={signOutBackLogin}
                         >
                             Sair

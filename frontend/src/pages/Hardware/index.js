@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Input,
     Container,
@@ -16,12 +16,15 @@ import {
     PaginationLink,
     PaginationItem,
     Pagination,
-    ListGroupItem
+    ListGroupItem,
+    Alert
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
 import api from '../../services/api';
+
+import AuthContext from '../../contexts/auth';
 
 export default function Hardware() {
     const [hardware, setHardwares] = useState([]);
@@ -37,6 +40,11 @@ export default function Hardware() {
     const [modal, setModal] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
 
+    const [visible, setVisible] = useState(false);
+
+    const onDismiss = () => setVisible(false);
+
+    const {message} = useContext(AuthContext);
 
     const toggle = (e) => {
         setModal(!modal)
@@ -65,6 +73,16 @@ export default function Hardware() {
 
         getAllHardwares();
     }, [pageSize, currentPage, querySearch]);
+
+    useEffect(() => {
+        function verifyMessage() {
+            if (message[0] !== '') {
+                setVisible(true);
+            }
+        }
+
+        verifyMessage();
+    }, [message]);
 
     function handleCurrentPage(e, index) {
         setCurrentPage(index);
@@ -120,6 +138,19 @@ export default function Hardware() {
                 hardware.rows.length <= 1 ?
                 "height_content" : "padding_all_10"
         }>
+            <Container className="width_30">
+                <Alert color={
+                        message[1] === 200 ?
+                        "success" :
+                        "danger"
+                    }
+                    isOpen={visible}
+                    toggle={onDismiss}
+                >
+                    {message[0]}
+                </Alert>
+            </Container>
+
             <Container className="margin_bottom_30" fluid={true}>
                 <Row>
                     <Col>

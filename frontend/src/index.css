@@ -288,6 +288,10 @@ body, html, #root {
 	display: flex;
 	align-items: center;
 }
+.center_horizontal {
+	display: flex;
+	justify-content: center;
+}
 .center_between {
     display: flex;
     justify-content: space-between;
@@ -314,4 +318,8 @@ body, html, #root {
 .index_2 {
 	z-index: 1000;
 	position: relative;
+}
+
+.no_transition {
+    transition: none;
 }

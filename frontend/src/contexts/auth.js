@@ -6,10 +6,15 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState(['', -1]);
 
     useEffect(() => {
         function loadStorageData() {
-            const storagedUser = localStorage.getItem('@RWAuth:user');
+            const storagedUser = (
+                localStorage.getItem('@RWAuth:user') ?
+                localStorage.getItem('@RWAuth:user') :
+                sessionStorage.getItem('@RWAuth:user')
+            );
             // const storagedToken = localStorage.getItem('@RWAuth:token');
 
             if (storagedUser) {
@@ -26,19 +31,27 @@ export function AuthProvider({ children }) {
 
     async function signIn(data) {
         const response = await auth.singIn(data);
-        // console.log(response)
 
-        if (response) {
-            setUser(response.user);
-
-            localStorage.setItem('@RWAuth:user', JSON.stringify(response.user));
-            // localStorage.setItem('@RWAuth:token', response.token);
+        if (response[0].data.user) {
+            setUser(response[0].data.user);
+            if (response[1] === "false") {
+                sessionStorage.setItem('@RWAuth:user', JSON.stringify(response[0].data.user));
+            }
+            else {
+                localStorage.setItem('@RWAuth:user', JSON.stringify(response[0].data.user));
+            }
+            setMessage(['Usuário logado com sucesso!', response[0].data.status]);
+        }
+        else {
+            setMessage([response[0].data.error, response[0].data.status]);
         }
     }
 
     function signOut() {
         localStorage.clear();
+        sessionStorage.clear();
         setUser(null);
+        setMessage(['Usuário deslogado com sucesso!', 200]);
     }
 
     return (
@@ -47,6 +60,8 @@ export function AuthProvider({ children }) {
                 signed: !!user,
                 user,
                 loading,
+                message,
+                setMessage,
                 signIn,
                 signOut
             }
