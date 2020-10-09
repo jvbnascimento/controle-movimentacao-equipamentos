@@ -13,7 +13,7 @@ import {
 	DropdownToggle,
 	DropdownMenu,
     NavbarText,
-    Button
+    Button,
 } from 'reactstrap';
 
 import api from '../../services/api';
@@ -22,11 +22,9 @@ import AuthContext from '../../contexts/auth';
 export default function Header() {
     const [listTypes, setTypes] = useState([]);
     const [listDepartments, setDepartments] = useState([]);
-    
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownOpen2, setDropdownOpen2] = useState(false);
-    
-    const {signOut, user} = useContext(AuthContext);
+    const {signOut, user, message } = useContext(AuthContext);
 
     const history = useHistory();
 
@@ -44,11 +42,11 @@ export default function Header() {
 		async function getAllDepartments() {
 			const response = await api.get('/departments');
 			const data = response.data;
-			setDepartments(data);
-		}
+            setDepartments(data);
+        }
 
-		getAllDepartments();
-    }, []);
+        getAllDepartments();
+    }, [message]);
     
     const toggle = () => setDropdownOpen(!dropdownOpen);
     const toggle2 = () => setDropdownOpen2(!dropdownOpen2);
@@ -60,7 +58,7 @@ export default function Header() {
 
 	return (
 		<div className="height_header">
-			<Navbar className="bg_color_verde_zimbra_no_effect no_padding height_header">
+            <Navbar className="bg_color_verde_zimbra_no_effect no_padding height_header">
 				<Nav className='font_color_white'>
 					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right height_header">
 						<Link className="font_size_title font_color_white height_header" to="/">Sistema</Link>
@@ -140,7 +138,7 @@ export default function Header() {
 
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
 						<Button
-                            className="bg_color_verde_zimbra_hover center padding_all_20 center height_header no_border no_margin no_transition"
+                            className="bg_color_verde_zimbra_hover center padding_all_20 center height_header no_border no_margin no_transition text_undeline"
                             onClick={signOutBackLogin}
                         >
                             Sair
