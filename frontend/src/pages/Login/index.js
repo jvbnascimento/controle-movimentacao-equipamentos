@@ -21,14 +21,10 @@ export default function Login() {
     const [useLogin, setUseLogin] = useState('');
     const [usePassword, setUsePassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-
     const [visible, setVisible] = useState(false);
+	const { signIn, message, setMessage } = useContext(AuthContext);
 
-    const onDismiss = () => setVisible(false);
-
-    const { signIn, message } = useContext(AuthContext);
-
-    useEffect(() => {
+	useEffect(() => {
         function verifyMessage() {
             if (message[0] !== '') {
                 setVisible(true);
@@ -36,9 +32,21 @@ export default function Login() {
         }
 
         verifyMessage();
-    }, [message])
+    }, [message]);
 
-    async function authenticate(e) {
+    const onDismiss = () => {
+		setVisible(false);
+		setMessage(['', -1]);
+	}
+
+	const handleLogin = (e) => {
+        setUseLogin(e.target.value);
+    }
+    const handlePassword = (e) => {
+        setUsePassword(e.target.value);
+    }
+
+    const authenticate = async(e) => {
         e.preventDefault();
 
         const login = e.target.email.value;
@@ -50,15 +58,7 @@ export default function Login() {
             password
         }
 
-
         signIn([user, remember_me]);
-    }
-
-    function handleLogin(e) {
-        setUseLogin(e.target.value);
-    }
-    function handlePassword(e) {
-        setUsePassword(e.target.value);
     }
 
     return (
@@ -77,11 +77,25 @@ export default function Login() {
             </Container>
 
             <Container className="height_container center width_30">
-                <Row className="border border_radius_20 padding_all_10_10_40_10 bg_color_white_zimbra">
+				<Row 
+					className="
+						border
+						border_radius_20
+						padding_all_10_10_40_10
+						bg_color_white_zimbra
+					"
+				>
                     <Col>
                         <Row>
                             <Col>
-                                <h2 className="text-center margin_top_bottom_20">Entre com suas credenciais</h2>
+                                <h2
+									className="
+										text-center
+										margin_top_bottom_20
+									"
+								>
+									Entre com suas credenciais
+								</h2>
                             </Col>
                         </Row>
 
@@ -118,7 +132,9 @@ export default function Login() {
                                                 type="checkbox"
                                                 name="remember_me"
                                                 value={rememberMe}
-                                                onChange={() => setRememberMe(!rememberMe)}
+                                                onChange={
+													() => setRememberMe(!rememberMe)
+												}
                                             />{' '}
                                             Lembrar-me
                                         </Label>

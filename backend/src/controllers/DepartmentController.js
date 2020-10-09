@@ -71,10 +71,10 @@ module.exports = {
 		});
 
 		if (!department) {
-			return res.status(404).json({ error: 'Department not found!' });
+			return res.json({ error: 'Department not found!', status: 404 });
 		}
 		if (name_exists.length != 0 && name_exists[0].name != department.name) {
-			return res.status(400).json({ error: 'Name is already being used!' });
+			return res.json({ error: 'Name is already being used!', stauts: 400 });
 		}
 
 		department.name = name;
@@ -82,7 +82,7 @@ module.exports = {
 
 		await department.save();
 
-		return res.json(department);
+		return res.json({ department, status: 200});
 	},
 
 	async delete(req, res) {

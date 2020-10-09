@@ -28,40 +28,18 @@ import AuthContext from '../../contexts/auth';
 
 export default function Hardware() {
     const [hardware, setHardwares] = useState([]);
-
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
-
     const [querySearch, setQuerySearch] = useState('');
-
     const [cSelected, setCSelected] = useState([]);
-
     const [modal, setModal] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
+	const [visible, setVisible] = useState(false);
+	const [tooltipOpen, setTooltipOpen] = useState(false);
+	const {message, setMessage} = useContext(AuthContext);
 
-    const [visible, setVisible] = useState(false);
-
-    const onDismiss = () => setVisible(false);
-
-    const {message} = useContext(AuthContext);
-
-    const toggle = (e) => {
-        setModal(!modal)
-
-        if (toggle) {
-            setHardwareToDelete([e.target.value, e.target.name]);
-        }
-        else {
-            setHardwareToDelete([-1, -1]);
-        }
-    };
-
-    const [tooltipOpen, setTooltipOpen] = useState(false);
-
-    const toggleNotification = () => setTooltipOpen(!tooltipOpen);
-
-    useEffect(() => {
+	useEffect(() => {
         async function getAllHardwares() {
             const response = await api.get(`/hardwares/${pageSize}/${currentPage}/filters?${querySearch}`);
             const data = await response.data;
@@ -84,11 +62,30 @@ export default function Hardware() {
         verifyMessage();
     }, [message]);
 
-    function handleCurrentPage(e, index) {
+    const onDismiss = () => {
+		setVisible(false);
+		setMessage(['', -1]);
+	}
+
+    const toggle = (e) => {
+        setModal(!modal)
+
+        if (toggle) {
+            setHardwareToDelete([e.target.value, e.target.name]);
+        }
+        else {
+            setHardwareToDelete([-1, -1]);
+        }
+    };
+
+    const toggleNotification = () => setTooltipOpen(!tooltipOpen);
+
+    const handleCurrentPage = (e, index) => {
+		e.preventDefault();
         setCurrentPage(index);
     }
 
-    function handleSizePage(e) {
+    const handleSizePage = (e) => {
         setPageSize(parseInt(e.target.value));
         setPageCounts(Math.ceil(hardware.count / parseInt(pageSize)));
     }
@@ -103,13 +100,13 @@ export default function Hardware() {
         setCSelected([...cSelected]);
     }
 
-    async function deleteHardware() {
+    const deleteHardware = async () => {
         await api.delete(`/hardwares/${hardwareToDelete[0]}`);
 
         window.location.reload();
     }
 
-    function handleValueInput(e) {
+    const handleValueInput = (e) => {
         const body = e.target.value.split(";").map(element => {
             return (element)
         });

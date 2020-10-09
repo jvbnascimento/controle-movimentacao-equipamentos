@@ -20,21 +20,10 @@ import AuthContext from '../../contexts/auth';
 
 export default function ListMovement() {
     // const [movements, setMovements] = useState([]);
-    
     const [visible, setVisible] = useState(false);
+	const {message, setMessage} = useContext(AuthContext);
 
-    const onDismiss = () => setVisible(false);
-
-    const {message} = useContext(AuthContext);
-
-	// useEffect(() => {
-	// 	async function getAllMovements() {
-	// 		const response = await api.get('/users');
-	// 		const data = await response.data;
-
-	// 		setMovements(data);
-    // 	}
-    useEffect(() => {
+	useEffect(() => {
         function verifyMessage() {
             if (message[0] !== '') {
                 setVisible(true);
@@ -43,6 +32,20 @@ export default function ListMovement() {
 
         verifyMessage();
     }, [message]);
+
+    const onDismiss = () => {
+		setVisible(false);
+		setMessage(['', -1]);
+	}
+	
+	// useEffect(() => {
+	// 	async function getAllMovements() {
+	// 		const response = await api.get('/users');
+	// 		const data = await response.data;
+
+	// 		setMovements(data);
+    // 	}
+    
 
 	// 	getAllMovements();
 	// }, []);

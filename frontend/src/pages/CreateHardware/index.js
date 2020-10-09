@@ -74,7 +74,7 @@ export default function EditHardware() {
         }
 
         verifyMessage();
-    }, [message])
+    }, [message]);
 
     async function createHardware() {
         const type_id = category;

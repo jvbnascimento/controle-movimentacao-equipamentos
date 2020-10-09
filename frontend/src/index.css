@@ -319,7 +319,11 @@ body, html, #root {
 	z-index: 1000;
 	position: relative;
 }
-
+/* TRANSITION */
 .no_transition {
     transition: none;
+}
+/* DECORATION */
+.text_undeline:hover{
+	text-decoration: underline;	
 }
