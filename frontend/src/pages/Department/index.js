@@ -34,11 +34,13 @@ export default function Department() {
     const [pagesCount, setPageCounts] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
-    const [modalEditDepartment, setModalEditDepartment] = useState(false);
+	const [modalEditDepartment, setModalEditDepartment] = useState(false);
+	const [modalDeleteDepartment, setModalDeleteDepartment] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
+    const [departmentToDelete, setDepartmentToDelete] = useState([-1, -1]);
     const [validDepartmentName, setValidDepartmentName] = useState(true);
     const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
-    const [visible, setVisible] = useState(false);
+	const [visible, setVisible] = useState(false);
     const { message, setMessage } = useContext(AuthContext);
 
     const search = useParams();
@@ -97,6 +99,17 @@ export default function Department() {
         else {
             setHardwareToDelete([-1, -1]);
         }
+	};
+	
+	const toggleModalDeleteDepartment = (e) => {
+        setModalDeleteDepartment(!modalDeleteDepartment)
+
+        if (toggleModalDeleteDepartment) {
+            setDepartmentToDelete([e.target.value, e.target.name]);
+        }
+        else {
+            setDepartmentToDelete([-1, -1]);
+        }
     };
 
     const handleSizePage = (e) => {
@@ -107,8 +120,8 @@ export default function Department() {
     const handleCurrentPage = (e, index) => {
         e.preventDefault();
         setCurrentPage(index);
-    }
-    // MELHORAR ESSA PARTE
+	}
+	
     const handleDepartmentName = (e) => {
         const verifyDepartmentName = e.target.value;
 
@@ -199,8 +212,9 @@ export default function Department() {
                 <Alert color={
                     message[1] === 200 ?
                         "success" :
-                        message[1] !== -1 &&
-                        "danger"
+                        message[1] !== -1 ?
+						"danger"
+						: ''
                 }
                     isOpen={visible}
                     toggle={onDismiss}
@@ -257,7 +271,10 @@ export default function Department() {
                         </Col>
                         <Col sm="auto" className="center">
                             <Button
-                                color="danger"
+								color="danger"
+								onClick={toggleModalDeleteDepartment}
+								value={department.id}
+								name={department.name}
                             >
                                 Deletar
                             </Button>
@@ -277,7 +294,7 @@ export default function Department() {
                                             <Col sm="16">
                                                 <h1 className="text-center">
                                                     Lista de equipamentos cadastrados ({listCategory.count})
-									</h1>
+												</h1>
                                             </Col>
                                         </Row>
 
@@ -420,9 +437,11 @@ export default function Department() {
                                     listCategory.rows.length !== 0 ?
                                     listCategory.rows.map(element => {
                                         return (
-                                            <ListGroupItem className="margin_top_bottom_10">
+											<ListGroupItem
+												className="margin_top_bottom_10"
+												key={element.id}
+											>
                                                 <Row
-                                                    key={element.id}
                                                     className="no_padding"
                                                 >
                                                     <Col
@@ -629,7 +648,7 @@ export default function Department() {
 
                 <ModalFooter>
                     <Button
-                        color="primary"
+						className="bg_color_verde_zimbra"
                         onClick={saveEditDepartment}
                     >
                         Salvar Alterações
@@ -640,6 +659,20 @@ export default function Department() {
                     >
                         Cancelar
 					</Button>
+                </ModalFooter>
+            </Modal>
+
+			<Modal isOpen={modalDeleteDepartment} toggle={toggleModalDeleteDepartment}>
+                <ModalHeader toggle={toggleModalDeleteDepartment}>Deletar departamento</ModalHeader>
+                <ModalBody>
+                    Tem certeza que desejar&nbsp;
+					<strong className="font_color_danger">DELETAR</strong>
+					&nbsp;o departamento&nbsp;
+					<strong className="font_color_danger">{departmentToDelete[1]}</strong>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={() => {}}>Sim</Button>
+                    <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteDepartment}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
         </div>

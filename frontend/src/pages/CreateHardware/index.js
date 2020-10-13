@@ -224,7 +224,7 @@ export default function EditHardware() {
                                                 className="margin_bottom_20"
                                                 invalid
                                             />
-                                            <FormFeedback invalid>
+                                            <FormFeedback>
                                                 O campo <strong>TOMBAMENTO</strong> tem que ser no formato <strong>XX-XXXX ou XX-XXXXX.</strong>
                                             </FormFeedback>
                                         </>
@@ -285,7 +285,7 @@ export default function EditHardware() {
                                                 className="margin_bottom_20"
                                                 invalid
                                             />
-                                            <FormFeedback invalid>O campo <strong>DESCRIÇÃO</strong> não pode ser vazio.</FormFeedback>
+                                            <FormFeedback>O campo <strong>DESCRIÇÃO</strong> não pode ser vazio.</FormFeedback>
                                         </>
                                 }
                             </FormGroup>
@@ -319,7 +319,7 @@ export default function EditHardware() {
                                                 className="margin_bottom_20"
                                                 invalid
                                             />
-                                            <FormFeedback invalid>O campo <strong>MARCA</strong> não pode ser vazio.</FormFeedback>
+                                            <FormFeedback>O campo <strong>MARCA</strong> não pode ser vazio.</FormFeedback>
                                         </>
                                 }
                             </FormGroup>

@@ -38,7 +38,6 @@ export default function Movements() {
             const data = await response.data;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
-
             setMovements(data);
         }
 
@@ -194,11 +193,11 @@ export default function Movements() {
 									border_color_verde_zimbra_hover
 									bg_color_verde_zimbra
 								"
-                                onClick={() => onCheckboxBtnClick('department')}
-                                active={cSelected.includes('department')}
+                                onClick={() => onCheckboxBtnClick('belongs')}
+                                active={cSelected.includes('belongs')}
                                 title="Filtrar por departamento"
                             >Departamento</Button>
-                            <Button
+                            {/* <Button
                                 className="
 									margin_left_right_05
 									border_color_verde_zimbra_hover
@@ -207,7 +206,7 @@ export default function Movements() {
                                 onClick={() => onCheckboxBtnClick('date_movement')}
                                 active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
-                            >Data</Button>
+                            >Data</Button> */}
                         </ButtonGroup>
                     </Col>
                 </Row>
@@ -461,8 +460,9 @@ export default function Movements() {
                                 </Container>
                             )
                         }) :
-                        movements !== undefined && movements.length !== 0 ?
-                            movements.map(element => {
+						movements.rows !== undefined &&
+						movements.rows.length !== 0 ?
+                            movements.rows.map(element => {
                                 return (
                                     <Container key={element.id}>
                                         <Row className="center margin_top_bottom_20">

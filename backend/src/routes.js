@@ -33,7 +33,7 @@ routes.delete("/departments/:department_id", DepartmentController.delete);
 routes.get("/hardwares/:limit/:offset/filters", HardwareController.listAllDetailedHardwares);
 routes.get("/hardwares", HardwareController.listAllHardwares);
 routes.get("/hardwares/description/:description", HardwareController.listAllHardwaresByDescription);
-routes.get("/hardwares/category/:name_category", HardwareController.listAllHardwaresByCategory);
+routes.get("/hardwares/category/:name_category/:limit/:offset", HardwareController.listAllHardwaresByCategory);
 routes.get("/hardwares/heritage/:heritage", HardwareController.listHardwareByHeritage);
 routes.get("/hardwares/department/:department_id", HardwareController.listHardwareByDepartment);
 routes.get("/hardwares/department/:department_name/:limit/:offset", HardwareController.listHardwareByDepartmentName);

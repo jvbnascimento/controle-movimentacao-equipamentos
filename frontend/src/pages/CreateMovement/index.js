@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
 	Form,
@@ -17,20 +17,19 @@ import {
 import { BsPlusCircleFill } from 'react-icons/bs';
 
 import api from '../../services/api';
+import AuthContext from '../../contexts/auth';
 
 export default function CreateMovement() {
     const [hardwares, setHardwares] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [listHardwares, setListHardwares] = useState([]);
-
     const [date_movement, setDateMovement] = useState('');
     const [responsible, setReponsible] = useState(1);
     const [destination_department, setDestinationDepartment] = useState(1);
     const [origin_department, setOriginDepartment] = useState(1);
-
     const history = useHistory();
+    const { user, message, setMessage } = useContext(AuthContext);
 
-    const user = JSON.parse(localStorage.getItem('user'));
 
     useEffect(() => {
         async function getAllHardwares() {
@@ -60,7 +59,7 @@ export default function CreateMovement() {
         getAllDepartments();
     }, []);
 
-    function addHardware(e) {
+    const addHardware = (e) => {
         e.preventDefault();
 
         if (parseInt(e.target.hardwares.value) !== 0) {
@@ -76,7 +75,7 @@ export default function CreateMovement() {
         }
     }
 
-    function removeHardware(e) {
+    const removeHardware = (e) => {
         e.preventDefault();
 
         if (parseInt(e.target.value) !== 0) {
@@ -93,28 +92,33 @@ export default function CreateMovement() {
         }
     }
 
-    function handleDateMovement(e) {
+    const handleDateMovement = (e) => {
         setDateMovement(e.target.value);
     }
-    function handleResponsible(e) {
+    const handleResponsible = (e) => {
         setReponsible(parseInt(e.target.value));
     }
-    function handleDestinationDepartment(e) {
+    const handleDestinationDepartment = (e) => {
         setDestinationDepartment(parseInt(e.target.value));
         
     }
-    function handleOriginDepartment(e) {
+    const handleOriginDepartment = (e) => {
         setOriginDepartment(parseInt(e.target.value));
 
         const destinationDepartmentId = departments.filter(department => {
-            return department && department.id !== parseInt(e.target.value);
+            return (
+				department &&
+				department.id !== parseInt(e.target.value)
+			);
         });
 
         setDestinationDepartment(destinationDepartmentId[0].id);
     }
 
-    async function createMovement() {
-        const id_hardwares = listHardwares.map(element => { return { "id": element.id } });
+	const createMovement = async () => {
+        const id_hardwares = listHardwares.map(element => {
+			return { "id": element.id } 
+		});
 
         const data = {
             date_movement,
@@ -124,21 +128,32 @@ export default function CreateMovement() {
             hardwares: id_hardwares
 		}
 
-        await api.post('/movements', data);
-
-        history.goBack();
+		await api.post('/movements', data);
+		
+		setMessage(['Movimentação criada com sucesso!', 200]);
+		
+		history.goBack();
     }
 
     return (
         <div 
-            className={listHardwares.length === 0 ? "height_content" : ""}
+            className={
+				listHardwares.length === 0 ?
+				"height_content" :
+				""
+			}
         >
             <h1 className="text-center"> Criar uma nova movimentação </h1>
 
             <Container className="width_40">
                 <Row>
                     <Col>
-                        <Label className="margin_top_10" for="labelDate">Data da movimentação</Label>
+						<Label
+							className="margin_top_10"
+							for="labelDate"
+						>
+							Data da movimentação
+						</Label>
                         <Input
                             type="date"
                             name="date_movement"
@@ -149,7 +164,12 @@ export default function CreateMovement() {
                             className="margin_bottom_20"
                         />
 
-                        <Label className="margin_top_10" for="labelResponsible">Responsável</Label>
+						<Label
+							className="margin_top_10"
+							for="labelResponsible"
+						>
+							Responsável
+						</Label>
                         <Input
                             type="text"
                             name="responsible_id"
@@ -161,7 +181,12 @@ export default function CreateMovement() {
                             readOnly
                         />
 
-                        <Label className="margin_top_10" for="labelNextDepartment">Departamento destino</Label>
+						<Label
+							className="margin_top_10"
+							for="labelNextDepartment"
+						>
+							Departamento destino
+						</Label>
                         <Input
                             type="select"
                             name="destination_department_id"
@@ -172,21 +197,34 @@ export default function CreateMovement() {
                             required
                         >
                             {
-                                departments !== undefined && departments.length !== 0 ?
+								departments !== undefined &&
+								departments.length !== 0 ?
                                     departments.filter(department => {
-                                        return department && department.id !== origin_department;
+										return (
+											department &&
+											department.id !== origin_department
+										);
                                     }).map(element => {
                                         return (
                                             <option
                                                 key={element.id}
                                                 value={element.id}
-                                            >{element.name} | {element.boss}</option>
+                                            >
+												{element.name} | {' '}
+												{element.boss
+											}</option>
                                         );
-                                    }) : ''
+									})
+								: ''
                             }
                         </Input>
 
-                        <Label className="margin_top_10" for="labelPreviousDepartment">Departamento original</Label>
+						<Label
+							className="margin_top_10"
+							for="labelPreviousDepartment"
+						>
+							Departamento original
+						</Label>
                         <Input
                             type="select"
                             name="origin_department_id"
@@ -196,22 +234,31 @@ export default function CreateMovement() {
                             className="margin_bottom_20"
                         >
                             {
-                                departments !== undefined && departments.length !== 0 ?
+								departments !== undefined &&
+								departments.length !== 0 ?
                                     departments.map(element => {
                                         return (
                                             <option
                                                 key={element.id}
                                                 value={element.id}
-                                            >{element.name} | {element.boss}</option>
+                                            >
+												{element.name} | {' '}
+												{element.boss}
+											</option>
                                         );
                                     })
-                                    : ''
+								: ''
                             }
                         </Input>
 
                         <Form onSubmit={addHardware}>
                             <FormGroup>
-                                <Label className="margin_top_10" for="labelAddHardware">Adicionar equipamentos</Label>
+								<Label
+									className="margin_top_10"
+									for="labelAddHardware"
+								>
+									Adicionar equipamentos
+								</Label>
                                 <Row className="center_between">
                                     <Col sm="9">
                                         <Input
@@ -225,7 +272,8 @@ export default function CreateMovement() {
                                                 value={0}
                                             >SELECIONAR EQUIPAMENTO</option>
                                             {
-                                                hardwares !== undefined && hardwares.length !== 0 ?
+												hardwares !== undefined &&
+												hardwares.length !== 0 ?
                                                     hardwares.filter(
 														({ id: id1 }) => 
 														!listHardwares.some(
@@ -236,10 +284,13 @@ export default function CreateMovement() {
                                                             <option
                                                                 key={element.id}
                                                                 value={element.id}
-                                                            >{element.heritage.replace("-", "")} | {element.description}</option>
+                                                            >
+																{element.heritage.replace("-", "")} | {' '} 
+																{element.description}
+															</option>
                                                         );
                                                     })
-                                                    : ''
+												: ''
                                             }
                                         </Input>
                                     </Col>
@@ -259,9 +310,15 @@ export default function CreateMovement() {
                         </Form>
 
                         {
-                            listHardwares !== undefined && listHardwares.length !== 0 ?
+							listHardwares !== undefined &&
+							listHardwares.length !== 0 ?
                                 <>
-                                    <Label className="margin_top_10" for="labelDepartment">Lista de equipamentos para movimentação</Label>
+                                    <Label
+										className="margin_top_10"
+										for="labelDepartment"
+									>
+										Lista de equipamentos para movimentação
+									</Label>
                                     <ListGroup>
                                         <div className="max_height_100">
                                             {
@@ -269,12 +326,28 @@ export default function CreateMovement() {
                                                     return (
                                                         <ListGroupItem key={hardware.id}>
                                                             <Row>
-                                                                <Col sm="auto" className="center border_only_right">{hardware.heritage}</Col>
-                                                                <Col>{hardware.description}</Col>
-                                                                <Col sm="auto" className="center">
+                                                                <Col
+																	sm="auto"
+																	className="
+																		center
+																		border_only_right
+																	"
+																>
+																	{hardware.heritage}
+																</Col>
+                                                                <Col>
+																	{hardware.description}
+																</Col>
+																<Col
+																	sm="auto"
+																	className="center"
+																>
                                                                     <Button
                                                                         value={hardware.id}
-                                                                        onClick={removeHardware}>Remover</Button>
+                                                                        onClick={removeHardware}
+																	>
+																		Remover
+																	</Button>
                                                                 </Col>
                                                             </Row>
                                                         </ListGroupItem>

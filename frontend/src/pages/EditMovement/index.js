@@ -351,7 +351,7 @@ export default function EditHardware() {
 												<>
 													<Label className="margin_top_10" for="labelDepartment">Lista de equipamentos para movimentação</Label>
 													<ListGroup>
-														<div className="max_height">
+														<div className="max_height_100">
 															{
 																listHardwares.map(hardware => {
 																	return (

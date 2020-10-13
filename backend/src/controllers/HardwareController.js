@@ -46,9 +46,11 @@ module.exports = {
         }
         if (filters.belongs) {
             belongsFilters.name = {
-                [Op.like]: `${filters.belongs.toUpperCase()}`
+                [Op.like]: `%${filters.belongs.toUpperCase()}%`
             }
-        }
+		}
+		
+		console.log(belongsFilters);
 
 		const hardwares = await Hardware.findAndCountAll({
             include: [
@@ -69,7 +71,8 @@ module.exports = {
             ],
             limit,
             offset,
-            distinct: true,
+			distinct: true,
+			subQuery: false
         });
 
 		return res.json(hardwares);
@@ -113,9 +116,9 @@ module.exports = {
 	},
 
 	async listAllHardwaresByCategory(req, res) {
-		const { name_category } = req.params;
+		const { name_category, limit, offset } = req.params;
 
-		const hardwares = await Hardware.findAll({
+		const hardwares = await Hardware.findAndCountAll({
 			include: [
 				{
 					association: 'category',
@@ -129,6 +132,13 @@ module.exports = {
 					association: 'belongs',
 				}
 			],
+			order: [
+				['heritage']
+			],
+			limit,
+			offset,
+			distinct: true,
+			subQuery: false
 		});
 
 		return res.json(hardwares);

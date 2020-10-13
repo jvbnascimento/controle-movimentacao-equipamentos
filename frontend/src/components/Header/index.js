@@ -12,21 +12,19 @@ import {
 	DropdownItem,
 	DropdownToggle,
 	DropdownMenu,
-    NavbarText,
-    Button,
+	NavbarText,
 } from 'reactstrap';
 
 import api from '../../services/api';
 import AuthContext from '../../contexts/auth';
 
 export default function Header() {
-    const [listTypes, setTypes] = useState([]);
-    const [listDepartments, setDepartments] = useState([]);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [dropdownOpen2, setDropdownOpen2] = useState(false);
-    const {signOut, user, message } = useContext(AuthContext);
-
-    const history = useHistory();
+	const [listTypes, setTypes] = useState([]);
+	const [listDepartments, setDepartments] = useState([]);
+	const [dropdownDepartments, setDropdownDepartments] = useState(false);
+	const [dropdownTypes, setDropdownTypes] = useState(false);
+	const { signOut, user, message } = useContext(AuthContext);
+	const history = useHistory();
 
 	useEffect(() => {
 		async function getAllTypes() {
@@ -36,126 +34,321 @@ export default function Header() {
 		}
 
 		getAllTypes();
-    }, []);
+	}, []);
 
 	useEffect(() => {
 		async function getAllDepartments() {
 			const response = await api.get('/departments');
 			const data = response.data;
-            setDepartments(data);
-        }
+			setDepartments(data);
+		}
 
-        getAllDepartments();
-    }, [message]);
-    
-    const toggle = () => setDropdownOpen(!dropdownOpen);
-    const toggle2 = () => setDropdownOpen2(!dropdownOpen2);
+		getAllDepartments();
+	}, [message]);
 
-    function signOutBackLogin() {
-        signOut();
-        history.push('/');
-    }
+	const toggleDepartments = () => {
+		setDropdownDepartments(!dropdownDepartments)
+	};
+	const toggleTypes = () => {
+		setDropdownTypes(!dropdownTypes)
+	};
+
+	const signOutBackLogin = () => {
+		signOut();
+		history.push('/');
+	}
 
 	return (
 		<div className="height_header">
-            <Navbar className="bg_color_verde_zimbra_no_effect no_padding height_header">
+			<Navbar className="
+					bg_color_verde_zimbra_no_effect
+					no_padding
+					height_header
+				"
+			>
 				<Nav className='font_color_white'>
-					<NavItem className="bg_color_verde_escuro_zimbra padding_all_20 border_only_right height_header">
-						<Link className="font_size_title font_color_white height_header" to="/">Sistema</Link>
+					<NavItem
+						className="
+							bg_color_verde_escuro_zimbra
+							padding_all_20
+							border_only_right
+							height_header
+						"
+					>
+						<Link
+							className="
+								font_size_title
+								font_color_white
+								height_header
+							"
+							to="/"
+						>
+							Sistema
+						</Link>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<Link className="center padding_all_20 font_color_white_hover height_header" to="/hardware">Equipamentos</Link>
+					<NavItem
+						className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+					>
+						<Link
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								height_header
+							"
+							to="/hardware"
+						>
+							Equipamentos
+						</Link>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<Link className="center padding_all_20 font_color_white_hover height_header" to="/movements">Movimentações</Link>
+					<NavItem
+						className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+					>
+						<Link
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								height_header
+							"
+							to="/movements"
+						>
+							Movimentações
+						</Link>
 					</NavItem>
 
-					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownOpen} toggle={toggle}>
-						<DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
+					<Dropdown
+						className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+						nav
+						isOpen={dropdownDepartments}
+						toggle={toggleDepartments}
+					>
+						<DropdownToggle
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								height_header
+							"
+							nav
+							caret
+						>
 							Departamentos
           				</DropdownToggle>
 
-						<DropdownMenu className="bg_color_verde_zimbra no_padding max_height_500">
-							{listDepartments !== undefined ?
+						<DropdownMenu
+							className="
+								bg_color_verde_zimbra
+								no_padding
+								max_height_500
+							"
+						>
+							{
+								listDepartments !== undefined ?
 								listDepartments.map(element => {
 									return (
-										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
+										<DropdownItem
+											className="
+												bg_color_verde_zimbra_hover
+												no_padding
+											"
+											key={element.id}
+										>
 											<Link
-                                                className="center_vertical font_color_white_hover"
-                                                to={`/department/${element.name.replace("/", "-")}`}
-                                            >
+												className="
+													center_vertical
+													font_color_white_hover
+												"
+												to={`/department/${element.name.replace("/", "-")}`}
+											>
 												<NavItem
-                                                    className="padding_all_10"
-                                                >{element.name}</NavItem>
-                                            </Link>
+													className="padding_all_10"
+												>
+													{element.name}
+												</NavItem>
+											</Link>
 										</DropdownItem>)
-								}) : ''
+								})
+								: ''
 							}
 							<DropdownItem divider className="no_margin" />
-							<DropdownItem className="bg_color_verde_zimbra_hover no_padding">
-								<NavItem>
-									<NavLink className="font_color_white_hover" href="#">CRIA ITEM</NavLink>
-								</NavItem>
+							<DropdownItem
+								className="
+									bg_color_verde_zimbra_hover
+									no_padding
+								"
+							>
+								<Link
+									className="
+										center_vertical
+										font_color_white_hover
+									"
+									to="#"
+								>
+									<NavItem
+										className="padding_all_10"
+									>
+										CRIAR DEPARTAMENTO
+									</NavItem>
+								</Link>
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 
-					<Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownOpen2} toggle={toggle2}>
-						<DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
+					<Dropdown
+						className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+						nav
+						isOpen={dropdownTypes}
+						toggle={toggleTypes}
+					>
+						<DropdownToggle
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								height_header
+							"
+							nav
+							caret
+						>
 							Tipos
           				</DropdownToggle>
 
-						<DropdownMenu className="bg_color_verde_zimbra no_padding">
-							{listTypes !== undefined ?
+						<DropdownMenu
+							className="
+								bg_color_verde_zimbra
+								no_padding
+							"
+						>
+							{
+								listTypes !== undefined ?
 								listTypes.map(element => {
 									return (
-										<DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
+										<DropdownItem
+											className="
+												bg_color_verde_zimbra_hover
+												no_padding
+											"
+											key={element.id}
+										>
 											<Link
-                                                className="center_vertical font_color_white_hover"
-                                                to={`/hardware/${element.name}`}
-                                            >
+												className="
+													center_vertical
+													font_color_white_hover
+												"
+												to={`/hardware/${element.name}`}
+											>
 												<NavItem
-                                                    className="padding_all_10"
-                                                >{element.name}</NavItem>
-                                            </Link>
+													className="padding_all_10"
+												>
+													{element.name}
+												</NavItem>
+											</Link>
 										</DropdownItem>)
-								}) : ''
+								})
+								: ''
 							}
 							<DropdownItem divider className="no_margin" />
-							<DropdownItem className="bg_color_verde_zimbra_hover no_padding">
-								<NavItem>
-									<NavLink className="font_color_white_hover" href="#">CRIA ITEM</NavLink>
-								</NavItem>
+							<DropdownItem
+								className="
+									bg_color_verde_zimbra_hover
+									no_padding
+								"
+							>
+								<Link
+									className="
+										center_vertical
+										font_color_white_hover
+									"
+									to="#"
+								>
+									<NavItem
+										className="padding_all_10"
+									>
+										CRIAR CATEGORIA
+									</NavItem>
+								</Link>
 							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<NavLink className="center padding_all_20 font_color_white_hover center height_header" href="#">Usuários</NavLink>
+					<NavItem
+						className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+					>
+						<NavLink
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								center
+								height_header
+							"
+							href="#"
+						>
+							Usuários
+						</NavLink>
 					</NavItem>
 
-					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<Button
-                            className="bg_color_verde_zimbra_hover center padding_all_20 center height_header no_border no_margin no_transition text_undeline"
-                            onClick={signOutBackLogin}
-                        >
-                            Sair
-                        </Button>
+					<NavItem className="
+							center
+							bg_color_verde_zimbra_hover
+							margin_left_right_1
+							height_header
+						"
+					>
+						<Link
+							className="
+								center
+								padding_all_20
+								font_color_white_hover
+								center
+								height_header
+							"
+							to="#"
+							onClick={signOutBackLogin}
+						>
+							Sair
+                        </Link>
 					</NavItem>
 				</Nav>
-                            
-                <NavbarText
-                    className="
+
+				<NavbarText
+					className="
                         text-right
                         padding_all_20
                         center
                         height_header
                     "
-                >
-                    <strong>{user.name}</strong>
-                </NavbarText>
+				>
+					<strong>{user.name}</strong>
+				</NavbarText>
 			</Navbar>
 		</div>
 	);

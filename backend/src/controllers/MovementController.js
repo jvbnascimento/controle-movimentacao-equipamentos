@@ -175,7 +175,6 @@ module.exports = {
             let belongsFilters = {}
             let categoryFilters = {}
 
-
             if (filters.heritage) {
                 hardwareFilters.heritage = {
                     [Op.like]: `%${filters.heritage}%`
@@ -208,14 +207,14 @@ module.exports = {
             }
             if (filters.belongs) {
                 belongsFilters.name = {
-                    [Op.like]: `${filters.belongs}`
+                    [Op.like]: `%${filters.belongs.toUpperCase()}%`
                 }
             }
-            if (filters.date_movement) {
-                movementFilters.date_movement = {
-                    [Op.eq]: `${filters.date_movement}`
-                }
-            }
+            // if (filters.date_movement) {
+            //     movementFilters.date_movement = {
+            //         [Op.like]: `%${filters.date_movement}%`
+            //     }
+            // }
 
             const movements = await Movement.findAndCountAll({
                 include: [
@@ -252,7 +251,7 @@ module.exports = {
                             {
                                 model: Department,
                                 as: "belongs",
-                                required: false,
+                                required: true,
 								where: belongsFilters,
                             },
                         ]
@@ -264,7 +263,8 @@ module.exports = {
                 ],
                 limit,
                 offset,
-                distinct: true,
+				distinct: true,
+				subQuery: false,
             });
 
             // const params = [];

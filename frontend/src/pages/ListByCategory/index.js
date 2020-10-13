@@ -10,7 +10,12 @@ import {
     Modal,
     ModalHeader,
     ModalBody,
-    ModalFooter
+	ModalFooter,
+	Input,
+	Pagination,
+	PaginationItem,
+	PaginationLink,
+	ListGroupItem
 } from 'reactstrap';
 
 import api from '../../services/api';
@@ -18,166 +23,358 @@ import api from '../../services/api';
 export default function ListByCategory() {
     const search = useParams();
 
-    const [listCategory, setListCategory] = useState([]);
+	const [listCategory, setListCategory] = useState([]);
+	const [pageSize, setPageSize] = useState(10);
+    const [pagesCount, setPageCounts] = useState(0);
+	const [currentPage, setCurrentPage] = useState(0);
+	const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
+    const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
 
     useEffect(() => {
         async function getAll() {
-            const response = await api.get(`/hardwares/category/${search.category}`);
-            const data = await response.data;
+            const response = await api.get(`/hardwares/category/${search.category}/${pageSize}/${currentPage}`);
+			const data = await response.data;
 
+			setPageCounts(Math.ceil((data.count) / pageSize));
             setListCategory(data);
         }
 
         getAll();
-    }, [search.category]);
+    }, [search.category, pageSize, currentPage]);
 
-    const [modal, setModal] = useState(false);
-    const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
+    const toggleModalDeleteHardware = (e) => {
+        setModalDeleteHardware(!modalDeleteHardware)
 
-
-    const toggle = (e) => {
-        setModal(!modal)
-
-        if (toggle) {
+        if (toggleModalDeleteHardware) {
             setHardwareToDelete([e.target.value, e.target.name]);
         }
         else {
             setHardwareToDelete([-1, -1]);
         }
-    };
+	};
+	
+	const handleSizePage = (e) => {
+        setPageSize(parseInt(e.target.value));
+        setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
+    }
 
-    async function deleteHardware() {
+    const handleCurrentPage = (e, index) => {
+        e.preventDefault();
+        setCurrentPage(index);
+	}
+
+    const deleteHardware = async () => {
         await api.delete(`/hardwares/${hardwareToDelete[0]}`);
 
         window.location.reload();
     }
 
     return (
-        <div className='height_content'>
-            <h3 className="margin_top_20 text-center"> Lista de equipamentos cadastrados - Categoria: {search.category} ({listCategory.length}) </h3>
+        <div className={
+            listCategory.rows !== undefined &&
+                listCategory.rows.length <= 3 ?
+                "height_content" : "padding_all_10"
+        }>
+            {
+                listCategory.rows !== undefined &&
+				listCategory.rows.length !== 0 ?
+                    <>
+                        <Container className="center margin_top_100">
+                            <Row>
+                                <Col>
+                                    <Container>
+                                        <Row>
+                                            <Col sm="16">
+                                                <h1 className="text-center">
+                                                    Lista de equipamentos cadastrados ({listCategory.count})
+												</h1>
+                                            </Col>
+                                        </Row>
 
-            <Container className="margin_top_10" fluid={true}>
-                <Row className="border">
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Tombamento</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="3">
-                        <strong>Descrição</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Marca</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Garantia</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Office</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Categoria</strong>
-                    </Col>
-                    <Col className="border_only_right padding_all_10 center_vertical" sm="1">
-                        <strong>Departamento</strong>
-                    </Col>
-                    <Col className="padding_all_10 center_vertical border_only_right" sm="1">
-                        <strong>Chefe</strong>
-                    </Col>
-                    <Col className="padding_all_10 center" sm="2">
-                        <strong>Ações</strong>
-                    </Col>
-                </Row>
-
-                {listCategory !== undefined && listCategory.length !== 0 ?
-                    listCategory.map(element => {
-                        return (
-                            <Row
-                                key={element.id}
-                                className="no_padding border"
-                            >
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.heritage}</Col>
-                                {
-                                    element.auction ?
-                                        <Col
-                                            className="
-                                            border_only_right
-                                            padding_all_10 center_vertical
-                                            bg_color_vermelho_danger
-                                        "
-                                            sm="3"
-                                        > {element.description} </Col>
-                                        :
-                                        element.belongs.name === "COTEC/INFRA" ?
-                                            <Col
-                                                className="
-                                        border_only_right
-                                        padding_all_10
-                                        center_vertical
-                                        bg_color_azul_info
-                                    "
-                                                sm="3"
-                                            > {element.description}</Col>
-                                            :
-                                            <Col
-                                                className="
-                                        border_only_right
-                                        padding_all_10
-                                        center_vertical
-                                        bg_color_amarelo_warning
-                                    "
-                                                sm="3"
-                                            > {element.description}</Col>
-                                }
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.brand}</Col>
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.warranty}</Col>
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.has_office}</Col>
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.category.name}</Col>
-                                <Col
-                                    className="border_only_right padding_all_10 center_vertical"
-                                    sm="1"
-                                >{element.belongs.name}</Col>
-                                <Col
-                                    className="padding_all_10 center_vertical border_only_right"
-                                    sm="1"
-                                >{element.belongs.boss}</Col>
-                                <Col
-                                    className="border_only_right padding_all_10 center"
-                                    sm="1"
-                                >
-                                    <Link
-                                        className="font_color_verde_zimbra_hover"
-                                        to={`/hardware/edit/${element.id}`}
-                                    >Editar</Link>
-                                </Col>
-                                <Col
-                                    className="padding_all_10 center"
-                                    sm="1"
-                                >
-                                    <Button
-                                        onClick={toggle}
-                                        color="danger"
-                                        value={element.id}
-                                        name={element.heritage}
-                                    >Deletar</Button>
+                                        <Row className="right margin_top_10">
+                                            <Col>
+                                                <span>Quantidade de itens mostrados</span>
+                                            </Col>
+                                            <Col sm="auto">
+                                                <Input
+                                                    type="select"
+                                                    name="pageSize"
+                                                    id="labelPageSize"
+                                                    value={pageSize}
+                                                    onChange={handleSizePage}
+                                                >
+                                                    <option key={0} value={5}>5</option>
+                                                    <option key={1} value={10}>10</option>
+                                                    <option key={2} value={20}>20</option>
+                                                    <option key={3} value={listCategory.count}>Tudo</option>
+                                                </Input>
+                                            </Col>
+                                        </Row>
+                                    </Container>
                                 </Col>
                             </Row>
-                        );
-                    }) :
-                    <Row className="center">
+                        </Container>
+
+                        {
+                            listCategory.rows !== undefined &&
+                                listCategory.rows.length !== 0 ?
+                                <Pagination
+                                    className="margin_top_20 center"
+                                    aria-label="Page navigation example"
+                                >
+                                    <PaginationItem disabled={currentPage <= 0}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            first
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, 0)}
+                                        />
+                                    </PaginationItem>
+
+                                    <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            previous
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, currentPage - pageSize)}
+                                        />
+                                    </PaginationItem>
+
+                                    {
+                                        [...Array(pagesCount)].map((page, i) => {
+                                            return (
+                                                <PaginationItem key={i}>
+                                                    <PaginationLink
+                                                        className={
+                                                            (i * pageSize) === (currentPage) ?
+                                                                "bg_color_cinza_zimbra_active" :
+                                                                "bg_color_cinza_zimbra"
+                                                        }
+                                                        href="#"
+                                                        onClick={e => handleCurrentPage(e, (i * pageSize))}
+                                                    > {i + 1} </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        })
+                                    }
+
+                                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            next
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
+                                        />
+                                    </PaginationItem>
+
+                                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            last
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
+                                        />
+                                    </PaginationItem>
+                                </Pagination>
+                                : ''
+                        }
+
+                        <Container className="margin_top_20 width_70" fluid={true}>
+                            <ListGroupItem>
+                                <Row>
+                                    <Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10 center
+                                            border_color_gray
+                                        "
+                                        sm="2"
+                                    >
+                                        <strong>Tombamento</strong>
+                                    </Col>
+                                    <Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10
+                                            center
+                                            border_color_gray
+                                        "
+                                        sm="4"
+                                    >
+                                        <strong>Descrição</strong>
+                                    </Col>
+                                    <Col
+                                        className="
+                                            border_only_right
+                                            padding_all_10
+                                            center
+                                            border_color_gray
+                                        "
+                                        sm="2">
+                                        <strong>Categoria</strong>
+                                    </Col>
+                                    <Col
+                                        className="
+                                            padding_all_10
+                                            center
+                                        "
+                                        sm="4"
+                                    >
+                                        <strong>Ações</strong>
+                                    </Col>
+                                </Row>
+                            </ListGroupItem>
+
+                            {
+                                listCategory.rows !== undefined &&
+                                    listCategory.rows.length !== 0 ?
+                                    listCategory.rows.map(element => {
+                                        return (
+											<ListGroupItem
+												className="margin_top_bottom_10"
+												key={element.id}
+											>
+                                                <Row
+                                                    className="no_padding"
+                                                >
+                                                    <Col
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center_vertical
+                                                            border_color_gray
+                                                        "
+                                                        sm="2"
+                                                    >{element.heritage}</Col>
+                                                    <Col
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10 center_vertical
+                                                            border_color_gray
+                                                        "
+                                                        sm="4"
+                                                    >{element.description}</Col>
+                                                    <Col
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center_vertical
+                                                            border_color_gray
+                                                        "
+                                                        sm="2"
+                                                    >{element.category.name}</Col>
+                                                    <Col
+                                                        className="
+                                                            border_only_right
+                                                            padding_all_10
+                                                            center
+                                                            border_color_gray
+                                                        "
+                                                        sm="2"
+                                                    >
+                                                        <Link
+                                                            className="font_color_verde_zimbra_hover"
+                                                            to={`/hardware/edit/${element.id}`}
+                                                        >Editar</Link>
+                                                    </Col>
+                                                    <Col
+                                                        className="padding_all_10 center"
+                                                        sm="2"
+                                                    >
+                                                        <Button
+                                                            onClick={toggleModalDeleteHardware}
+                                                            color="danger"
+                                                            value={element.id}
+                                                            name={element.heritage}
+                                                        >Deletar</Button>
+                                                    </Col>
+                                                </Row>
+                                            </ListGroupItem>
+                                        );
+                                    }) : ''
+                            }
+                        </Container>
+
+                        {
+                            listCategory.rows !== undefined &&
+                                listCategory.rows.length !== 0 ?
+                                <Pagination
+                                    className="margin_top_20 center"
+                                    aria-label="Page navigation example"
+                                >
+                                    <PaginationItem disabled={currentPage <= 0}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            first
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, 0)}
+                                        />
+                                    </PaginationItem>
+
+                                    <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            previous
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, currentPage - pageSize)}
+                                        />
+                                    </PaginationItem>
+
+                                    {
+                                        [...Array(pagesCount)].map((page, i) => {
+                                            return (
+                                                <PaginationItem key={i}>
+                                                    <PaginationLink
+                                                        className={
+                                                            (i * pageSize) === (currentPage) ?
+                                                                "bg_color_cinza_zimbra_active" :
+                                                                "bg_color_cinza_zimbra"
+                                                        }
+                                                        href="#"
+                                                        onClick={e => handleCurrentPage(e, (i * pageSize))}
+                                                    > {i + 1} </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        })
+                                    }
+
+                                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            next
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
+                                        />
+                                    </PaginationItem>
+
+                                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
+                                        <PaginationLink
+                                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
+                                            last
+                                            href="#"
+                                            onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
+                                        />
+                                    </PaginationItem>
+                                </Pagination>
+                                : ''
+                        }
+
+                        <Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
+                            <ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>
+                            <ModalBody>
+                                Tem certeza que desejar&nbsp;
+								<strong className="font_color_danger">DELETAR</strong>
+								&nbsp;o equipamento de tombo&nbsp;
+								<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" onClick={deleteHardware}>Sim</Button>
+                                <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteHardware}>Cancelar</Button>
+                            </ModalFooter>
+                        </Modal>
+                    </>
+                    :
+                    <Row className="center no_margin">
                         <Col
                             className="padding_all_10"
                             sm="auto"
@@ -185,11 +382,10 @@ export default function ListByCategory() {
                             <h2>Não há equipamentos registrados ainda</h2>
                         </Col>
                     </Row>
-                }
-            </Container>
+            }
 
-            <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>Deletar equipamento</ModalHeader>
+            <Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
+                <ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>
                 <ModalBody>
                     Tem certeza que desejar&nbsp;
 					<strong className="font_color_danger">DELETAR</strong>
@@ -198,7 +394,7 @@ export default function ListByCategory() {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="danger" onClick={deleteHardware}>Sim</Button>
-                    <Button className="bg_color_verde_zimbra" onClick={toggle}>Cancelar</Button>
+                    <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteHardware}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
         </div>

@@ -231,8 +231,8 @@ export default function Hardware() {
 									border_color_verde_zimbra_hover
 									bg_color_verde_zimbra
 								"
-                                onClick={() => onCheckboxBtnClick('department')}
-                                active={cSelected.includes('department')}
+                                onClick={() => onCheckboxBtnClick('belongs')}
+                                active={cSelected.includes('belongs')}
                                 title="Filtrar por departamento"
                             >Departamento</Button>
                         </ButtonGroup>

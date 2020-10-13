@@ -34,6 +34,10 @@ body, html, #root {
     max-height: 100px;
     overflow-y: auto;
 }
+.max_height_200 {
+    max-height: 200px;
+    overflow-y: auto;
+}
 .max_height_500 {
     max-height: 500px;
     overflow-y: auto;
@@ -158,8 +162,11 @@ body, html, #root {
 .font_color_white_hover {
 	color: #eeeeee;
 }
-.font_color_white_hover:hover {
-	color: #111111;
+.font_color_white_hover:hover,
+.font_color_white_hover:active,
+.font_color_white_hover:focus{
+	color: #111111 !important;
+	border-color: transparent;
 }
 .font_color_verde_zimbra_hover {
     color: #308f8f;
