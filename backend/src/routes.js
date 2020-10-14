@@ -24,11 +24,12 @@ routes.put("/types/:type_id", TypeController.update);
 routes.delete("/types/:type_id", TypeController.delete);
 
 routes.get("/departments", DepartmentController.listAllDepartments);
-routes.get("/departments/:department_id", DepartmentController.listDepartment);
+routes.get("/departments/id/:department_id", DepartmentController.listDepartment);
 routes.get("/departments/name/:department_name", DepartmentController.listDepartmentByName);
+routes.get("/departments/verify_name/:name", DepartmentController.nameExists);
 routes.post("/departments", DepartmentController.create);
-routes.put("/departments/:department_id", DepartmentController.update);
-routes.delete("/departments/:department_id", DepartmentController.delete);
+routes.put("/departments/update/:department_id", DepartmentController.update);
+routes.delete("/departments/delete/:department_id", DepartmentController.delete);
 
 routes.get("/hardwares/:limit/:offset/filters", HardwareController.listAllDetailedHardwares);
 routes.get("/hardwares", HardwareController.listAllHardwares);

@@ -66,7 +66,9 @@ export default function ListMovement() {
                 <Alert color={
                         message[1] === 200 ?
                         "success" :
+                        message[1] !== -1 ?
                         "danger"
+                        : ''
                     }
                     isOpen={visible}
                     toggle={onDismiss}

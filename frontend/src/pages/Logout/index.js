@@ -1,9 +1,19 @@
+import { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import AuthContext from '../../contexts/auth';
 
 export default function Logout() {
-    localStorage.clear();
+    const { signOut } = useContext(AuthContext);
+    const history = useHistory();
+    
+    useEffect(() => {
+		function logout() {
+			signOut();
+            history.push('/');
+		}
 
-    useHistory().push('/login');
-
+		logout();
+    }, [signOut, history]);
+    
     return null;
 }

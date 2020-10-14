@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
 	Navbar,
@@ -12,7 +12,16 @@ import {
 	DropdownItem,
 	DropdownToggle,
 	DropdownMenu,
-	NavbarText,
+    NavbarText,
+    Input,
+    Modal,
+	ModalHeader,
+	ModalBody,
+    ModalFooter,
+    FormGroup,
+    FormFeedback,
+    Label,
+    Button
 } from 'reactstrap';
 
 import api from '../../services/api';
@@ -22,9 +31,13 @@ export default function Header() {
 	const [listTypes, setTypes] = useState([]);
 	const [listDepartments, setDepartments] = useState([]);
 	const [dropdownDepartments, setDropdownDepartments] = useState(false);
-	const [dropdownTypes, setDropdownTypes] = useState(false);
-	const { signOut, user, message } = useContext(AuthContext);
-	const history = useHistory();
+    const [dropdownTypes, setDropdownTypes] = useState(false);
+    const [modalCreateDepartment, setModalCreateDepartment] = useState(false);
+    const [departmentName, setDepartmentName] = useState('');
+    const [departmentBoss, setDepartmentBoss] = useState('');
+    const [verifyDepartmentName, setVerifyDepartmentName] = useState(false);
+    const [verifyDepartmentBoss, setVerifyDepartmentBoss] = useState(false);
+	const { user, message, setMessage } = useContext(AuthContext);
 
 	useEffect(() => {
 		async function getAllTypes() {
@@ -40,23 +53,96 @@ export default function Header() {
 		async function getAllDepartments() {
 			const response = await api.get('/departments');
 			const data = response.data;
-			setDepartments(data);
+            setDepartments(data);
+            
+            setDepartmentName('');
+            setDepartmentBoss('');
+            setVerifyDepartmentName(false);
+            setVerifyDepartmentBoss(false);
 		}
 
 		getAllDepartments();
-	}, [message]);
+    }, [message]);
+    
+    useEffect(() => {
+		async function getDepartment() {
+            if (departmentName !== '') {
+                const response = await api.get(`/departments/verify_name/${departmentName}`);
+                const data = response.data;
+                
+                setVerifyDepartmentName(data.name_exists);
+            }
+		}
+
+		getDepartment();
+	}, [departmentName]);
 
 	const toggleDepartments = () => {
 		setDropdownDepartments(!dropdownDepartments)
 	};
 	const toggleTypes = () => {
 		setDropdownTypes(!dropdownTypes)
-	};
+    };
+    
+    const toggleModalCreateDepartment = () => {
+        setModalCreateDepartment(!modalCreateDepartment);
+    }
 
-	const signOutBackLogin = () => {
-		signOut();
-		history.push('/');
-	}
+    const handleDepartmentName = (e) => {
+        setDepartmentName(e.target.value);
+    }
+
+    const handleDepartmentBoss = (e) => {
+        const validDepartmentBoss = e.target.value;
+
+        if (/^\S.*/gm.exec(validDepartmentBoss)) {
+            setVerifyDepartmentBoss(true);
+        }
+        else {
+            setVerifyDepartmentBoss(false);
+        }
+
+        setDepartmentBoss(e.target.value);
+    }
+
+    const cancelCreation = () => {
+        setDepartmentName('');
+        setDepartmentBoss('');
+        setVerifyDepartmentName(false);
+        setVerifyDepartmentBoss(false);
+        toggleModalCreateDepartment();
+    }
+
+    const validCreateDepartment = () => {
+        if (!verifyDepartmentName && departmentName !== '' && verifyDepartmentBoss) {
+            return true;
+        }
+        return false;
+    }
+
+    const createDepartment = async () => {
+        if (validCreateDepartment()) {
+            const new_data = {
+                name: departmentName,
+                boss: departmentBoss
+            }
+
+            const response = await api.post(`departments/`, new_data);
+
+            if (response.data.status === 200) {
+                setMessage(['Departamento criado com sucesso', 200]);
+                toggleModalCreateDepartment();
+            }
+            else {
+                setMessage([response.error, response.status]);
+                toggleModalCreateDepartment();
+            }
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+            toggleModalCreateDepartment();
+        }
+    }
 
 	return (
 		<div className="height_header">
@@ -160,6 +246,28 @@ export default function Header() {
 								max_height_500
 							"
 						>
+                            <DropdownItem
+								className="
+									bg_color_verde_zimbra_hover
+									no_padding
+								"
+							>
+								<Link
+									className="
+										center_vertical
+										font_color_white_hover
+									"
+                                    to="#"
+                                    onClick={toggleModalCreateDepartment}
+								>
+									<NavItem
+										className="padding_all_10"
+									>
+										CRIAR DEPARTAMENTO
+									</NavItem>
+								</Link>
+							</DropdownItem>
+                            <DropdownItem divider className="no_margin" />
 							{
 								listDepartments !== undefined ?
 								listDepartments.map(element => {
@@ -188,27 +296,6 @@ export default function Header() {
 								})
 								: ''
 							}
-							<DropdownItem divider className="no_margin" />
-							<DropdownItem
-								className="
-									bg_color_verde_zimbra_hover
-									no_padding
-								"
-							>
-								<Link
-									className="
-										center_vertical
-										font_color_white_hover
-									"
-									to="#"
-								>
-									<NavItem
-										className="padding_all_10"
-									>
-										CRIAR DEPARTAMENTO
-									</NavItem>
-								</Link>
-							</DropdownItem>
 						</DropdownMenu>
 					</Dropdown>
 
@@ -282,7 +369,7 @@ export default function Header() {
 										center_vertical
 										font_color_white_hover
 									"
-									to="#"
+                                    to="#"
 								>
 									<NavItem
 										className="padding_all_10"
@@ -331,8 +418,7 @@ export default function Header() {
 								center
 								height_header
 							"
-							to="#"
-							onClick={signOutBackLogin}
+							to="/logout"
 						>
 							Sair
                         </Link>
@@ -350,6 +436,87 @@ export default function Header() {
 					<strong>{user.name}</strong>
 				</NavbarText>
 			</Navbar>
+
+            <Modal isOpen={modalCreateDepartment} toggle={toggleModalCreateDepartment}>
+                <ModalHeader toggle={toggleModalCreateDepartment}>
+                    Criar departamento
+                </ModalHeader>
+
+                <ModalBody>
+                    <FormGroup>
+                        <Label>Departamento</Label>
+                        {
+                            !verifyDepartmentName ?
+                            departmentName !== '' ?
+                                <>
+                                    <Input
+                                        value={departmentName}
+                                        onChange={handleDepartmentName}
+                                        valid
+                                    />
+                                    <FormFeedback valid>Nome válido</FormFeedback>
+                                </>
+                                :
+                                <>
+                                    <Input
+                                        value={departmentName}
+                                        onChange={handleDepartmentName}
+                                        invalid
+                                    />
+                                    <FormFeedback>O campo <strong>DEPARTAMENTO</strong> não pode ser vazio.</FormFeedback>
+                                </>
+                            :
+                            <>
+                                <Input
+                                    value={departmentName}
+                                    onChange={handleDepartmentName}
+                                    invalid
+                                />
+                                <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
+                            </>
+                        }
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label>Responsável</Label>
+                        {
+                            verifyDepartmentBoss ?
+                            <>
+                                <Input
+                                    value={departmentBoss}
+                                    onChange={handleDepartmentBoss}
+                                    valid
+                                />
+                                <FormFeedback valid>Nome válido</FormFeedback>
+                            </>
+                            :
+                            <>
+                                <Input
+                                    value={departmentBoss}
+                                    onChange={handleDepartmentBoss}
+                                    invalid
+                                />
+                                <FormFeedback>O campo <strong>RESPONSÁVEL</strong> não pode ser vazio.</FormFeedback>
+                            </>
+                        }
+                    </FormGroup>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button
+						className="bg_color_verde_zimbra"
+                        onClick={createDepartment}
+                    >
+                        Criar
+					</Button>{' '}
+                    <Button
+                        color="secondary"
+                        onClick={cancelCreation}
+                    >
+                        Cancelar
+					</Button>
+                </ModalFooter>
+            </Modal>
 		</div>
 	);
 }

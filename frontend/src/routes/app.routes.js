@@ -12,6 +12,7 @@ import Movements from '../pages/Movements';
 import CreateMovement from '../pages/CreateMovement';
 import EditMovement from '../pages/EditMovement';
 import Department from '../pages/Department';
+import Logout from '../pages/Logout';
 
 export default function AuthRoutes() {
     return (
@@ -52,6 +53,10 @@ export default function AuthRoutes() {
                 <Route path="/department/:name" exact>
 					<DefaultLayout container={<Department />} />
 				</Route>
+
+                <Route path="/logout" exact>
+                    <Logout />
+                </Route>
 			</Switch>
 		</Router>
     );

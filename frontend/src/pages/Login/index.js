@@ -66,8 +66,10 @@ export default function Login() {
             <Container className="width_30">
                 <Alert color={
                     message[1] === 200 ?
-                        "success" :
-                        "danger"
+                    "success" :
+                    message[1] !== -1 ?
+                    "danger"
+                    : ''
                 }
                     isOpen={visible}
                     toggle={onDismiss}

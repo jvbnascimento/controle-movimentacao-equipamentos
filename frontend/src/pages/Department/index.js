@@ -177,6 +177,14 @@ export default function Department() {
         window.location.reload();
     }
 
+    const deleteDepartment = async () => {
+        await api.delete(`/departments/delete/${departmentToDelete[0]}`);
+
+        setMessage(['Departamento deletado com sucesso!', 200]);
+        setModalDeleteHardware(!modalDeleteHardware);
+        history.push('/');
+    }
+
     const saveEditDepartment = async () => {
         if (verifyAllInputsValid()) {
             const new_data = {
@@ -671,7 +679,7 @@ export default function Department() {
 					<strong className="font_color_danger">{departmentToDelete[1]}</strong>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="danger" onClick={() => {}}>Sim</Button>
+                    <Button color="danger" onClick={deleteDepartment}>Sim</Button>
                     <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteDepartment}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
