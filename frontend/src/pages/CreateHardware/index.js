@@ -31,17 +31,14 @@ export default function EditHardware() {
     const [date_auction, setDateAuction] = useState(null);
     const [category, setCategory] = useState(1);
     const [belongs, setBelongs] = useState([1, '']);
-
     const [heritageValid, setHeritageValid] = useState(false);
     const [descriptionValid, setDescriptionValid] = useState(false);
     const [brandValid, setBrandValid] = useState(false);
-
+    const [warrantyValid, setWarrantyValid] = useState(false);
+    const [dateAuctionValid, setDateAuctionValid] = useState(false);
     const [visible, setVisible] = useState(false);
-    
-    const history = useHistory();
-    const onDismiss = () => setVisible(false);
-
     const { message, setMessage } = useContext(AuthContext);
+    const history = useHistory();
 
     useEffect(() => {
         async function getAllTypes() {
@@ -76,7 +73,118 @@ export default function EditHardware() {
         verifyMessage();
     }, [message]);
 
-    async function createHardware() {
+    const onDismiss = () => {
+        setVisible(false);
+    }
+
+    const verifyAllInputsValid = () => {
+        if (
+            /(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(heritage) &&
+            /^\S.*/gm.exec(description) &&
+            /^\S.*/gm.exec(brand) &&
+            /^\S.*/gm.exec(warranty) &&
+            auction === 'true' &&
+            date_auction !== null &&
+            /^\S.*/gm.exec(date_auction)
+        ) {
+            return true;
+        }
+        else if (
+            /(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(heritage) &&
+            /^\S.*/gm.exec(description) &&
+            /^\S.*/gm.exec(brand) &&
+            /^\S.*/gm.exec(warranty) &&
+            auction === 'false'
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    const handleHeritage = (e) => {
+        const verifyHeritage = e.target.value;
+
+        if (/(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(verifyHeritage)) {
+            setHeritageValid(true);
+        }
+        else {
+            setHeritageValid(false)
+        }
+
+        setHeritage(verifyHeritage);
+    }
+    const handleDescription = (e) => {
+        const verifyDescription = e.target.value;
+
+        if (/^\S.*/gm.exec(verifyDescription)) {
+            setDescriptionValid(true);
+        }
+        else {
+            setDescriptionValid(false)
+        }
+
+        setDescription(verifyDescription);
+    }
+    const handleBrand = (e) => {
+        const verifyBrand = e.target.value;
+
+        if (/^\S.*/gm.exec(verifyBrand)) {
+            setBrandValid(true);
+        }
+        else {
+            setBrandValid(false)
+        }
+
+        setBrand(verifyBrand);
+    }
+    const handleWarranty = (e) => {
+        const verifyWarranty = e.target.value;
+
+        if (/^\S.*/gm.exec(verifyWarranty)) {
+            setWarrantyValid(true);
+        }
+        else {
+            setWarrantyValid(false)
+        }
+
+        setWarranty(e.target.value);
+    }
+    const handleHasOffice = (e) => {
+        setHasOffice(e.target.value);
+    }
+    const handleAuction = (e) => {
+        setAuction(e.target.value);
+    }
+    const handleDateAuction = (e) => {
+        const verifyDateAuction = e.target.value;
+
+        if (/^\S.*/gm.exec(verifyDateAuction)) {
+            setDateAuctionValid(true);
+        }
+        else {
+            setDateAuctionValid(false)
+        }
+
+        setDateAuction(e.target.value);
+    }
+    const handleCategory = (e) => {
+        setCategory(e.target.value);
+    }
+    const handleBelongs = (e) => {
+        setBelongs([e.target.value, e.target.options[e.target.selectedIndex].attributes.name.value]);
+    }
+
+    const validateCreation = () => {
+        const validation = verifyAllInputsValid();
+        if (validation) {
+            createHardware();
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+        }
+    }
+
+    const createHardware = async () => {
         const type_id = category;
         const department_id = belongs[0];
 
@@ -92,88 +200,16 @@ export default function EditHardware() {
             department_id
         }
 
-        await api.post(`/${type_id}/hardwares/`, new_data);
-        
-        setMessage(['Equipamento cadastrado com sucesso.', 200]);
-        
-        history.goBack();
+        const response = await api.post(`/${type_id}/hardwares/`, new_data);
+
+        if (response.data.status === 200) {
+            setMessage(['Equipamento cadastrado com sucesso.', 200]);
+            history.goBack();
+        }
+        else {
+            setMessage([response.data.error, response.data.status]);
+        }
     };
-
-    function verifyAllInputsValid() {
-        if (
-            /(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(heritage) &&
-            /^\S.*/gm.exec(description) &&
-            /^\S.*/gm.exec(brand)
-            ) {
-            return true;
-        }
-        return false;
-    }
-
-    function handleHeritage(e) {
-        const verifyHeritage = e.target.value;
-
-        if (/(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(verifyHeritage)) {
-            setHeritageValid(true);
-        }
-        else {
-            setHeritageValid(false)
-        }
-
-        setHeritage(verifyHeritage);
-    }
-    function handleDescription(e) {
-        const verifyDescription = e.target.value;
-
-        if (/^\S.*/gm.exec(verifyDescription)) {
-            setDescriptionValid(true);
-        }
-        else {
-            setDescriptionValid(false)
-        }
-
-        setDescription(verifyDescription);
-    }
-    function handleBrand(e) {
-        const verifyBrand = e.target.value;
-
-        if (/^\S.*/gm.exec(verifyBrand)) {
-            setBrandValid(true);
-        }
-        else {
-            setBrandValid(false)
-        }
-
-        setBrand(verifyBrand);
-    }
-    function handleWarranty(e) {
-        setWarranty(e.target.value);
-    }
-    function handleHasOffice(e) {
-        setHasOffice(e.target.value);
-    }
-    function handleAuction(e) {
-        setAuction(e.target.value);
-    }
-    function handleDateAuction(e) {
-        setDateAuction(e.target.value);
-    }
-    function handleCategory(e) {
-        setCategory(e.target.value);
-    }
-    function handleBelongs(e) {
-        setBelongs([e.target.value, e.target.options[e.target.selectedIndex].attributes.name.value]);
-    }
-
-    function validateCreation() {
-        const validation = verifyAllInputsValid();
-        if (validation) {
-            createHardware();
-        }
-        else {
-            setMessage(["Existem campos não preenchidos corretamente", 400]);
-        }
-    }
 
     return (
         <>
@@ -326,15 +362,37 @@ export default function EditHardware() {
 
                             <FormGroup>
                                 <Label className="margin_top_10" for="labelWarranty">Garantia</Label>
-                                <Input
-                                    type="text"
-                                    name="warranty"
-                                    id="labelWarranty"
-                                    placeholder="Garantia"
-                                    defaultValue={warranty}
-                                    onChange={handleWarranty}
-                                    className="margin_bottom_20"
-                                />
+                                {
+                                    warrantyValid ?
+                                        <>
+                                            <Input
+                                                type="date"
+                                                name="warranty"
+                                                id="labelWarranty"
+                                                placeholder="Garantia"
+                                                defaultValue={warranty}
+                                                onChange={handleWarranty}
+                                                className="margin_bottom_20"
+                                                valid
+                                            />
+                                            <FormFeedback valid>Data válida.</FormFeedback>
+                                        </>
+                                        :
+                                        <>
+                                            <Input
+                                                type="date"
+                                                name="warranty"
+                                                id="labelWarranty"
+                                                placeholder="Garantia"
+                                                defaultValue={warranty}
+                                                onChange={handleWarranty}
+                                                className="margin_bottom_20"
+                                                invalid
+                                            />
+                                            <FormFeedback>O campo <strong>GARANTIA</strong> não pode ser vazio.</FormFeedback>
+                                        </>
+                                }
+
                             </FormGroup>
 
                             <FormGroup>
@@ -390,15 +448,37 @@ export default function EditHardware() {
                                 {auction === 'true' &&
                                     <>
                                         <Label className="margin_top_10" for="labelDateAuction">Data de saída para leilão</Label>
-                                        <Input
-                                            type="date"
-                                            name="date_auction"
-                                            id="labelDateAuction"
-                                            placeholder="Data de saída para leilão"
-                                            value={date_auction === null ? '' : date_auction}
-                                            onChange={handleDateAuction}
-                                            className="margin_bottom_20"
-                                        />
+                                        {
+                                            dateAuctionValid ?
+                                                <>
+                                                    <Input
+                                                        type="date"
+                                                        name="date_auction"
+                                                        id="labelDateAuction"
+                                                        placeholder="Data de saída para leilão"
+                                                        value={date_auction === null ? '' : date_auction}
+                                                        onChange={handleDateAuction}
+                                                        className="margin_bottom_20"
+                                                        valid
+                                                    />
+                                                    <FormFeedback>Data válida.</FormFeedback>
+                                                </>
+                                                :
+                                                <>
+                                                    <Input
+                                                        type="date"
+                                                        name="date_auction"
+                                                        id="labelDateAuction"
+                                                        placeholder="Data de saída para leilão"
+                                                        value={date_auction === null ? '' : date_auction}
+                                                        onChange={handleDateAuction}
+                                                        className="margin_bottom_20"
+                                                        invalid
+                                                    />
+                                                    <FormFeedback>O campo <strong>DATA DE SAÍDA PARA LEILÃO</strong> não pode ser vazio.</FormFeedback>
+                                                </>
+                                        }
+
                                     </>
                                 }
                             </FormGroup>

@@ -210,9 +210,8 @@ export default function CreateMovement() {
                                                 key={element.id}
                                                 value={element.id}
                                             >
-												{element.name} | {' '}
-												{element.boss
-											}</option>
+												{element.name}
+											</option>
                                         );
 									})
 								: ''
@@ -242,8 +241,7 @@ export default function CreateMovement() {
                                                 key={element.id}
                                                 value={element.id}
                                             >
-												{element.name} | {' '}
-												{element.boss}
+												{element.name}
 											</option>
                                         );
                                     })

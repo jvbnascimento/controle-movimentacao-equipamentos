@@ -266,10 +266,10 @@ module.exports = {
 		const department = await Department.findByPk(department_id);
 
 		if (!type) {
-			return res.status(404).json({ error: 'Type not found' });
+			return res.json({ error: 'Type not found', status: 404 });
 		}
 		if (!department) {
-			return res.status(404).json({ error: 'Department not found' });
+			return res.json({ error: 'Department not found', status: 404 });
 		}
 
 		const hardware = await Hardware.create({
@@ -284,7 +284,7 @@ module.exports = {
 			type_id
 		});
 
-		return res.json(hardware);
+		return res.json({ hardware, status: 200 });
 	},
 
 	async update(req, res) {

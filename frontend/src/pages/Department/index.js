@@ -201,7 +201,7 @@ export default function Department() {
                 toggleModalEditDepartment();
             }
             else {
-                setMessage([response.error, response.status]);
+                setMessage([response.data.error, response.data.status]);
                 toggleModalEditDepartment();
             }
         }

@@ -21,6 +21,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
+import { AiFillQuestionCircle } from 'react-icons/ai';
 
 import api from '../../services/api';
 
@@ -50,7 +51,7 @@ export default function Hardware() {
         }
 
         getAllHardwares();
-    }, [pageSize, currentPage, querySearch]);
+    }, [pageSize, currentPage, querySearch, message]);
 
     useEffect(() => {
         function verifyMessage() {
@@ -102,8 +103,10 @@ export default function Hardware() {
 
     const deleteHardware = async () => {
         await api.delete(`/hardwares/${hardwareToDelete[0]}`);
-
-        window.location.reload();
+        
+        setMessage([`Equipamento de tombo ${hardwareToDelete[1]} foi deletado com sucesso`, 200]);
+        setHardwareToDelete([-1, -1]);
+        setModal(!modal);
     }
 
     const handleValueInput = (e) => {
@@ -139,7 +142,9 @@ export default function Hardware() {
                 <Alert color={
                         message[1] === 200 ?
                         "success" :
+                        message[1] !== -1 ?
                         "danger"
+                        : ''
                     }
                     isOpen={visible}
                     toggle={onDismiss}
@@ -253,7 +258,9 @@ export default function Hardware() {
                                     />
                                 </Col>
                                 <Col sm="1" className="center">
-                                    <span id="TooltipExample">!</span>
+                                    <span id="TooltipExample">
+                                        <AiFillQuestionCircle size="30" />
+                                    </span>
                                     <Tooltip
                                         placement="right"
                                         isOpen={tooltipOpen}

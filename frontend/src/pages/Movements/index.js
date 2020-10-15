@@ -18,6 +18,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
+import { AiFillQuestionCircle } from 'react-icons/ai';
 
 import api from '../../services/api';
 
@@ -225,7 +226,9 @@ export default function Movements() {
                                     />
                                 </Col>
                                 <Col sm="1" className="center">
-                                    <span id="TooltipExample">!</span>
+                                    <span id="TooltipExample">
+                                        <AiFillQuestionCircle size="30" />
+                                    </span>
                                     <Tooltip
 										placement="right" 
 										isOpen={tooltipOpen}
