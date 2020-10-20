@@ -21,7 +21,6 @@ import AuthContext from '../../contexts/auth';
 export default function EditHardware() {
     const [types, setTypes] = useState([]);
     const [departments, setDepartments] = useState([]);
-
     const [heritage, setHeritage] = useState('');
     const [description, setDescription] = useState('');
     const [brand, setBrand] = useState('');
@@ -71,29 +70,45 @@ export default function EditHardware() {
         }
 
         verifyMessage();
-    }, [message]);
+	}, [message]);
+	
+	const heritageValidator = (data) => {
+		if (data.length === 7) {
+			return (/(\d{2})(-){1}(\d{4})(\D)*/gm.test(data));
+		}
+		else if (data.length === 8) {
+			return (/(\d{2})(-){1}(\d{5})(\D)*/gm.test(data));
+		}
+		return false;
+	}
 
+	const emptyFieldValidator = (data) => {
+		return (/^\S.*/gm.test(data));
+	}
+
+	// CLOSE MODAL
     const onDismiss = () => {
         setVisible(false);
     }
 
+	// VERIFY IF ALL INPUTS ARE VALID
     const verifyAllInputsValid = () => {
         if (
-            /(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(heritage) &&
-            /^\S.*/gm.exec(description) &&
-            /^\S.*/gm.exec(brand) &&
-            /^\S.*/gm.exec(warranty) &&
+            heritageValidator(heritage) &&
+            emptyFieldValidator(description) &&
+            emptyFieldValidator(brand) &&
+            emptyFieldValidator(warranty) &&
             auction === 'true' &&
             date_auction !== null &&
-            /^\S.*/gm.exec(date_auction)
+            emptyFieldValidator(date_auction)
         ) {
             return true;
         }
         else if (
-            /(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(heritage) &&
-            /^\S.*/gm.exec(description) &&
-            /^\S.*/gm.exec(brand) &&
-            /^\S.*/gm.exec(warranty) &&
+            heritageValidator(heritage) &&
+            emptyFieldValidator(description) &&
+            emptyFieldValidator(brand) &&
+            emptyFieldValidator(warranty) &&
             auction === 'false'
         ) {
             return true;
@@ -101,10 +116,11 @@ export default function EditHardware() {
         return false;
     }
 
+	// MODIFY THE HERITAGE FIELD VALUE
     const handleHeritage = (e) => {
         const verifyHeritage = e.target.value;
 
-        if (/(\d{2})(-)(\d{4})|(\d{2})(-)(\d{5})/gm.exec(verifyHeritage)) {
+        if (heritageValidator(verifyHeritage)) {
             setHeritageValid(true);
         }
         else {
@@ -116,7 +132,7 @@ export default function EditHardware() {
     const handleDescription = (e) => {
         const verifyDescription = e.target.value;
 
-        if (/^\S.*/gm.exec(verifyDescription)) {
+        if (emptyFieldValidator(verifyDescription)) {
             setDescriptionValid(true);
         }
         else {
@@ -128,7 +144,7 @@ export default function EditHardware() {
     const handleBrand = (e) => {
         const verifyBrand = e.target.value;
 
-        if (/^\S.*/gm.exec(verifyBrand)) {
+        if (emptyFieldValidator(verifyBrand)) {
             setBrandValid(true);
         }
         else {
@@ -140,7 +156,7 @@ export default function EditHardware() {
     const handleWarranty = (e) => {
         const verifyWarranty = e.target.value;
 
-        if (/^\S.*/gm.exec(verifyWarranty)) {
+        if (emptyFieldValidator(verifyWarranty)) {
             setWarrantyValid(true);
         }
         else {
@@ -158,7 +174,7 @@ export default function EditHardware() {
     const handleDateAuction = (e) => {
         const verifyDateAuction = e.target.value;
 
-        if (/^\S.*/gm.exec(verifyDateAuction)) {
+        if (emptyFieldValidator(verifyDateAuction)) {
             setDateAuctionValid(true);
         }
         else {
