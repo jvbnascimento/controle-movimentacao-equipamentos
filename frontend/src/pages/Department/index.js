@@ -230,10 +230,12 @@ export default function Department() {
                     {message[0]}
                 </Alert>
             </Container>
+
             <h1 className="text-center">
                 Informações do departamento
             </h1>
-            <Container fluid={true} className="width_70 margin_top_bottom_20">
+            
+			<Container fluid={true} className="width_70 margin_top_bottom_20">
                 <ListGroupItem className="">
                     <Row className="text_left">
                         <Col sm="2">

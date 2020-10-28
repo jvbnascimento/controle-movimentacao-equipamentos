@@ -19,6 +19,7 @@ routes.delete("/users/:user_id", UserController.delete);
 
 routes.get("/types", TypeController.listAllTypes);
 routes.get("/types/:type_id", TypeController.listType);
+routes.get("/types/verify_name/:name", TypeController.nameExists);
 routes.post("/types", TypeController.create);
 routes.put("/types/:type_id", TypeController.update);
 routes.delete("/types/:type_id", TypeController.delete);

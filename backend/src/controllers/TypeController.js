@@ -18,6 +18,26 @@ module.exports = {
 
 		return res.json(type);
 	},
+    
+	async nameExists(req, res) {
+		const { name } = req.params;
+
+		if (name !== null) {
+			const type = await Type.findOne({
+				where: {
+					name: name.toUpperCase()
+				}
+			});
+			
+			if (type && type.name) {
+                return res.json({ name_exists: true, stauts: 200 });
+            }
+
+			return res.json({ name_exists: false, status: 200 });
+		}
+
+		return res.json({ name_exists: false, status: 200 });
+	},
 
 	async create(req, res) {
 		const { name } = req.body;
@@ -32,7 +52,7 @@ module.exports = {
 
 		const type = await Type.create({ name });
 
-		return res.status(201).json(type);
+		return res.json({ type, status: 201 });
     },
     
     async update(req, res) {

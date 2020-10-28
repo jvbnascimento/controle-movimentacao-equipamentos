@@ -32,11 +32,14 @@ export default function Header() {
 	const [listDepartments, setDepartments] = useState([]);
 	const [dropdownDepartments, setDropdownDepartments] = useState(false);
     const [dropdownTypes, setDropdownTypes] = useState(false);
-    const [modalCreateDepartment, setModalCreateDepartment] = useState(false);
+	const [modalCreateDepartment, setModalCreateDepartment] = useState(false);
+	const [modalCreateCategory, setModalCreateCategory] = useState(false);
     const [departmentName, setDepartmentName] = useState('');
     const [departmentBoss, setDepartmentBoss] = useState('');
     const [verifyDepartmentName, setVerifyDepartmentName] = useState(false);
-    const [verifyDepartmentBoss, setVerifyDepartmentBoss] = useState(false);
+	const [verifyDepartmentBoss, setVerifyDepartmentBoss] = useState(false);
+	const [categoryName, setCategoryName] = useState('');
+	const [verifyCategoryName, setVerifyCategoryName] = useState(true);
 	const { user, message, setMessage } = useContext(AuthContext);
 
 	useEffect(() => {
@@ -44,10 +47,13 @@ export default function Header() {
 			const response = await api.get('/types');
 			const data = response.data;
 			setTypes(data);
+
+			setCategoryName('');
+            setVerifyCategoryName(false);
 		}
 
 		getAllTypes();
-	}, []);
+	}, [message]);
 
 	useEffect(() => {
 		async function getAllDepartments() {
@@ -77,6 +83,19 @@ export default function Header() {
 		getDepartment();
 	}, [departmentName]);
 
+	useEffect(() => {
+		async function getCategory() {
+            if (categoryName !== '') {
+                const response = await api.get(`/types/verify_name/${categoryName}`);
+                const data = response.data;
+                
+                setVerifyCategoryName(data.name_exists);
+            }
+		}
+
+		getCategory();
+	}, [categoryName]);
+
 	const toggleDepartments = () => {
 		setDropdownDepartments(!dropdownDepartments)
 	};
@@ -86,6 +105,19 @@ export default function Header() {
     
     const toggleModalCreateDepartment = () => {
         setModalCreateDepartment(!modalCreateDepartment);
+	}
+	
+	const toggleModalCreateCategory = () => {
+        setModalCreateCategory(!modalCreateCategory);
+    }
+
+    const handleCategoryName = (e) => {
+
+		if (e.target.value === '') {
+			setVerifyCategoryName(false);
+		}
+
+		setCategoryName(e.target.value);
     }
 
     const handleDepartmentName = (e) => {
@@ -105,7 +137,7 @@ export default function Header() {
         setDepartmentBoss(e.target.value);
     }
 
-    const cancelCreation = () => {
+    const cancelCreationDepartment = () => {
         setDepartmentName('');
         setDepartmentBoss('');
         setVerifyDepartmentName(false);
@@ -141,6 +173,42 @@ export default function Header() {
         else {
             setMessage(["Existem campos não preenchidos corretamente", 400]);
             toggleModalCreateDepartment();
+        }
+	}
+	
+	const cancelCreationCategory = () => {
+        setCategoryName('');
+        setVerifyCategoryName(false);
+        toggleModalCreateCategory();
+	}
+	
+	const validCreateCategory = () => {
+        if (!verifyCategoryName && categoryName !== '') {
+            return true;
+        }
+        return false;
+    }
+
+    const createCategory = async () => {
+        if (validCreateCategory()) {
+            const new_data = {
+                name: categoryName
+            }
+
+            const response = await api.post(`types/`, new_data);
+
+            if (response.data.status === 201) {
+                setMessage(['Categoria criada com sucesso', 201]);
+                toggleModalCreateCategory();
+            }
+            else {
+                setMessage([response.error, response.status]);
+                toggleModalCreateCategory();
+            }
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+            toggleModalCreateCategory();
         }
     }
 
@@ -329,6 +397,29 @@ export default function Header() {
 								no_padding
 							"
 						>
+							
+							<DropdownItem
+								className="
+									bg_color_verde_zimbra_hover
+									no_padding
+								"
+							>
+								<Link
+									className="
+										center_vertical
+										font_color_white_hover
+									"
+									to="#"
+									onClick={toggleModalCreateCategory}
+								>
+									<NavItem
+										className="padding_all_10"
+									>
+										CRIAR CATEGORIA
+									</NavItem>
+								</Link>
+							</DropdownItem>
+							<DropdownItem divider className="no_margin" />
 							{
 								listTypes !== undefined ?
 								listTypes.map(element => {
@@ -357,27 +448,7 @@ export default function Header() {
 								})
 								: ''
 							}
-							<DropdownItem divider className="no_margin" />
-							<DropdownItem
-								className="
-									bg_color_verde_zimbra_hover
-									no_padding
-								"
-							>
-								<Link
-									className="
-										center_vertical
-										font_color_white_hover
-									"
-                                    to="#"
-								>
-									<NavItem
-										className="padding_all_10"
-									>
-										CRIAR CATEGORIA
-									</NavItem>
-								</Link>
-							</DropdownItem>
+							
 						</DropdownMenu>
 					</Dropdown>
 
@@ -447,7 +518,7 @@ export default function Header() {
                         <Label>Departamento</Label>
                         {
                             !verifyDepartmentName ?
-                            departmentName !== '' ?
+                            	departmentName !== '' ?
                                 <>
                                     <Input
                                         value={departmentName}
@@ -472,7 +543,7 @@ export default function Header() {
                                     onChange={handleDepartmentName}
                                     invalid
                                 />
-                                <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
+                                <FormFeedback>Já existe uma <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
                             </>
                         }
                     </FormGroup>
@@ -511,7 +582,64 @@ export default function Header() {
 					</Button>{' '}
                     <Button
                         color="secondary"
-                        onClick={cancelCreation}
+                        onClick={cancelCreationDepartment}
+                    >
+                        Cancelar
+					</Button>
+                </ModalFooter>
+            </Modal>
+
+			<Modal isOpen={modalCreateCategory} toggle={toggleModalCreateCategory}>
+                <ModalHeader toggle={toggleModalCreateCategory}>
+                    Criar Categoria
+                </ModalHeader>
+
+                <ModalBody>
+                    <FormGroup>
+                        <Label>Categoria</Label>
+                        {
+                            !verifyCategoryName ?
+                            categoryName !== '' ?
+                                <>
+                                    <Input
+                                        value={categoryName}
+                                        onChange={handleCategoryName}
+                                        valid
+                                    />
+                                    <FormFeedback valid>Nome válido</FormFeedback>
+                                </>
+                                :
+                                <>
+                                    <Input
+                                        value={categoryName}
+                                        onChange={handleCategoryName}
+                                        invalid
+                                    />
+                                    <FormFeedback>O campo <strong>CATEGORIA</strong> não pode ser vazio.</FormFeedback>
+                                </>
+                            :
+                            <>
+                                <Input
+                                    value={categoryName}
+                                    onChange={handleCategoryName}
+                                    invalid
+                                />
+                                <FormFeedback>Já existe um <strong>CATEGORIA</strong> com o nome informado.</FormFeedback>
+                            </>
+                        }
+                    </FormGroup>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button
+						className="bg_color_verde_zimbra"
+                        onClick={createCategory}
+                    >
+                        Criar
+					</Button>{' '}
+                    <Button
+                        color="secondary"
+                        onClick={cancelCreationCategory}
                     >
                         Cancelar
 					</Button>
