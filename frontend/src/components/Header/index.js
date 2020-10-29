@@ -73,7 +73,7 @@ export default function Header() {
     useEffect(() => {
 		async function getDepartment() {
             if (departmentName !== '') {
-                const response = await api.get(`/departments/verify_name/${departmentName}`);
+                const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
                 const data = response.data;
                 
                 setVerifyDepartmentName(data.name_exists);
@@ -112,7 +112,6 @@ export default function Header() {
     }
 
     const handleCategoryName = (e) => {
-
 		if (e.target.value === '') {
 			setVerifyCategoryName(false);
 		}
@@ -121,6 +120,10 @@ export default function Header() {
     }
 
     const handleDepartmentName = (e) => {
+        if (e.target.value === '') {
+			setVerifyDepartmentName(false);
+        }
+        
         setDepartmentName(e.target.value);
     }
 

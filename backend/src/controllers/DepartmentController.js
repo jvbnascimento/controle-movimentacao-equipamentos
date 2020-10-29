@@ -47,7 +47,7 @@ module.exports = {
         if (name !== null) {
             const name_exists = await Department.findOne({
                 where: {
-                    name: name.toUpperCase()
+                    name: name.toUpperCase().replace("-", "/")
                 }
             });
 

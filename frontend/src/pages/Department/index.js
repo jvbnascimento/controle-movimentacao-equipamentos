@@ -34,13 +34,13 @@ export default function Department() {
     const [pagesCount, setPageCounts] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
-	const [modalEditDepartment, setModalEditDepartment] = useState(false);
-	const [modalDeleteDepartment, setModalDeleteDepartment] = useState(false);
+    const [modalEditDepartment, setModalEditDepartment] = useState(false);
+    const [modalDeleteDepartment, setModalDeleteDepartment] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
     const [departmentToDelete, setDepartmentToDelete] = useState([-1, -1]);
     const [validDepartmentName, setValidDepartmentName] = useState(true);
     const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
-	const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
     const { message, setMessage, colorMessage } = useContext(AuthContext);
 
     const search = useParams();
@@ -72,6 +72,19 @@ export default function Department() {
     }, [search.name, message]);
 
     useEffect(() => {
+        async function getDepartment() {
+            if (departmentName !== '') {
+                const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
+                const data = response.data;
+
+                setValidDepartmentName(data.name_exists);
+            }
+        }
+
+        getDepartment();
+    }, [departmentName]);
+
+    useEffect(() => {
         function verifyMessage() {
             if (message[0] !== '') {
                 setVisible(true);
@@ -99,9 +112,9 @@ export default function Department() {
         else {
             setHardwareToDelete([-1, -1]);
         }
-	};
-	
-	const toggleModalDeleteDepartment = (e) => {
+    };
+
+    const toggleModalDeleteDepartment = (e) => {
         setModalDeleteDepartment(!modalDeleteDepartment)
 
         if (toggleModalDeleteDepartment) {
@@ -120,15 +133,12 @@ export default function Department() {
     const handleCurrentPage = (e, index) => {
         e.preventDefault();
         setCurrentPage(index);
-	}
-	
+    }
+
     const handleDepartmentName = (e) => {
         const verifyDepartmentName = e.target.value;
 
-        if (/^\S.*/gm.exec(verifyDepartmentName)) {
-            setValidDepartmentName(true);
-        }
-        else {
+        if (verifyDepartmentName === '') {
             setValidDepartmentName(false);
         }
 
@@ -159,7 +169,9 @@ export default function Department() {
     const verifyAllInputsValid = () => {
         if (
             /^\S.*/gm.exec(departmentName) &&
-            /^\S.*/gm.exec(departmentBoss)
+            /^\S.*/gm.exec(departmentBoss) &&
+            !validDepartmentName &&
+            !validDepartmentBoss
         ) {
             return true;
         }
@@ -230,8 +242,8 @@ export default function Department() {
             <h1 className="text-center">
                 Informações do departamento
             </h1>
-            
-			<Container fluid={true} className="width_70 margin_top_bottom_20">
+
+            <Container fluid={true} className="width_70 margin_top_bottom_20">
                 <ListGroupItem className="">
                     <Row className="text_left">
                         <Col sm="2">
@@ -277,10 +289,10 @@ export default function Department() {
                         </Col>
                         <Col sm="auto" className="center">
                             <Button
-								color="danger"
-								onClick={toggleModalDeleteDepartment}
-								value={department.id}
-								name={department.name}
+                                color="danger"
+                                onClick={toggleModalDeleteDepartment}
+                                value={department.id}
+                                name={department.name}
                             >
                                 Deletar
                             </Button>
@@ -443,10 +455,10 @@ export default function Department() {
                                     listCategory.rows.length !== 0 ?
                                     listCategory.rows.map(element => {
                                         return (
-											<ListGroupItem
-												className="margin_top_bottom_10"
-												key={element.id}
-											>
+                                            <ListGroupItem
+                                                className="margin_top_bottom_10"
+                                                key={element.id}
+                                            >
                                                 <Row
                                                     className="no_padding"
                                                 >
@@ -605,15 +617,25 @@ export default function Department() {
                     <FormGroup>
                         <Label>Departamento</Label>
                         {
-                            validDepartmentName ?
-                                <>
-                                    <Input
-                                        value={departmentName}
-                                        onChange={handleDepartmentName}
-                                        valid
-                                    />
-                                    <FormFeedback valid>Nome válido</FormFeedback>
-                                </>
+                            !validDepartmentName ?
+                                departmentName !== '' ?
+                                    <>
+                                        <Input
+                                            value={departmentName}
+                                            onChange={handleDepartmentName}
+                                            valid
+                                        />
+                                        <FormFeedback valid>Nome válido</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input
+                                            value={departmentName}
+                                            onChange={handleDepartmentName}
+                                            invalid
+                                        />
+                                        <FormFeedback>O campo <strong>DEPARTAMENTO</strong> não pode ser vazio.</FormFeedback>
+                                    </>
                                 :
                                 <>
                                     <Input
@@ -621,7 +643,7 @@ export default function Department() {
                                         onChange={handleDepartmentName}
                                         invalid
                                     />
-                                    <FormFeedback invalid>O campo <strong>DEPARTAMENTO</strong> não pode ser vazio.</FormFeedback>
+                                    <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
                                 </>
                         }
                     </FormGroup>
@@ -654,7 +676,7 @@ export default function Department() {
 
                 <ModalFooter>
                     <Button
-						className="bg_color_verde_zimbra"
+                        className="bg_color_verde_zimbra"
                         onClick={saveEditDepartment}
                     >
                         Salvar Alterações
@@ -668,7 +690,7 @@ export default function Department() {
                 </ModalFooter>
             </Modal>
 
-			<Modal isOpen={modalDeleteDepartment} toggle={toggleModalDeleteDepartment}>
+            <Modal isOpen={modalDeleteDepartment} toggle={toggleModalDeleteDepartment}>
                 <ModalHeader toggle={toggleModalDeleteDepartment}>Deletar departamento</ModalHeader>
                 <ModalBody>
                     Tem certeza que desejar&nbsp;
