@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import {
 	Container,
 	Row,
@@ -16,7 +16,10 @@ import {
 	PaginationItem,
 	PaginationLink,
 	ListGroupItem,
-	Alert,
+    Alert,
+    FormFeedback,
+    FormGroup,
+    Label
 } from 'reactstrap';
 
 import api from '../../services/api';
@@ -24,17 +27,24 @@ import AuthContext from '../../contexts/auth';
 
 export default function ListByCategory() {
 	const search = useParams();
-
+    const [category, setCategory] = useState(Object);
+    const [categoryName, setCategoryName] = useState('');
 	const [listCategory, setListCategory] = useState([]);
 	const [pageSize, setPageSize] = useState(10);
 	const [pagesCount, setPageCounts] = useState(0);
 	const [currentPage, setCurrentPage] = useState(0);
-	const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
+    const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
+    const [modalEditCategory, setModalEditCategory] = useState(false);
+    const [modalDeleteCategory, setModalDeleteCategory] = useState(false);
+    const [validCategoryName, setValidCategoryName] = useState(true);
+    const [categoryToDelete, setCategoryToDelete] = useState([-1, -1]);
 	
 	const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
 	
 	const [visible, setVisible] = useState(false);
-	const { message, setMessage } = useContext(AuthContext);
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
+
+    const history = useHistory();
 
 	useEffect(() => {
 		async function getAll() {
@@ -46,7 +56,33 @@ export default function ListByCategory() {
 		}
 
 		getAll();
-	}, [search.category, pageSize, currentPage]);
+    }, [search.category, pageSize, currentPage]);
+    
+    useEffect(() => {
+		async function getCategory() {
+			const response = await api.get(`/types/category_name/${search.category}`);
+            const data = await response.data;
+            
+            setCategory(data.type);
+            setCategoryName(data.type.name);
+            setValidCategoryName(false);
+		}
+
+		getCategory();
+    }, [search.category]);
+
+    useEffect(() => {
+		async function getCategory() {
+            if (categoryName !== '') {
+                const response = await api.get(`/types/verify_name/${categoryName}`);
+                const data = response.data;
+
+                setValidCategoryName(data.name_exists);
+            }
+		}
+
+		getCategory();
+	}, [categoryName]);
 
 	useEffect(() => {
 		function verifyMessage() {
@@ -88,7 +124,81 @@ export default function ListByCategory() {
 	const onDismiss = () => {
         setVisible(false);
         setMessage(['', -1]);
-	}
+    }
+    
+    const toggleModalEditCategory = () => {
+        setModalEditCategory(!modalEditCategory);
+        setCategoryName(category.name);
+        setValidCategoryName(true);
+    }
+	
+	const toggleModalDeleteCategory = (e) => {
+        setModalDeleteCategory(!modalDeleteCategory)
+
+        if (toggleModalDeleteCategory) {
+            setCategoryToDelete([e.target.value, e.target.name]);
+        }
+        else {
+            setCategoryToDelete([-1, -1]);
+        }
+    };
+
+    const handleCategoryName = (e) => {
+        if (e.target.value === '') {
+			setValidCategoryName(false);
+        }
+        
+        setCategoryName(e.target.value);
+    }
+
+    const cancelEdition = () => {
+        setCategoryName(category.name);
+        setValidCategoryName(true);
+        toggleModalEditCategory();
+    }
+
+    const verifyAllInputsValid = () => {
+        if (
+            /^\S.*/gm.exec(categoryName) &&
+            !validCategoryName
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    const saveEditCategory = async () => {
+        if (verifyAllInputsValid()) {
+            const new_data = {
+                name: categoryName,
+            }
+
+            const response = await api.put(`types/${category.id}`, new_data);
+
+            if (response.data.status === 200) {
+                setMessage(['As alterações foram salvas com sucesso!', 200]);
+                search.category = categoryName;
+                history.push(`/hardware/${search.category}`);
+                toggleModalEditCategory();
+            }
+            else {
+                setMessage([response.data.error, response.data.status]);
+                toggleModalEditCategory();
+            }
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+            toggleModalEditCategory();
+        }
+    }
+
+    const deleteCategory = async () => {
+        await api.delete(`/types/${categoryToDelete[0]}`);
+
+        setMessage(['Categoria deletada com sucesso!', 204]);
+        setModalDeleteCategory(!modalDeleteCategory);
+        history.push('/');
+    }
 
 	return (
 		<div className={
@@ -96,25 +206,67 @@ export default function ListByCategory() {
 				listCategory.rows.length <= 3 ?
 				"height_content" : "padding_all_10"
 		}>
+            <Container className="width_30 position_absolute margin_left_35_por">
+                <Alert color={
+                    colorMessage[message[1]]
+                }
+                    isOpen={visible}
+                    toggle={onDismiss}
+                >
+                    {message[0]}
+                </Alert>
+            </Container>
+
+            <h1 className="text-center">
+                Informações da categoria
+            </h1>
+            
+			<Container fluid={true} className="width_70 margin_top_bottom_20">
+                <ListGroupItem className="">
+                    <Row className="text_left">
+                        <Col sm="2">
+                            <h6>CATEGORIA:</h6>
+                        </Col>
+                        <Col sm="auto">
+                            <h6>{
+                                category.name !== undefined && category.name
+                            }</h6>
+                        </Col>
+                    </Row>
+                </ListGroupItem>
+
+                <ListGroupItem>
+                    <Row className="text_left">
+                        <Col sm="auto" className="center">
+                            <Button
+                                className="
+									font_color_verde_zimbra_hover
+									bg_color_transparent
+									no_border
+									text_undeline
+								"
+                                onClick={toggleModalEditCategory}
+                            >
+                                Editar
+                            </Button>
+                        </Col>
+                        <Col sm="auto" className="center">
+                            <Button
+								color="danger"
+								onClick={toggleModalDeleteCategory}
+								value={category.id}
+								name={category.name}
+                            >
+                                Deletar
+                            </Button>
+                        </Col>
+                    </Row>
+                </ListGroupItem>
+            </Container>
 			{
 				listCategory.rows !== undefined &&
 					listCategory.rows.length !== 0 ?
 					<>
-						<Container className="width_30 position_absolute margin_left_35_por">
-							<Alert color={
-								message[1] === 200 ?
-									"success" :
-									message[1] !== -1 ?
-										"danger"
-										: ''
-							}
-								isOpen={visible}
-								toggle={onDismiss}
-							>
-								{message[0]}
-							</Alert>
-						</Container>
-
 						<Container className="center margin_top_100">
 							<Row>
 								<Col>
@@ -420,19 +572,76 @@ export default function ListByCategory() {
 					</Row>
 			}
 
-			<Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
-				<ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>
-				<ModalBody>
-					Tem certeza que desejar&nbsp;
+            <Modal isOpen={modalEditCategory} toggle={toggleModalEditCategory}>
+                <ModalHeader toggle={toggleModalEditCategory}>
+                    Editar informações da categoria: {category.name}
+                </ModalHeader>
+
+                <ModalBody>
+                    <FormGroup>
+                        <Label>Categoria</Label>
+                        {
+                            !validCategoryName ?
+                                categoryName !== '' ?
+                                <>
+                                    <Input
+                                        value={categoryName}
+                                        onChange={handleCategoryName}
+                                        valid
+                                    />
+                                    <FormFeedback valid>Nome válido</FormFeedback>
+                                </>
+                                :
+                                <>
+                                    <Input
+                                        value={categoryName}
+                                        onChange={handleCategoryName}
+                                        invalid
+                                    />
+                                    <FormFeedback>O campo <strong>CATEGORIA</strong> não pode ser vazio.</FormFeedback>
+                                </>
+                                :
+                                <>
+                                    <Input
+                                        value={categoryName}
+                                        onChange={handleCategoryName}
+                                        invalid
+                                    />
+                                    <FormFeedback>Já existe uma <strong>CATEGORIA</strong> com o nome informado.</FormFeedback>
+                                </>
+                        }
+                    </FormGroup>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button
+						className="bg_color_verde_zimbra"
+                        onClick={saveEditCategory}
+                    >
+                        Salvar Alterações
+					</Button>{' '}
+                    <Button
+                        color="secondary"
+                        onClick={cancelEdition}
+                    >
+                        Cancelar
+					</Button>
+                </ModalFooter>
+            </Modal>
+
+			<Modal isOpen={modalDeleteCategory} toggle={toggleModalDeleteCategory}>
+                <ModalHeader toggle={toggleModalDeleteCategory}>Deletar categoria</ModalHeader>
+                <ModalBody>
+                    Tem certeza que desejar&nbsp;
 					<strong className="font_color_danger">DELETAR</strong>
-					&nbsp;o equipamento de tombo&nbsp;
-					<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
-				</ModalBody>
-				<ModalFooter>
-					<Button color="danger" onClick={deleteHardware}>Sim</Button>
-					<Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteHardware}>Cancelar</Button>
-				</ModalFooter>
-			</Modal>
+					&nbsp;a categoria&nbsp;
+					<strong className="font_color_danger">{categoryToDelete[1]}</strong>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={deleteCategory}>Sim</Button>
+                    <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteCategory}>Cancelar</Button>
+                </ModalFooter>
+            </Modal>
 		</div>
 	);
 }

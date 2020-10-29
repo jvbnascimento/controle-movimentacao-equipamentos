@@ -88,7 +88,7 @@ export default function Header() {
             if (categoryName !== '') {
                 const response = await api.get(`/types/verify_name/${categoryName}`);
                 const data = response.data;
-                
+
                 setVerifyCategoryName(data.name_exists);
             }
 		}
@@ -543,7 +543,7 @@ export default function Header() {
                                     onChange={handleDepartmentName}
                                     invalid
                                 />
-                                <FormFeedback>Já existe uma <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
+                                <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
                             </>
                         }
                     </FormGroup>
@@ -577,6 +577,7 @@ export default function Header() {
                     <Button
 						className="bg_color_verde_zimbra"
                         onClick={createDepartment}
+                        disabled={!validCreateDepartment() ? true : false}
                     >
                         Criar
 					</Button>{' '}
@@ -634,6 +635,7 @@ export default function Header() {
                     <Button
 						className="bg_color_verde_zimbra"
                         onClick={createCategory}
+                        disabled={!validCreateCategory() ? true : false}
                     >
                         Criar
 					</Button>{' '}

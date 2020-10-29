@@ -41,7 +41,7 @@ export default function Department() {
     const [validDepartmentName, setValidDepartmentName] = useState(true);
     const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
 	const [visible, setVisible] = useState(false);
-    const { message, setMessage } = useContext(AuthContext);
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
 
     const search = useParams();
     const history = useHistory();
@@ -181,7 +181,7 @@ export default function Department() {
         await api.delete(`/departments/delete/${departmentToDelete[0]}`);
 
         setMessage(['Departamento deletado com sucesso!', 200]);
-        setModalDeleteHardware(!modalDeleteHardware);
+        setModalDeleteDepartment(!modalDeleteDepartment);
         history.push('/');
     }
 
@@ -218,11 +218,7 @@ export default function Department() {
         }>
             <Container className="width_30 position_absolute margin_left_35_por">
                 <Alert color={
-                    message[1] === 200 ?
-                        "success" :
-                        message[1] !== -1 ?
-						"danger"
-						: ''
+                    colorMessage[message[1]]
                 }
                     isOpen={visible}
                     toggle={onDismiss}

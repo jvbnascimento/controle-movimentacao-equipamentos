@@ -7,6 +7,13 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState(['', -1]);
+    const colorMessage = {
+        200: "success",
+        201: "success",
+        204: "success",
+        404: "danger",
+        400: "danger"
+    }
 
     useEffect(() => {
         function loadStorageData() {
@@ -63,7 +70,8 @@ export function AuthProvider({ children }) {
                 message,
                 setMessage,
                 signIn,
-                signOut
+                signOut,
+                colorMessage
             }
         }>
             {children}

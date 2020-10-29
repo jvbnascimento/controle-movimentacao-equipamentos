@@ -32,7 +32,7 @@ export default function CreateMovement() {
 	const [dateMovementValid, setDateMovementValid] = useState(false);
 	const [visible, setVisible] = useState(false);
 	const history = useHistory();
-	const { user, message, setMessage } = useContext(AuthContext);
+	const { user, message, setMessage, colorMessage } = useContext(AuthContext);
 
 
 	useEffect(() => {
@@ -201,9 +201,7 @@ export default function CreateMovement() {
 		>
 			<Container className="width_30">
 				<Alert color={
-					message[1] === 200 ?
-						"success" :
-						"danger"
+					colorMessage[message[1]]
 				}
 					isOpen={visible}
 					toggle={onDismiss}

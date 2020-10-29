@@ -21,7 +21,7 @@ import AuthContext from '../../contexts/auth';
 export default function ListMovement() {
     // const [movements, setMovements] = useState([]);
     const [visible, setVisible] = useState(false);
-	const {message, setMessage} = useContext(AuthContext);
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
 
 	useEffect(() => {
         function verifyMessage() {
@@ -64,11 +64,7 @@ export default function ListMovement() {
 		<div className='height_content'>
             <Container className="width_30">
                 <Alert color={
-                        message[1] === 200 ?
-                        "success" :
-                        message[1] !== -1 ?
-                        "danger"
-                        : ''
+                        colorMessage[message[1]]
                     }
                     isOpen={visible}
                     toggle={onDismiss}

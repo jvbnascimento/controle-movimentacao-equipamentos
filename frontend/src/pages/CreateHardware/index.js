@@ -36,7 +36,7 @@ export default function EditHardware() {
     const [warrantyValid, setWarrantyValid] = useState(false);
     const [dateAuctionValid, setDateAuctionValid] = useState(false);
     const [visible, setVisible] = useState(false);
-    const { message, setMessage } = useContext(AuthContext);
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
     const history = useHistory();
 
     useEffect(() => {
@@ -231,9 +231,7 @@ export default function EditHardware() {
         <>
             <Container className="width_30">
                 <Alert color={
-                    message[1] === 200 ?
-                        "success" :
-                        "danger"
+                    colorMessage[message[1]]
                 }
                     isOpen={visible}
                     toggle={onDismiss}

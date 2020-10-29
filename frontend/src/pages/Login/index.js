@@ -22,7 +22,7 @@ export default function Login() {
     const [usePassword, setUsePassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [visible, setVisible] = useState(false);
-	const { signIn, message, setMessage } = useContext(AuthContext);
+	const { signIn, message, setMessage, colorMessage } = useContext(AuthContext);
 
 	useEffect(() => {
         function verifyMessage() {
@@ -65,11 +65,7 @@ export default function Login() {
         <>
             <Container className="width_30">
                 <Alert color={
-                    message[1] === 200 ?
-                    "success" :
-                    message[1] !== -1 ?
-                    "danger"
-                    : ''
+                   colorMessage[message[1]]
                 }
                     isOpen={visible}
                     toggle={onDismiss}

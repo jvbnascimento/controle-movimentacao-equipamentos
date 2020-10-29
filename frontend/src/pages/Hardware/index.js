@@ -38,7 +38,7 @@ export default function Hardware() {
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
 	const [visible, setVisible] = useState(false);
 	const [tooltipOpen, setTooltipOpen] = useState(false);
-	const {message, setMessage} = useContext(AuthContext);
+	const { message, setMessage, colorMessage } = useContext(AuthContext);
 
 	useEffect(() => {
         async function getAllHardwares() {
@@ -140,11 +140,7 @@ export default function Hardware() {
         }>
             <Container className="width_30">
                 <Alert color={
-                        message[1] === 200 ?
-                        "success" :
-                        message[1] !== -1 ?
-                        "danger"
-                        : ''
+                        colorMessage[message[1]]
                     }
                     isOpen={visible}
                     toggle={onDismiss}
