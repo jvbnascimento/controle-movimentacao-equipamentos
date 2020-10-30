@@ -22,7 +22,6 @@ body, html, #root {
 }
 .height_content {
     height: 80vh;
-    padding: 10px;
 }
 .height_footer {
 	height: 12vh;

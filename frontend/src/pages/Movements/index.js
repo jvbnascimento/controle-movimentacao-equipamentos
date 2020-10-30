@@ -57,12 +57,10 @@ export default function Movements() {
     function format_date(date) {
         const data_auxiliar = date.split("T");
         const data = data_auxiliar[0].split("-");
-        const horario = data_auxiliar[1].split(".");
 
         const new_data = data[2] + "/" + data[1] + "/" + data[0];
-        const new_horario = horario[0];
 
-        return (new_data + " " + new_horario);
+        return (new_data);
     }
 
     const onCheckboxBtnClick = (selected) => {
@@ -107,13 +105,12 @@ export default function Movements() {
 
     return (
         <div className={
-			movements.rows !== undefined &&
-			movements.rows.length <= 1 ?
-			"height_content" : "padding_all_10"
-		}>
-            <Container className="margin_bottom_30" fluid={true}>
-                <Row>
-                    <Col>
+            movements.rows !== undefined && movements.rows.length !== 0 ?
+            '' : 'height_content'
+        }>
+            <Container className="margin_bottom_30 padding_all_10" fluid={true}>
+                <Row sm="auto no_margin">
+                    <Col sm="auto">
                         <Link
                             to="/movement/create"
                             className="font_color_verde_zimbra_hover"
@@ -124,7 +121,7 @@ export default function Movements() {
                 </Row>
             </Container>
 
-            <Container className="margin_bottom_30" fluid={true}>
+            <Container className="margin_bottom_30">
                 <Row>
                     <Col className="center">
                         <ButtonGroup className="margin_bottom_20">
@@ -244,7 +241,7 @@ export default function Movements() {
                 </Row>
             </Container>
 
-            <Container className="center">
+            <Container className="center padding_all_10">
                 <Row>
                     <Col>
                         <Container>
@@ -343,7 +340,7 @@ export default function Movements() {
                     : ''
             }
 
-            <ListGroup>
+            <ListGroup className="padding_all_10">
                 {
 					movements.rows !== undefined &&
 					movements.rows.length !== 0 ?
@@ -450,10 +447,8 @@ export default function Movements() {
                                                                             }
                                                                         </Col>
                                                                     </Row>
-
                                                                 </Col>
                                                             </Row>
-
                                                         </Col>
                                                     </Row>
                                                 </ListGroupItem>
@@ -589,9 +584,9 @@ export default function Movements() {
                             })
                             :
                             <Row
-                                className="center margin_top_bottom_20"
+                                className="margin_top_bottom_20 width_100 center"
                             >
-                                <Col xs="8" className="text-center">
+                                <Col sm="auto" className="text-center">
                                     <h3>Ainda não há movimentações</h3>
                                 </Col>
                             </Row>
