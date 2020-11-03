@@ -14,9 +14,9 @@ module.exports = {
         let belongsFilters = {}
         let categoryFilters = {}
 
-        if (filters.heritage) {
-            hardwareFilters.heritage = {
-                [Op.like]: `%${filters.heritage}%`
+        if (filters.code) {
+            hardwareFilters.code = {
+                [Op.like]: `%${filters.code}%`
             }
         }
         if (filters.brand) {
@@ -67,7 +67,7 @@ module.exports = {
             ],
             where: hardwareFilters,
             order: [
-                ['heritage']
+                ['code']
             ],
             limit,
             offset,
@@ -133,7 +133,7 @@ module.exports = {
 				}
 			],
 			order: [
-				['heritage']
+				['code']
 			],
 			limit,
 			offset,
@@ -145,12 +145,12 @@ module.exports = {
 	},
 	
 	async listHardwareByHeritage(req, res) {
-		const { heritage } = req.params;
+		const { code } = req.params;
 
 		const hardware = await Hardware.findAll({
 			where: {
-				heritage: {
-					[Op.iLike]: `%${heritage}%`
+				code: {
+					[Op.iLike]: `%${code}%`
                 }
 			},
 			include: [
@@ -186,7 +186,7 @@ module.exports = {
                 },
 			],
 			order: [
-				['heritage']
+				['code']
 			],
 		});
 
@@ -213,7 +213,7 @@ module.exports = {
                 },
 			],
 			order: [
-				['heritage']
+				['code']
 			],
 			limit,
 			offset,
@@ -252,7 +252,7 @@ module.exports = {
 	async create(req, res) {
 		const { type_id } = req.params;
 		const {
-			heritage,
+			code,
 			description,
 			brand,
 			warranty,
@@ -273,7 +273,7 @@ module.exports = {
 		}
 
 		const hardware = await Hardware.create({
-			heritage,
+			code,
 			description,
 			brand,
 			warranty,
@@ -290,7 +290,7 @@ module.exports = {
 	async update(req, res) {
 		const { hardware_id } = req.params;
 		const {
-			heritage,
+			code,
 			description,
 			brand,
 			warranty,
@@ -324,7 +324,7 @@ module.exports = {
 			return res.status(404).json({ error: 'Department not found' });
 		}
 
-		hardware.heritage = heritage;
+		hardware.code = code;
 		hardware.description = description;
 		hardware.brand = brand;
 		hardware.warranty = warranty;

@@ -8,7 +8,7 @@ const DepartmentController = require("./controllers/DepartmentController");
 const HardwareController = require("./controllers/HardwareController");
 const MovementController = require("./controllers/MovementController");
 const LoginController = require("./controllers/LoginController");
-const LogoutController = require("./controllers/LogoutController");
+const RoleController = require("./controllers/RoleController");
 
 routes.get("/users", UserController.listAllUsers);
 routes.get("/users/:user_id", UserController.listUser);
@@ -24,6 +24,14 @@ routes.get("/types/verify_name/:name", TypeController.nameExists);
 routes.post("/types", TypeController.create);
 routes.put("/types/:type_id", TypeController.update);
 routes.delete("/types/:type_id", TypeController.delete);
+
+routes.get("/roles", RoleController.listAllRoles);
+routes.get("/roles/:role_id", RoleController.listRole);
+routes.get("/roles/role_name/:name", RoleController.listRoleByName);
+routes.get("/roles/verify_name/:name", RoleController.nameExists);
+routes.post("/roles", RoleController.create);
+routes.put("/roles/:role_id", RoleController.update);
+routes.delete("/roles/:role_id", RoleController.delete);
 
 routes.get("/departments", DepartmentController.listAllDepartments);
 routes.get("/departments/id/:department_id", DepartmentController.listDepartment);
@@ -41,14 +49,14 @@ routes.get("/hardwares/heritage/:heritage", HardwareController.listHardwareByHer
 routes.get("/hardwares/department/:department_id", HardwareController.listHardwareByDepartment);
 routes.get("/hardwares/department/:department_name/:limit/:offset", HardwareController.listHardwareByDepartmentName);
 routes.get("/hardwares/:hardware_id", HardwareController.listHardwareById);
-routes.post("/:type_id/hardwares", HardwareController.create);
+routes.post("/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);
 
 routes.get("/movements/:movement_id", MovementController.listMovementById);
 routes.get("/movements/detailed/:limit/:offset", MovementController.listAllMovements);
 routes.get("/movements/data/:date_movement", MovementController.listAllMovementsByData);
-routes.get("/movements/heritage/:heritage", MovementController.listAllMovementsByHeritage);
+routes.get("/movements/code/:code", MovementController.listAllMovementsByHeritage);
 routes.get("/movements/:limit/:offset/filters", MovementController.listAllMovementsByAdvancedSearch);
 routes.post("/movements", MovementController.create);
 routes.put("/movements/:movement_id", MovementController.update);

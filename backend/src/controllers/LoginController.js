@@ -12,6 +12,12 @@ module.exports = {
                 email: {
                     [Op.eq]: `${login}`
                 }
+            },
+            include: {
+                association: 'roles',
+                through: {
+                    attributes: [],
+                }
             }
         });
 

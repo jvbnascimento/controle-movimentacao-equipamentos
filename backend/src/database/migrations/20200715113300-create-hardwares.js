@@ -11,7 +11,7 @@ module.exports = {
 				primaryKey: true,
 				autoIncrement: true,
 			},
-			heritage: {
+			code: {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
@@ -36,7 +36,7 @@ module.exports = {
 				allowNull: false,
 			},
 			date_auction: {
-				type: Sequelize.DATE,
+				type: Sequelize.DATEONLY,
 				allowNull: true,
 			},
 			department_id: {

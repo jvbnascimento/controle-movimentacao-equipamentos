@@ -12,7 +12,7 @@ module.exports = {
 				allowNull: false,
 			},
 			date_movement: {
-				type: Sequelize.DATE,
+				type: Sequelize.DATEONLY,
 				allowNull: false,
 			},
 			origin_department_id: {

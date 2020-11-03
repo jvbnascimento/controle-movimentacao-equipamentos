@@ -3,13 +3,13 @@ const { Model, DataTypes } = require('sequelize');
 class Hardware extends Model {
 	static init(sequelize) {
 		super.init({
-			heritage: DataTypes.STRING,
+			code: DataTypes.STRING,
 			description: DataTypes.STRING,
 			brand: DataTypes.STRING,
 			warranty: DataTypes.STRING,
 			has_office: DataTypes.STRING,
 			auction: DataTypes.BOOLEAN,
-			date_auction: DataTypes.DATE,
+			date_auction: DataTypes.DATEONLY,
 		}, {
 			sequelize,
 			tableName: 'hardwares'
