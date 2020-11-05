@@ -49,8 +49,6 @@ module.exports = {
                 [Op.like]: `%${filters.belongs.toUpperCase()}%`
             }
 		}
-		
-		console.log(belongsFilters);
 
 		const hardwares = await Hardware.findAndCountAll({
             include: [

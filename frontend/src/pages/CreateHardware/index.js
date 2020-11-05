@@ -44,7 +44,9 @@ export default function EditHardware() {
             const response = await api.get('/types');
             const data = await response.data;
 
-            setTypes(data);
+            if (data.length !== 0) {
+                setTypes(data);
+            }
         }
 
         getAllTypes();
@@ -55,8 +57,10 @@ export default function EditHardware() {
             const response = await api.get('/departments');
             const data = await response.data;
 
-            setDepartments(data);
-            setBelongs([data[0].id, data[0].boss]);
+            if (data.length !== 0) {
+                setDepartments(data);
+                setBelongs([data[0].id, data[0].boss]);
+            }
         }
 
         getAllDepartments();
@@ -230,12 +234,9 @@ export default function EditHardware() {
     return (
         <>
             <Container className="width_30">
-                <Alert color={
-                    colorMessage[message[1]]
-                }
+                <Alert color={colorMessage[message[1]]}
                     isOpen={visible}
-                    toggle={onDismiss}
-                >
+                    toggle={onDismiss}>
                     {message[0]}
                 </Alert>
             </Container>

@@ -52,7 +52,7 @@ module.exports = {
             });
 
             if (name_exists && name_exists.name) {
-                return res.json({ name_exists: true, stauts: 200 });
+                return res.json({ name_exists: true, status: 200 });
             }
 
             return res.json({ name_exists: false, status: 200 });
@@ -74,7 +74,7 @@ module.exports = {
             return res.json({ error: 'Name already exists!', status: 400 });
         }
 
-        const department = await Department.create({ name, boss });
+        const department = await Department.create({ name: name.toUpperCase(), boss: boss.toUpperCase() });
 
         return res.json({ department, status: 200 });
     },
@@ -86,7 +86,7 @@ module.exports = {
         const department = await Department.findByPk(department_id);
         const name_exists = await Department.findAll({
             where: {
-                name
+                name: name.toUpperCase()
             }
         });
 
@@ -97,8 +97,8 @@ module.exports = {
             return res.json({ error: 'Name is already being used!', stauts: 400 });
         }
 
-        department.name = name;
-        department.boss = boss;
+        department.name = name.toUpperCase();
+        department.boss = boss.toUpperCase();
 
         await department.save();
 

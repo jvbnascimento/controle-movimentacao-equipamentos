@@ -63,12 +63,9 @@ export default function ListMovement() {
 	return (
 		<div className='height_content'>
             <Container className="width_30">
-                <Alert color={
-                        colorMessage[message[1]]
-                    }
+                <Alert color={colorMessage[message[1]]}
                     isOpen={visible}
-                    toggle={onDismiss}
-                >
+                    toggle={onDismiss}>
                     {message[0]}
                 </Alert>
             </Container>

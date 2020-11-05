@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Container,
     Row,
@@ -14,7 +14,8 @@ import {
     ButtonGroup,
     Button,
     DropdownItem,
-    Tooltip
+    Tooltip,
+    Alert
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
@@ -22,16 +23,17 @@ import { AiFillQuestionCircle } from 'react-icons/ai';
 
 import api from '../../services/api';
 
+import AuthContext from '../../contexts/auth';
+
 export default function Movements() {
     const [movements, setMovements] = useState([]);
-    
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
-
     const [querySearch, setQuerySearch] = useState('');
-
     const [cSelected, setCSelected] = useState([]);
+    const [visible, setVisible] = useState(false);
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
 
     useEffect(() => {
         async function filteredSearch() {
@@ -44,6 +46,21 @@ export default function Movements() {
 
         filteredSearch();
     }, [querySearch, currentPage, pageSize]);
+
+    useEffect(() => {
+        function verifyMessage() {
+            if (message[0] !== '') {
+                setVisible(true);
+            }
+        }
+
+        verifyMessage();
+    }, [message]);
+
+    const onDismiss = () => {
+        setVisible(false);
+        setMessage(['', -1]);
+    }
 
     function handleCurrentPage(e, index) {
         setCurrentPage(index);
@@ -104,98 +121,98 @@ export default function Movements() {
     }
 
     return (
-        <div className={
-            movements.rows !== undefined && movements.rows.length !== 0 ?
-            '' : 'height_content'
-        }>
-            <Container className="margin_bottom_30 padding_all_10" fluid={true}>
-                <Row sm="auto no_margin">
+        <div className={movements.rows !== undefined && movements.rows.length !== 0 ? '' : 'height_content'}>
+            <Container className="width_30">
+                <Alert
+                    color={colorMessage[message[1]]}
+                    isOpen={visible}
+                    toggle={onDismiss}>
+                    {message[0]}
+                </Alert>
+            </Container>
+
+            <Container fluid={true} className="margin_bottom_30 padding_all_10">
+                <Row sm="auto" className="no_margin">
                     <Col sm="auto">
                         <Link
                             to="/movement/create"
-                            className="font_color_verde_zimbra_hover"
                             title="Cadastrar nova movimentação"
-                        ><BsPlusCircleFill size="40" />
+                            className="font_color_verde_zimbra_hover">
+                            <BsPlusCircleFill size="40" />
                         </Link>
                     </Col>
                 </Row>
             </Container>
 
-            <Container className="margin_bottom_30">
-                <Row>
-                    <Col className="center">
-                        <ButtonGroup className="margin_bottom_20">
-                            <Button
-								className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('heritage')}
-                                active={cSelected.includes('heritage')}
-                                title="Filtrar por tombamento"
-                            >Tombamento</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('brand')}
-                                active={cSelected.includes('brand')}
-                                title="Filtrar por marca"
-                            >Marca</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('warranty')}
-                                active={cSelected.includes('warranty')}
-                                title="Filtrar por garantia"
-                            >Garantia</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('has_office')}
-                                active={cSelected.includes('has_office')}
-                                title="Filtrar por ferramenta office"
-                            >Office</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('auction')}
-                                active={cSelected.includes('auction')}
-                                title="Filtrar por máquinas leiloadas"
-                            >Leilão</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('category')}
-                                active={cSelected.includes('category')}
-                                title="Filtrar por categoria"
-                            >Categoria</Button>
-                            <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
-                                onClick={() => onCheckboxBtnClick('belongs')}
-                                active={cSelected.includes('belongs')}
-                                title="Filtrar por departamento"
-                            >Departamento</Button>
-                            {/* <Button
+            {movements.rows !== undefined && movements.rows.length !== 0 ?
+                <Container className="margin_bottom_30">
+                    <Row>
+                        <Col className="center">
+                            <ButtonGroup className="margin_bottom_20">
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('heritage')}
+                                    active={cSelected.includes('heritage')}
+                                    title="Filtrar por tombamento"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Tombamento
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('brand')}
+                                    active={cSelected.includes('brand')}
+                                    title="Filtrar por marca"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Marca
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('warranty')}
+                                    active={cSelected.includes('warranty')}
+                                    title="Filtrar por garantia"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Garantia
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('has_office')}
+                                    active={cSelected.includes('has_office')}
+                                    title="Filtrar por ferramenta office"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Office
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('auction')}
+                                    active={cSelected.includes('auction')}
+                                    title="Filtrar por máquinas leiloadas"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Leilão
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('category')}
+                                    active={cSelected.includes('category')}
+                                    title="Filtrar por categoria"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Categoria
+                                </Button>
+
+                                <Button
+                                    onClick={() => onCheckboxBtnClick('belongs')}
+                                    active={cSelected.includes('belongs')}
+                                    title="Filtrar por departamento"
+                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                                >
+                                    Departamento
+                                </Button>
+
+                                {/* <Button
                                 className="
 									margin_left_right_05
 									border_color_verde_zimbra_hover
@@ -205,81 +222,87 @@ export default function Movements() {
                                 active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
                             >Data</Button> */}
-                        </ButtonGroup>
-                    </Col>
-                </Row>
+                            </ButtonGroup>
+                        </Col>
+                    </Row>
 
-                <Row>
-                    <Col>
-                        <Container>
-                            <Row>
-                                <Col className="center">
-                                    <Input
-                                        type="text"
-                                        name="filter"
-                                        placeholder="Procurar"
-                                        className="background_color_white_zimbra"
-                                        onChange={handleValueInput}
-                                    />
-                                </Col>
-                                <Col sm="1" className="center">
-                                    <span id="TooltipExample">
-                                        <AiFillQuestionCircle size="30" />
-                                    </span>
-                                    <Tooltip
-										placement="right" 
-										isOpen={tooltipOpen}
-										target="TooltipExample"
-										toggle={toggle}
-									>
-                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.
+                    <Row>
+                        <Col>
+                            <Container>
+                                <Row>
+                                    <Col className="center">
+                                        <Input
+                                            type="text"
+                                            name="filter"
+                                            placeholder="Procurar"
+                                            className="background_color_white_zimbra"
+                                            onChange={handleValueInput}
+                                        />
+                                    </Col>
+                                    <Col sm="1" className="center">
+                                        <span id="TooltipExample">
+                                            <AiFillQuestionCircle size="30" />
+                                        </span>
+                                        <Tooltip
+                                            placement="right"
+                                            isOpen={tooltipOpen}
+                                            target="TooltipExample"
+                                            toggle={toggle}
+                                        >
+                                            Separe os campos por ';' (ponto e vírgula) e sem espaços.
 									</Tooltip>
-                                </Col>
-                            </Row>
-                        </Container>
-                    </Col>
-                </Row>
-            </Container>
-
-            <Container className="center padding_all_10">
-                <Row>
-                    <Col>
-                        <Container>
-                            <Row>
-                                <Col sm="16">
-                                    <h1 className="text-center">
-										Últimas movimentações ({movements.count})
-									</h1>
-                                </Col>
-                            </Row>
-
-                            <Row className="right margin_top_10">
-                                <Col>
-                                    <span>Quantidade de itens mostrados</span>
-                                </Col>
-                                <Col sm="auto">
-                                    <Input
-                                        type="select"
-                                        name="pageSize"
-                                        id="labelPageSize"
-                                        value={pageSize}
-                                        onChange={handleSizePage}
-                                    >
-                                        <option key={0} value={5}>5</option>
-                                        <option key={1} value={10}>10</option>
-                                        <option key={2} value={20}>20</option>
-                                        <option key={3} value={movements.count}>Tudo</option>
-                                    </Input>
-                                </Col>
-                            </Row>
-                        </Container>
-                    </Col>
-                </Row>
-            </Container>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                    </Row>
+                </Container>
+                : ''
+            }
 
             {
-				movements.rows !== undefined &&
-				movements.rows.length !== 0 ?
+                movements.rows !== undefined && movements.rows.length !== 0 ?
+                    <Container className="center margin_top_30">
+                        <Row>
+                            <Col>
+                                <Container>
+                                    <Row>
+                                        <Col sm="16">
+                                            <h1 className="text-center">
+                                                Últimas movimentações ({movements.count})
+									</h1>
+                                        </Col>
+                                    </Row>
+
+                                    <Row className="right margin_top_10">
+                                        <Col>
+                                            <span>Quantidade de itens mostrados</span>
+                                        </Col>
+                                        <Col sm="auto">
+                                            <Input
+                                                type="select"
+                                                name="pageSize"
+                                                id="labelPageSize"
+                                                value={pageSize}
+                                                onChange={handleSizePage}
+                                            >
+                                                <option key={0} value={5}>5</option>
+                                                <option key={1} value={10}>10</option>
+                                                <option key={2} value={20}>20</option>
+                                                <option key={3} value={movements.count}>Tudo</option>
+                                            </Input>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Col>
+                        </Row>
+                    </Container>
+                    : ''
+            }
+
+            {
+                movements.rows !== undefined &&
+                    movements.rows.length !== 0 ?
                     <Pagination
                         className="margin_top_20 center"
                     >
@@ -304,13 +327,13 @@ export default function Movements() {
                         {
                             [...Array(pagesCount)].map((page, i) => {
                                 return (
-									<PaginationItem key={i}>
+                                    <PaginationItem key={i}>
                                         <PaginationLink
                                             className={
-												(i * pageSize) === (currentPage) ?
-												"bg_color_cinza_zimbra_active" : 
-												"bg_color_cinza_zimbra" 
-											}
+                                                (i * pageSize) === (currentPage) ?
+                                                    "bg_color_cinza_zimbra_active" :
+                                                    "bg_color_cinza_zimbra"
+                                            }
                                             href="#"
                                             onClick={e => handleCurrentPage(e, (i * pageSize))}
                                         > {i + 1} </PaginationLink>
@@ -342,8 +365,7 @@ export default function Movements() {
 
             <ListGroup className="padding_all_10">
                 {
-					movements.rows !== undefined &&
-					movements.rows.length !== 0 ?
+                    movements.rows !== undefined && movements.rows.length !== 0 ?
                         movements.rows.map(element => {
                             return (
                                 <Container key={element.id}>
@@ -458,8 +480,7 @@ export default function Movements() {
                                 </Container>
                             )
                         }) :
-						movements.rows !== undefined &&
-						movements.rows.length !== 0 ?
+                        movements.rows !== undefined && movements.rows.length !== 0 ?
                             movements.rows.map(element => {
                                 return (
                                     <Container key={element.id}>
@@ -583,11 +604,9 @@ export default function Movements() {
                                 )
                             })
                             :
-                            <Row
-                                className="margin_top_bottom_20 width_100 center"
-                            >
+                            <Row className="margin_top_bottom_20 width_100 center">
                                 <Col sm="auto" className="text-center">
-                                    <h3>Ainda não há movimentações</h3>
+                                    <h3>Não há movimentações registradas ainda</h3>
                                 </Col>
                             </Row>
                 }
@@ -624,10 +643,10 @@ export default function Movements() {
                                     <PaginationItem key={i}>
                                         <PaginationLink
                                             className={
-												(i * pageSize) === (currentPage) ?
-												"bg_color_cinza_zimbra_active" : 
-												"bg_color_cinza_zimbra" 
-											}
+                                                (i * pageSize) === (currentPage) ?
+                                                    "bg_color_cinza_zimbra_active" :
+                                                    "bg_color_cinza_zimbra"
+                                            }
                                             href="#"
                                             onClick={e => handleCurrentPage(e, (i * pageSize))}
                                         > {i + 1} </PaginationLink>

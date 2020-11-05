@@ -73,7 +73,7 @@ export default function Department() {
 
     useEffect(() => {
         async function getDepartment() {
-            if (departmentName !== '') {
+            if (departmentName !== '' && departmentName !== undefined) {
                 const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
                 const data = response.data;
 
@@ -168,10 +168,10 @@ export default function Department() {
 
     const verifyAllInputsValid = () => {
         if (
-            /^\S.*/gm.exec(departmentName) &&
-            /^\S.*/gm.exec(departmentBoss) &&
+            /^\S.*/gm.test(departmentName) &&
+            /^\S.*/gm.test(departmentBoss) &&
             !validDepartmentName &&
-            !validDepartmentBoss
+            validDepartmentBoss
         ) {
             return true;
         }
@@ -204,11 +204,12 @@ export default function Department() {
                 boss: departmentBoss
             }
 
-            const response = await api.put(`departments/${department.id}`, new_data);
+            const response = await api.put(`departments/update/${department.id}`, new_data);
 
             if (response.data.status === 200) {
                 setMessage(['As alterações foram salvas com sucesso!', 200]);
-                search.name = departmentName.replace("/", "-");
+                search.name = departmentName.replace("/", "-").toUpperCase();
+                setDepartmentName('');
                 history.push(`/department/${search.name}`);
                 toggleModalEditDepartment();
             }
