@@ -104,7 +104,8 @@ export default function EditHardware() {
             emptyFieldValidator(warranty) &&
             auction === 'true' &&
             date_auction !== null &&
-            emptyFieldValidator(date_auction)
+            emptyFieldValidator(date_auction) &&
+            types.length !== 0
         ) {
             return true;
         }
@@ -113,7 +114,8 @@ export default function EditHardware() {
             emptyFieldValidator(description) &&
             emptyFieldValidator(brand) &&
             emptyFieldValidator(warranty) &&
-            auction === 'false'
+            auction === 'false' &&
+            types.length !== 0
         ) {
             return true;
         }
@@ -297,12 +299,10 @@ export default function EditHardware() {
                                         types !== undefined && types.length !== 0 ?
                                             types.map(element => {
                                                 return (
-                                                    <option
-                                                        key={element.id}
-                                                        value={element.id}
-                                                    >{element.name}</option>
+                                                    <option key={element.id} value={element.id}>{element.name}</option>
                                                 );
-                                            }) : ''
+                                            }) : 
+                                            <option>Não há categorias cadastradas ainda</option>
                                     }
                                 </Input>
                             </FormGroup>

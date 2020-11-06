@@ -77,12 +77,20 @@ export default function Department() {
                 const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
                 const data = response.data;
 
-                setValidDepartmentName(data.name_exists);
+                if (data.name_exists && departmentName === department.name) {
+                    setValidDepartmentName(true);
+                }
+                else if (data.name_exists && departmentName !== department.name) {
+                    setValidDepartmentName(false);
+                }
+                else {
+                    setValidDepartmentName(true);
+                }
             }
         }
 
         getDepartment();
-    }, [departmentName]);
+    }, [departmentName, department.name]);
 
     useEffect(() => {
         function verifyMessage() {
@@ -93,7 +101,6 @@ export default function Department() {
 
         verifyMessage();
     }, [message]);
-
 
     const toggleModalEditDepartment = () => {
         setModalEditDepartment(!modalEditDepartment);
@@ -136,7 +143,7 @@ export default function Department() {
     }
 
     const handleDepartmentName = (e) => {
-        const verifyDepartmentName = e.target.value;
+        const verifyDepartmentName = e.target.value.toUpperCase();
 
         if (verifyDepartmentName === '') {
             setValidDepartmentName(false);
@@ -170,7 +177,7 @@ export default function Department() {
         if (
             /^\S.*/gm.test(departmentName) &&
             /^\S.*/gm.test(departmentBoss) &&
-            !validDepartmentName &&
+            validDepartmentName &&
             validDepartmentBoss
         ) {
             return true;
@@ -618,7 +625,7 @@ export default function Department() {
                     <FormGroup>
                         <Label>Departamento</Label>
                         {
-                            !validDepartmentName ?
+                            validDepartmentName ?
                                 departmentName !== '' ?
                                     <>
                                         <Input
@@ -638,14 +645,24 @@ export default function Department() {
                                         <FormFeedback>O campo <strong>DEPARTAMENTO</strong> não pode ser vazio.</FormFeedback>
                                     </>
                                 :
-                                <>
-                                    <Input
-                                        value={departmentName}
-                                        onChange={handleDepartmentName}
-                                        invalid
-                                    />
-                                    <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
-                                </>
+                                departmentName !== '' ?
+                                    <>
+                                        <Input
+                                            value={departmentName}
+                                            onChange={handleDepartmentName}
+                                            invalid
+                                        />
+                                        <FormFeedback>Já existe um <strong>DEPARTAMENTO</strong> com o nome informado.</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input
+                                            value={departmentName}
+                                            onChange={handleDepartmentName}
+                                            invalid
+                                        />
+                                        <FormFeedback>O campo <strong>DEPARTAMENTO</strong> não pode ser vazio.</FormFeedback>
+                                    </>
                         }
                     </FormGroup>
 
