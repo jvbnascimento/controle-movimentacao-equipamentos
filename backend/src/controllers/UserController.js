@@ -1,7 +1,6 @@
 const User = require('../models/User');
-const express = require('express');
-const bcrypt = require('bcrypt');
 const Role = require('../models/Role');
+const bcrypt = require('bcrypt');
 
 module.exports = {
 	async listAllUsers(req, res) {
@@ -14,7 +13,7 @@ module.exports = {
             }
         });
 
-		return res.json({ users, status: 200 });
+		return res.status(200).json({ users });
     },
     
     async listUser(req, res) {
@@ -30,10 +29,10 @@ module.exports = {
         });
         
         if (!user) {
-            return res.json({ error: 'User not found!', status: 404 });
+            return res.status(404).json({ error: 'User not found!' });
         }
 
-		return res.json({ user, status: 200 });
+		return res.status(200).json({ user });
 	},
 
 	async create(req, res) {

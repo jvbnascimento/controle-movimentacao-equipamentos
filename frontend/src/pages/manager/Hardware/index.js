@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import {
@@ -8,50 +8,97 @@ import {
     Col,
     ButtonGroup,
     Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Tooltip,
-    PaginationLink,
-    PaginationItem,
-    Pagination,
     ListGroupItem,
     Alert
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { BsPlusCircleFill } from 'react-icons/bs';
 import { AiFillQuestionCircle } from 'react-icons/ai';
+import PaginationComponent from '../../../components/Pagination';
 
-import api from '../../services/api';
+import api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
 
-import AuthContext from '../../contexts/auth';
+const LEFT_PAGE = 'LEFT';
+const RIGHT_PAGE = 'RIGHT';
+
+const range = (from, to, step = 1) => {
+	let i = from;
+	const range = [];
+
+	while (i <= to) {
+		range.push(i);
+		i += step;
+	}
+
+	return range;
+}
 
 export default function Hardware() {
     const [hardware, setHardwares] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [pagesCount, setPageCounts] = useState(0);
+	const [pagesCount, setPageCounts] = useState(0);
+	const [pageNeighbours, setPageNeighbours] = useState(1);
+	const [pages, setPages] = useState([]);
     const [querySearch, setQuerySearch] = useState('');
     const [cSelected, setCSelected] = useState([]);
-    const [modal, setModal] = useState(false);
-    const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
     const [visible, setVisible] = useState(false);
     const [tooltipOpen, setTooltipOpen] = useState(false);
     const { message, setMessage, colorMessage } = useContext(AuthContext);
 
     useEffect(() => {
+		const fetchPageNumbers = () => {
+			const totalNumbers = (pageNeighbours * 2) + 3;
+			const totalBlocks = totalNumbers + 2;
+
+			if (pagesCount > totalBlocks) {
+				const startPage = Math.max(2, currentPage - pageNeighbours);
+				const endPage = Math.min(pagesCount - 1, currentPage + pageNeighbours);
+				let pages = range(startPage, endPage);
+
+				const hasLeftSpill = startPage > 2;
+				const hasRightSpill = (pagesCount - endPage) > 1;
+				const spillOffset = totalNumbers - (pages.length + 1);
+
+				switch (true) {
+					case (hasLeftSpill && !hasRightSpill): {
+						const extraPages = range(startPage - spillOffset, startPage - 1);
+						pages = [LEFT_PAGE, ...extraPages, ...pages];
+						break;
+					}
+
+					case (!hasLeftSpill && hasRightSpill): {
+						const extraPages = range(endPage + 1, endPage + spillOffset);
+						pages = [...pages, ...extraPages, RIGHT_PAGE];
+						break;
+					}
+
+					case (hasLeftSpill && hasRightSpill):
+					default: {
+						pages = [LEFT_PAGE, ...pages, RIGHT_PAGE];
+						break;
+					}
+				}
+
+				return [1, ...pages, pagesCount];
+			}
+
+			return range(1, pagesCount);
+		}
+
         async function getAllHardwares() {
             const response = await api.get(`/hardwares/${pageSize}/${currentPage}/filters?${querySearch}`);
             const data = await response.data;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
-
-            setHardwares(data);
+			setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
+			setHardwares(data);
         }
 
-        getAllHardwares();
-    }, [pageSize, currentPage, querySearch, message]);
+		getAllHardwares();
+		setPages(fetchPageNumbers());
+    }, [pageSize, currentPage, pageNeighbours, querySearch, message, pagesCount]);
 
     useEffect(() => {
         function verifyMessage() {
@@ -68,27 +115,17 @@ export default function Hardware() {
         setMessage(['', -1]);
     }
 
-    const toggle = (e) => {
-        setModal(!modal)
-
-        if (toggle) {
-            setHardwareToDelete([e.target.value, e.target.name]);
-        }
-        else {
-            setHardwareToDelete([-1, -1]);
-        }
-    };
-
     const toggleNotification = () => setTooltipOpen(!tooltipOpen);
 
-    const handleCurrentPage = (e, index) => {
+    const handleCurrentPage = (e, page) => {
         e.preventDefault();
-        setCurrentPage(index);
+		setCurrentPage(Math.max(0, Math.min(page, pagesCount)));
     }
 
     const handleSizePage = (e) => {
         setPageSize(parseInt(e.target.value));
-        setPageCounts(Math.ceil(hardware.count / parseInt(pageSize)));
+		setPageCounts(Math.ceil(hardware.count / parseInt(pageSize)));
+		setCurrentPage(1);
     }
 
     const onCheckboxBtnClick = (selected) => {
@@ -99,14 +136,6 @@ export default function Hardware() {
             cSelected.splice(index, 1);
         }
         setCSelected([...cSelected]);
-    }
-
-    const deleteHardware = async () => {
-        await api.delete(`/hardwares/${hardwareToDelete[0]}`);
-
-        setMessage([`Equipamento de tombo ${hardwareToDelete[1]} foi deletado com sucesso`, 200]);
-        setHardwareToDelete([-1, -1]);
-        setModal(!modal);
     }
 
     const handleValueInput = (e) => {
@@ -145,22 +174,8 @@ export default function Hardware() {
                 </Alert>
             </Container>
 
-            <Container className="margin_bottom_30 padding_all_10" fluid={true}>
-                <Row sm="auto" className="no_margin">
-                    <Col sm="auto">
-                        <Link
-                            to="/hardware/create"
-                            className="font_color_verde_zimbra_hover"
-                            title="Cadastrar novo equipamento"
-                        >
-                            <BsPlusCircleFill size="40" />
-                        </Link>
-                    </Col>
-                </Row>
-            </Container>
-
             {hardware.rows !== undefined && hardware.rows.length !== 0 ?
-                <Container className="margin_bottom_30">
+                <Container className="margin_top_30">
                     <Row>
                         <Col className="center">
                             <ButtonGroup className="margin_bottom_20">
@@ -303,67 +318,22 @@ export default function Hardware() {
                 : ''
             }
 
-            {hardware.rows !== undefined && hardware.rows.length !== 0 ?
-                <Pagination className="margin_top_20 center">
-                    <PaginationItem disabled={currentPage <= 0}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            first
-                            href="#"
-                            onClick={e => handleCurrentPage(e, 0)}
-                        />
-                    </PaginationItem>
-
-                    <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            previous
-                            href="#"
-                            onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-                        />
-                    </PaginationItem>
-
-                    {
-                        [...Array(pagesCount)].map((page, i) => {
-                            return (
-                                <PaginationItem key={i}>
-                                    <PaginationLink
-                                        className={
-                                            (i * pageSize) === (currentPage) ?
-                                                "bg_color_cinza_zimbra_active" :
-                                                "bg_color_cinza_zimbra"
-                                        }
-                                        href="#"
-                                        onClick={e => handleCurrentPage(e, (i * pageSize))}
-                                    > {i + 1} </PaginationLink>
-                                </PaginationItem>
-                            );
-                        })
-                    }
-
-                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            next
-                            href="#"
-                            onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-                        />
-                    </PaginationItem>
-
-                    <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                        <PaginationLink
-                            className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            last
-                            href="#"
-                            onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-                        />
-                    </PaginationItem>
-                </Pagination>
-                : ''
-            }
+{
+				hardware.rows !== undefined &&
+				hardware.rows.length !== 0 &&
+				<PaginationComponent
+					pages={pages}
+					left={LEFT_PAGE}
+					right={RIGHT_PAGE}
+					currentPage={currentPage}
+					handleCurrentPage={handleCurrentPage}
+					pageNeighbours={pageNeighbours}
+					pagesCount={pagesCount}
+				/>
+			}
 
             {hardware.rows !== undefined && hardware.rows.length !== 0 ?
-                <Container fluid={true} className="margin_top_20 width_70">
+                <Container fluid={true} className="margin_top_20 width_80 padding_all_10">
                     <ListGroupItem>
                         <Row>
                             <Col sm="2" className="border_only_right padding_all_10 center border_color_gray">
@@ -384,14 +354,14 @@ export default function Hardware() {
                 : ''
             }
 
-            <Container className="width_70 padding_all_10" fluid={true}>
+            <Container className="width_80 padding_all_10" fluid={true}>
                 {hardware.rows !== undefined && hardware.rows.length !== 0 ?
                     hardware.rows.map(element => {
                         return (
                             <ListGroupItem key={element.id}>
-                                <Row className="center margin_top_bottom_20">
+                                <Row className="center">
                                     <Col sm="2" className="padding_all_10 center_vertical">
-                                        {element.heritage}
+                                        {element.code}
                                     </Col>
                                     {element.auction ?
                                         <Col sm="4" className="border padding_all_10 center_vertical border_color_vermelho_danger">
@@ -410,20 +380,10 @@ export default function Hardware() {
                                     <Col sm="2" className="border_only_right padding_all_10 center_vertical border_color_gray">
                                         {element.category !== null && element.category.name}
                                     </Col>
-                                    <Col sm="2" className="border_only_right padding_all_10 center border_color_gray">
+                                    <Col sm="4" className="padding_all_10 center">
                                         <Link to={`/hardware/edit/${element.id}`} className="font_color_verde_zimbra_hover">
                                             Editar
                                         </Link>
-                                    </Col>
-                                    <Col sm="2" className="padding_all_10 center">
-                                        <Button
-                                            onClick={toggle}
-                                            color="danger"
-                                            value={element.id}
-                                            name={element.heritage}
-                                        >
-                                            Deletar
-                                        </Button>
                                     </Col>
                                 </Row>
                             </ListGroupItem>
@@ -437,75 +397,19 @@ export default function Hardware() {
                 }
             </Container>
 
-            {hardware.rows !== undefined && hardware.rows.length !== 0 ?
-                    <Pagination className="margin_top_20 center">
-                        <PaginationItem disabled={currentPage <= 0}>
-                            <PaginationLink
-                                first
-                                href="#"
-                                onClick={e => handleCurrentPage(e, 0)}
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
-                            <PaginationLink
-                                previous
-                                href="#"
-                                onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            />
-                        </PaginationItem>
-
-                        {[...Array(pagesCount)].map((page, i) => {
-                                return (
-                                    <PaginationItem key={i}>
-                                        <PaginationLink
-                                            href="#"
-                                            onClick={e => handleCurrentPage(e, (i * pageSize))}
-                                            className={(i * pageSize) === (currentPage) ? "bg_color_cinza_zimbra_active" : "bg_color_cinza_zimbra"}
-                                        >
-                                            {i + 1}
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                );
-                            })
-                        }
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                next
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                last
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                            />
-                        </PaginationItem>
-                    </Pagination>
-                    : ''
-            }
-
-            <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>Deletar equipamento</ModalHeader>
-                <ModalBody>
-                    Tem certeza que desejar&nbsp;
-					<strong className="font_color_danger">DELETAR</strong>
-					&nbsp;o equipamento de tombo&nbsp;
-					<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="danger" onClick={deleteHardware}>Sim</Button>
-                    <Button onClick={toggle} className="bg_color_verde_zimbra">Cancelar</Button>
-                </ModalFooter>
-            </Modal>
+            {
+				hardware.rows !== undefined &&
+				hardware.rows.length !== 0 &&
+				<PaginationComponent
+					pages={pages}
+					left={LEFT_PAGE}
+					right={RIGHT_PAGE}
+					currentPage={currentPage}
+					handleCurrentPage={handleCurrentPage}
+					pageNeighbours={pageNeighbours}
+					pagesCount={pagesCount}
+				/>
+			}
         </div>
     );
 }

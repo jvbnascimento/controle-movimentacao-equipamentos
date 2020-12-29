@@ -51,6 +51,9 @@ body, html, #root {
 .width_70 {
     width: 70vw;
 }
+.width_80 {
+    width: 80vw;
+}
 .width_100 {
     width: 100vw;
 }
@@ -295,6 +298,9 @@ body, html, #root {
 }
 .padding_all_10 {
 	padding: 10px;
+}
+.padding_top_bottom_10 {
+	padding: 10px 5px;
 }
 .padding_all_20 {
 	padding: 20px;

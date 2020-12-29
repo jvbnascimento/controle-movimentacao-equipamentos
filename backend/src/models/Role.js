@@ -6,7 +6,7 @@ class Role extends Model {
 			name: DataTypes.STRING,
 		}, {
 			sequelize,
-			tableName: 'roles'
+			tableName: 'roles',
 		});
 	}
 

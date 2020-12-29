@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -18,8 +18,8 @@ import {
 } from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
-import api from '../../services/api';
-import AuthContext from '../../contexts/auth';
+import api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
 
 export default function CreateMovement() {
 	const [hardwares, setHardwares] = useState([]);
@@ -55,13 +55,18 @@ export default function CreateMovement() {
 			const response = await api.get('/departments');
 			const data = await response.data;
 
-			setDestinationDepartment(data[0].id);
-			setOriginDepartment(data[1].id);
-			setDepartments(data);
+			if (data.length < 2) {
+				history.goBack();
+			}
+			else {
+				setDestinationDepartment(data[0].id);
+				setOriginDepartment(data[1].id);
+				setDepartments(data);
+			}
 		}
 
 		getAllDepartments();
-	}, []);
+	}, [history]);
 
 	useEffect(() => {
 		function verifyMessage() {
@@ -381,7 +386,7 @@ export default function CreateMovement() {
 																key={element.id}
 																value={element.id}
 															>
-																{element.heritage.replace("-", "")} | {' '}
+																{element.code.replace("-", "")} | {' '}
 																{element.description}
 															</option>
 														);
@@ -429,9 +434,9 @@ export default function CreateMovement() {
 																		border_only_right
 																	"
 																>
-																	{hardware.heritage}
+																	{hardware.code}
 																</Col>
-																<Col>
+																<Col className="center_vertical">
 																	{hardware.description}
 																</Col>
 																<Col

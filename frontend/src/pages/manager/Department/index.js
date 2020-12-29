@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
@@ -22,8 +22,8 @@ import {
     Alert
 } from 'reactstrap';
 
-import api from '../../services/api';
-import AuthContext from '../../contexts/auth';
+import api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
 
 export default function Department() {
     const [listCategory, setListCategory] = useState([]);
@@ -33,11 +33,7 @@ export default function Department() {
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
-    const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
     const [modalEditDepartment, setModalEditDepartment] = useState(false);
-    const [modalDeleteDepartment, setModalDeleteDepartment] = useState(false);
-    const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
-    const [departmentToDelete, setDepartmentToDelete] = useState([-1, -1]);
     const [validDepartmentName, setValidDepartmentName] = useState(true);
     const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
     const [visible, setVisible] = useState(false);
@@ -110,28 +106,6 @@ export default function Department() {
         setValidDepartmentBoss(true);
     }
 
-    const toggleModalDeleteHardware = (e) => {
-        setModalDeleteHardware(!modalDeleteHardware)
-
-        if (toggleModalDeleteHardware) {
-            setHardwareToDelete([e.target.value, e.target.name]);
-        }
-        else {
-            setHardwareToDelete([-1, -1]);
-        }
-    };
-
-    const toggleModalDeleteDepartment = (e) => {
-        setModalDeleteDepartment(!modalDeleteDepartment)
-
-        if (toggleModalDeleteDepartment) {
-            setDepartmentToDelete([e.target.value, e.target.name]);
-        }
-        else {
-            setDepartmentToDelete([-1, -1]);
-        }
-    };
-
     const handleSizePage = (e) => {
         setPageSize(parseInt(e.target.value));
         setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
@@ -188,20 +162,6 @@ export default function Department() {
     const onDismiss = () => {
         setVisible(false);
         setMessage(['', -1]);
-    }
-
-    const deleteHardware = async () => {
-        await api.delete(`/hardwares/${hardwareToDelete[0]}`);
-
-        window.location.reload();
-    }
-
-    const deleteDepartment = async () => {
-        await api.delete(`/departments/delete/${departmentToDelete[0]}`);
-
-        setMessage(['Departamento deletado com sucesso!', 200]);
-        setModalDeleteDepartment(!modalDeleteDepartment);
-        history.push('/');
     }
 
     const saveEditDepartment = async () => {
@@ -293,16 +253,6 @@ export default function Department() {
                                 onClick={toggleModalEditDepartment}
                             >
                                 Editar
-                            </Button>
-                        </Col>
-                        <Col sm="auto" className="center">
-                            <Button
-                                color="danger"
-                                onClick={toggleModalDeleteDepartment}
-                                value={department.id}
-                                name={department.name}
-                            >
-                                Deletar
                             </Button>
                         </Col>
                     </Row>
@@ -478,7 +428,7 @@ export default function Department() {
                                                             border_color_gray
                                                         "
                                                         sm="2"
-                                                    >{element.heritage}</Col>
+                                                    >{element.code}</Col>
                                                     <Col
                                                         className="
                                                             border_only_right
@@ -503,23 +453,12 @@ export default function Department() {
                                                             center
                                                             border_color_gray
                                                         "
-                                                        sm="2"
+                                                        sm="4"
                                                     >
                                                         <Link
                                                             className="font_color_verde_zimbra_hover"
                                                             to={`/hardware/edit/${element.id}`}
                                                         >Editar</Link>
-                                                    </Col>
-                                                    <Col
-                                                        className="padding_all_10 center"
-                                                        sm="2"
-                                                    >
-                                                        <Button
-                                                            onClick={toggleModalDeleteHardware}
-                                                            color="danger"
-                                                            value={element.id}
-                                                            name={element.heritage}
-                                                        >Deletar</Button>
                                                     </Col>
                                                 </Row>
                                             </ListGroupItem>
@@ -591,20 +530,6 @@ export default function Department() {
                                 </Pagination>
                                 : ''
                         }
-
-                        <Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
-                            <ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>
-                            <ModalBody>
-                                Tem certeza que desejar&nbsp;
-								<strong className="font_color_danger">DELETAR</strong>
-								&nbsp;o equipamento de tombo&nbsp;
-								<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" onClick={deleteHardware}>Sim</Button>
-                                <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteHardware}>Cancelar</Button>
-                            </ModalFooter>
-                        </Modal>
                     </>
                     :
                     <Row className="center no_margin">
@@ -705,20 +630,6 @@ export default function Department() {
                     >
                         Cancelar
 					</Button>
-                </ModalFooter>
-            </Modal>
-
-            <Modal isOpen={modalDeleteDepartment} toggle={toggleModalDeleteDepartment}>
-                <ModalHeader toggle={toggleModalDeleteDepartment}>Deletar departamento</ModalHeader>
-                <ModalBody>
-                    Tem certeza que desejar&nbsp;
-					<strong className="font_color_danger">DELETAR</strong>
-					&nbsp;o departamento&nbsp;
-					<strong className="font_color_danger">{departmentToDelete[1]}</strong>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="danger" onClick={deleteDepartment}>Sim</Button>
-                    <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteDepartment}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
         </div>

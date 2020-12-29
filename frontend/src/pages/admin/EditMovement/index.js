@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
@@ -21,7 +21,7 @@ import {
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 
-import api from '../../services/api';
+import api from '../../../services/api';
 
 export default function EditHardware() {
 	const movement_id = useParams();
@@ -75,7 +75,7 @@ export default function EditHardware() {
 	useEffect(() => {
 		async function getAllUsers() {
 			const response = await api.get('/users');
-			const data = await response.data;
+			const data = await response.data.users;
 
 			setUsers(data);
 		}
@@ -271,7 +271,7 @@ export default function EditHardware() {
 															<option
 																key={element.id}
 																value={element.id}
-															>{element.name} | {element.boss}</option>
+															>{element.name}</option>
 														);
 													}) : ''
 											}
@@ -293,7 +293,7 @@ export default function EditHardware() {
 															<option
 																key={element.id}
 																value={element.id}
-															>{element.name} | {element.boss}</option>
+															>{element.name}</option>
 														);
 													})
 													: ''
@@ -323,7 +323,7 @@ export default function EditHardware() {
 																			<option
 																				key={element.id}
 																				value={element.id}
-																			>{element.heritage.replace("-", "")} | {element.description}</option>
+																			>{element.code.replace("-", "")} | {element.description}</option>
 																		);
 																	})
 																	: ''
@@ -357,8 +357,8 @@ export default function EditHardware() {
 																	return (
 																		<ListGroupItem key={hardware.id}>
 																			<Row>
-																				<Col sm="auto" className="center border_only_right">{hardware.heritage}</Col>
-																				<Col>{hardware.description}</Col>
+																				<Col sm="auto" className="center border_only_right">{hardware.code}</Col>
+																				<Col className="center_vertical">{hardware.description}</Col>
 																				<Col sm="auto" className="center">
 																					<Button
 																						value={hardware.id}

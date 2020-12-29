@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useHistory } from 'react-router-dom';
@@ -22,8 +22,8 @@ import {
     Label
 } from 'reactstrap';
 
-import api from '../../services/api';
-import AuthContext from '../../contexts/auth';
+import api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
 
 export default function ListByCategory() {
 	const search = useParams();
@@ -203,7 +203,7 @@ export default function ListByCategory() {
 	return (
 		<div className={
 			listCategory.rows !== undefined &&
-				listCategory.rows.length <= 3 ?
+				listCategory.rows.length <= 1 ?
 				"height_content" : "padding_all_10"
 		}>
             <Container className="width_30 position_absolute margin_left_35_por">
@@ -433,7 +433,7 @@ export default function ListByCategory() {
                                                             border_color_gray
                                                         "
 														sm="2"
-													>{element.heritage}</Col>
+													>{element.code}</Col>
 													<Col
 														className="
                                                             border_only_right
@@ -473,7 +473,7 @@ export default function ListByCategory() {
 															onClick={toggleModalDeleteHardware}
 															color="danger"
 															value={element.id}
-															name={element.heritage}
+															name={element.code}
 														>Deletar</Button>
 													</Col>
 												</Row>

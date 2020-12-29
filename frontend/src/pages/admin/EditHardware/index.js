@@ -1,17 +1,17 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Form, FormGroup, Label, Input, Container, Row, Col, Button } from 'reactstrap';
 
-import api from '../../services/api';
+import api from '../../../services/api';
 
 export default function EditHardware() {
     const hardware_id = useParams();
 
     const [hardware, setHardware] = useState(Object);
     const [types, setTypes] = useState([]);
-    const [heritage, setHeritage] = useState('');
+    const [code, setCode] = useState('');
     const [description, setDescription] = useState('');
     const [brand, setBrand] = useState('');
     const [warranty, setWarranty] = useState('');
@@ -27,7 +27,7 @@ export default function EditHardware() {
             const response = await api.get(`/hardwares/${hardware_id.id}`);
             const data = await response.data;
 
-            setHeritage(data.heritage);
+            setCode(data.code);
             setDescription(data.description);
             setBrand(data.brand);
             setWarranty(data.warranty);
@@ -59,7 +59,7 @@ export default function EditHardware() {
 
         const new_data = {
             id,
-            heritage,
+            code,
             description,
             brand,
             warranty,
@@ -75,8 +75,8 @@ export default function EditHardware() {
         history.goBack();
     };
 
-    function handleHeritage(e) {
-        setHeritage(e.target.value);
+    function handleCode(e) {
+        setCode(e.target.value);
     }
     function handleDescription(e) {
         setDescription(e.target.value);
@@ -104,20 +104,20 @@ export default function EditHardware() {
         <Container className="center">
             <Row className="no_padding">
                 <Col>
-                    <h3 className="text-center margin_top_bottom_20">Editar dados do equipamento {hardware.heritage}</h3>
+                    <h3 className="text-center margin_top_bottom_20">Editar dados do equipamento {hardware.code}</h3>
                     <Form>
                         {
                             hardware !== undefined ?
                                 <>
                                     <FormGroup key={hardware.id}>
-                                        <Label className="margin_top_10" for="labelHeritage">Tombamento</Label>
+                                        <Label className="margin_top_10" for="labelCode">Tombamento</Label>
                                         <Input
                                             type="text"
-                                            name="heritage"
-                                            id="labelHeritage"
+                                            name="code"
+                                            id="labelCode"
                                             placeholder="Tombamento"
-                                            value={heritage}
-                                            onChange={handleHeritage}
+                                            value={code}
+                                            onChange={handleCode}
                                             className="margin_bottom_20"
                                         />
 
@@ -145,7 +145,7 @@ export default function EditHardware() {
 
                                         <Label className="margin_top_10" for="labelWarranty">Garantia</Label>
                                         <Input
-                                            type="text"
+                                            type="date"
                                             name="warranty"
                                             id="labelWarranty"
                                             placeholder="Garantia"
@@ -156,14 +156,19 @@ export default function EditHardware() {
 
                                         <Label className="margin_top_10" for="labelHasOffice">Tem office</Label>
                                         <Input
-                                            type="text"
+                                            type="select"
                                             name="has_office"
                                             id="labelHasOffice"
                                             placeholder="Tem office?"
                                             defaultValue={has_office}
                                             onChange={handleHasOffice}
                                             className="margin_bottom_20"
-                                        />
+                                        >
+											<option key={0} value={'SEM OFFICE'}>SEM OFFICE</option>
+                                            <option key={1} value={'2007'}>2007</option>
+                                            <option key={2} value={'2013'}>2013</option>
+                                            <option key={3} value={'2016'}>2016</option>
+                                        </Input>
 
                                         <Label className="margin_top_10" for="labelAuction">Leilão</Label>
                                         <Input

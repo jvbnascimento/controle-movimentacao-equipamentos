@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import {
@@ -13,7 +13,7 @@ import {
 //     PaginationItem,
 //     PaginationLink,
 //     NavLink,
-import AuthContext from '../../contexts/auth';
+import AuthContext from '../../../contexts/auth';
 
 // import api from '../../services/api';
 // , { useState, useEffect }

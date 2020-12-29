@@ -24,8 +24,8 @@ class User extends Model {
 	}
 
 	static associate(models) {
-        this.hasMany(models.Movement, { foreignKey: 'responsible_id', as: 'movements' });
-        this.belongsToMany(models.Role, { foreignKey: 'user_id', through: 'user_roles', as: 'roles' });
+		this.hasMany(models.Movement, { foreignKey: 'responsible_id', as: 'movements' });
+		this.belongsToMany(models.Role, { foreignKey: 'user_id', through: 'user_roles', as: 'roles' });
 	}
 }
 

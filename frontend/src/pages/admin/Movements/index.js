@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 import {
@@ -21,9 +21,8 @@ import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { AiFillQuestionCircle } from 'react-icons/ai';
 
-import api from '../../services/api';
-
-import AuthContext from '../../contexts/auth';
+import api from '../../../services/api';
+import AuthContext from '../../../contexts/auth';
 
 export default function Movements() {
     const [movements, setMovements] = useState([]);

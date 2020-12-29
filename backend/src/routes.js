@@ -49,7 +49,7 @@ routes.get("/hardwares/heritage/:heritage", HardwareController.listHardwareByHer
 routes.get("/hardwares/department/:department_id", HardwareController.listHardwareByDepartment);
 routes.get("/hardwares/department/:department_name/:limit/:offset", HardwareController.listHardwareByDepartmentName);
 routes.get("/hardwares/:hardware_id", HardwareController.listHardwareById);
-routes.post("/hardwares", HardwareController.create);
+routes.post("/:type_id/hardwares", HardwareController.create);
 routes.put("/hardwares/:hardware_id", HardwareController.update);
 routes.delete("/hardwares/:hardware_id", HardwareController.delete);
 

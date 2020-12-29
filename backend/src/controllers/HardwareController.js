@@ -68,7 +68,7 @@ module.exports = {
                 ['code']
             ],
             limit,
-            offset,
+            offset: (offset - 1) * limit,
 			distinct: true,
 			subQuery: false
         });

@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import Header from '../../components/Header';
+import AdminHeader from '../../components/admin/Header';
+import ManagerHeader from '../../components/manager/Header';
 import Footer from '../../components/Footer';
 
+import AuthContext from '../../contexts/auth';
+
 export default function DefaultLayout(props) {
-	return (
-		<>
-			<Header />
-				{props.container}
-			<Footer />
-		</>
-	);
+	const { currentRoleUser } = useContext(AuthContext);
+
+	if (currentRoleUser === 'ADMINISTRADOR') {
+		return (
+			<>
+				<AdminHeader />
+				{props.children}
+				<Footer />
+			</>
+		);
+	}
+	else if (currentRoleUser === 'GERENTE') {
+		return (
+			<>
+				<ManagerHeader />
+				{props.children}
+				<Footer />
+			</>
+		);
+	}
 }
