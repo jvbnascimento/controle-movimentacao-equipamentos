@@ -359,7 +359,7 @@ export default function Hardware() {
 				</Container>
 				: ''
 			}
-
+ 
 			{
 				hardware.rows !== undefined &&
 				hardware.rows.length !== 0 &&

@@ -20,31 +20,90 @@ import {
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { AiFillQuestionCircle } from 'react-icons/ai';
+import PaginationComponent from '../../../components/Pagination'
 
 import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
 
+const LEFT_PAGE = 'LEFT';
+const RIGHT_PAGE = 'RIGHT';
+
+const range = (from, to, step = 1) => {
+    let i = from;
+    const range = [];
+
+    while (i <= to) {
+        range.push(i);
+        i += step;
+    }
+
+    return range;
+}
+
 export default function Movements() {
     const [movements, setMovements] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
+    const [pageNeighbours, setPageNeighbours] = useState(1);
+    const [pages, setPages] = useState([]);
     const [querySearch, setQuerySearch] = useState('');
     const [cSelected, setCSelected] = useState([]);
     const [visible, setVisible] = useState(false);
     const { message, setMessage, colorMessage } = useContext(AuthContext);
 
     useEffect(() => {
+        const fetchPageNumbers = () => {
+            const totalNumbers = (pageNeighbours * 2) + 3;
+            const totalBlocks = totalNumbers + 2;
+
+            if (pagesCount > totalBlocks) {
+                const startPage = Math.max(2, currentPage - pageNeighbours);
+                const endPage = Math.min(pagesCount - 1, currentPage + pageNeighbours);
+                let pages = range(startPage, endPage);
+
+                const hasLeftSpill = startPage > 2;
+                const hasRightSpill = (pagesCount - endPage) > 1;
+                const spillOffset = totalNumbers - (pages.length + 1);
+
+                switch (true) {
+                    case (hasLeftSpill && !hasRightSpill): {
+                        const extraPages = range(startPage - spillOffset, startPage - 1);
+                        pages = [LEFT_PAGE, ...extraPages, ...pages];
+                        break;
+                    }
+
+                    case (!hasLeftSpill && hasRightSpill): {
+                        const extraPages = range(endPage + 1, endPage + spillOffset);
+                        pages = [...pages, ...extraPages, RIGHT_PAGE];
+                        break;
+                    }
+
+                    case (hasLeftSpill && hasRightSpill):
+                    default: {
+                        pages = [LEFT_PAGE, ...pages, RIGHT_PAGE];
+                        break;
+                    }
+                }
+
+                return [1, ...pages, pagesCount];
+            }
+
+            return range(1, pagesCount);
+        }
+
         async function filteredSearch() {
             const response = await api.get(`/movements/${pageSize}/${currentPage}/filters?${querySearch}`);
-            const data = await response.data;
+            const data = await response.data.movements;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
+            setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
             setMovements(data);
         }
 
         filteredSearch();
-    }, [querySearch, currentPage, pageSize]);
+        setPages(fetchPageNumbers());
+    }, [querySearch, currentPage, pageSize, pageNeighbours, pagesCount]);
 
     useEffect(() => {
         function verifyMessage() {
@@ -61,13 +120,15 @@ export default function Movements() {
         setMessage(['', -1]);
     }
 
-    function handleCurrentPage(e, index) {
-        setCurrentPage(index);
+    function handleCurrentPage(e, page) {
+        e.preventDefault();
+        setCurrentPage(Math.max(0, Math.min(page, pagesCount)));
     }
 
     function handleSizePage(e) {
         setPageSize(parseInt(e.target.value));
         setPageCounts(Math.ceil(movements.count / parseInt(pageSize)));
+        setCurrentPage(1);
     }
 
     function format_date(date) {
@@ -149,8 +210,8 @@ export default function Movements() {
                         <Col className="center">
                             <ButtonGroup className="margin_bottom_20">
                                 <Button
-                                    onClick={() => onCheckboxBtnClick('heritage')}
-                                    active={cSelected.includes('heritage')}
+                                    onClick={() => onCheckboxBtnClick('code')}
+                                    active={cSelected.includes('code')}
                                     title="Filtrar por tombamento"
                                     className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
                                 >
@@ -301,65 +362,16 @@ export default function Movements() {
 
             {
                 movements.rows !== undefined &&
-                    movements.rows.length !== 0 ?
-                    <Pagination
-                        className="margin_top_20 center"
-                    >
-                        <PaginationItem disabled={currentPage <= 0}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                first
-                                href="#"
-                                onClick={e => handleCurrentPage(e, 0)}
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                previous
-                                href="#"
-                                onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-                            />
-                        </PaginationItem>
-
-                        {
-                            [...Array(pagesCount)].map((page, i) => {
-                                return (
-                                    <PaginationItem key={i}>
-                                        <PaginationLink
-                                            className={
-                                                (i * pageSize) === (currentPage) ?
-                                                    "bg_color_cinza_zimbra_active" :
-                                                    "bg_color_cinza_zimbra"
-                                            }
-                                            href="#"
-                                            onClick={e => handleCurrentPage(e, (i * pageSize))}
-                                        > {i + 1} </PaginationLink>
-                                    </PaginationItem>
-                                );
-                            })
-                        }
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                next
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                last
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-                            />
-                        </PaginationItem>
-                    </Pagination>
-                    : ''
+                movements.rows.length !== 0 &&
+                <PaginationComponent
+                    pages={pages}
+                    left={LEFT_PAGE}
+                    right={RIGHT_PAGE}
+                    currentPage={currentPage}
+                    handleCurrentPage={handleCurrentPage}
+                    pageNeighbours={pageNeighbours}
+                    pagesCount={pagesCount}
+                />
             }
 
             <ListGroup className="padding_all_10">
@@ -423,7 +435,7 @@ export default function Movements() {
                                                                                                             <Col>{hardware.category.name}</Col>
                                                                                                         </Row>
                                                                                                         <Row>
-                                                                                                            <Col>{hardware.heritage}</Col>
+                                                                                                            <Col>{hardware.code}</Col>
                                                                                                         </Row>
                                                                                                     </Col>
 
@@ -449,7 +461,7 @@ export default function Movements() {
                                                                                                     <Col>{hardware.category.name}</Col>
                                                                                                 </Row>
                                                                                                 <Row>
-                                                                                                    <Col>{hardware.heritage}</Col>
+                                                                                                    <Col>{hardware.code}</Col>
                                                                                                 </Row>
                                                                                             </Col>
 
@@ -544,7 +556,7 @@ export default function Movements() {
                                                                                                                 <Col>{hardware.category.name}</Col>
                                                                                                             </Row>
                                                                                                             <Row>
-                                                                                                                <Col>{hardware.heritage}</Col>
+                                                                                                                <Col>{hardware.code}</Col>
                                                                                                             </Row>
                                                                                                         </Col>
 
@@ -570,7 +582,7 @@ export default function Movements() {
                                                                                                         <Col>{hardware.category.name}</Col>
                                                                                                     </Row>
                                                                                                     <Row>
-                                                                                                        <Col>{hardware.heritage}</Col>
+                                                                                                        <Col>{hardware.code}</Col>
                                                                                                     </Row>
                                                                                                 </Col>
 

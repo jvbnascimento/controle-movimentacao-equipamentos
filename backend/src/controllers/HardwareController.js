@@ -142,7 +142,7 @@ module.exports = {
 		return res.json(hardwares);
 	},
 	
-	async listHardwareByHeritage(req, res) {
+	async listHardwareByCode(req, res) {
 		const { code } = req.params;
 
 		const hardware = await Hardware.findAll({
