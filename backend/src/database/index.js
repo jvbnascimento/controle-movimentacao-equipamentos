@@ -237,139 +237,159 @@ Role.associate(connection.models);
 //             name: "GABINETE",
 //             boss: "TESTE"
 //         });
-        Movement.sync({ force: true })
-        xlsxFile('../CONTROLE PARQUE 2020.xlsx', { sheet: 'PARQUE' })
-            // .then((rows) => {
-            //     rows.forEach(async (element) => {
-            //         let type = '';
-            //         let department = ''
 
-            //         if (element[1]) {
-            //             type = await Type.findOne({
-            //                 where: {
-            //                     name: element[1]
-            //                 }
-            //             });
-            //         }
-            //         if (element[7]) {
-            //             let departmentName = '';
-            //             if (element[7] === 'COTEC/INFRA/ANEXO') {
-            //                 departmentName = 'COTEC/INFRA';
-            //             }
-            //             else if (element[7] === 'GAB. ADJUNTO') {
-            //                 departmentName = 'GABINETE ADJUNTO';
-            //             }
-            //             else if (element[7] === 'GAB.EXECUTIVO') {
-            //                 departmentName = 'GABINETE EXECUTIVO';
-            //             }
-            //             else {
-            //                 departmentName = element[7];
-            //             }
+// Movement.sync({ force: true })
 
-            //             department = await Department.findOne({
-            //                 where: {
-            //                     name: departmentName
-            //                 }
-            //             });
-            //         }
+// xlsxFile('../CONTROLE PARQUE 2020.xlsx', { sheet: 'PARQUE' })
+    // .then((rows) => {
+    //     rows.forEach(async (element) => {
+    //         let type = '';
+    //         let department = ''
 
-            //         if (type && department) {
-            //             Hardware.create({
-            //                 code: element[0],
-            //                 type_id: type.id,
-            //                 description: element[2],
-            //                 warranty: element[4] === null ? new Date().toLocaleDateString() : element[4],
-            //                 has_office: element[5] === null ? 'SEM OFFICE' : element[5],
-            //                 department_id: department.id,
-            //                 brand: 'MARCA',
-            //                 auction: false,
-            //                 date_auction: null
-            //             });
-            //         }
-            //     });
-            // })
-            .then((rows) => {
-                rows.forEach(async (element) => {
-                    let startIndex = 7;
+    //         if (element[1]) {
+    //             type = await Type.findOne({
+    //                 where: {
+    //                     name: element[1]
+    //                 }
+    //             });
+    //         }
+    //         if (element[7]) {
+    //             let departmentName = '';
+    //             if (element[7] === 'COTEC/INFRA/ANEXO') {
+    //                 departmentName = 'COTEC/INFRA';
+    //             }
+    //             else if (element[7] === 'GAB. ADJUNTO') {
+    //                 departmentName = 'GABINETE ADJUNTO';
+    //             }
+    //             else if (element[7] === 'GAB.EXECUTIVO') {
+    //                 departmentName = 'GABINETE EXECUTIVO';
+    //             }
+    //             else if (element[7] === 'COTEC/DESENVOLV') {
+    //                 departmentName = 'COTEC/DESENVOLVIMENTO';
+    //             }
+    //             else if (element[7] === 'COAFI/COPA E SELADORIA') {
+    //                 departmentName = 'COAFI/COPA E ZELADORIA';
+    //             }
+    //             else {
+    //                 departmentName = element[7];
+    //             }
 
-                    while (element[startIndex] !== null && element[startIndex] !== undefined) {
-                        if (element[startIndex + 1] !== null && element[startIndex + 1] !== undefined) {
-                            let departmentOriginName = '';
-                            let departmentDestinationName = '';
+    //             department = await Department.findOne({
+    //                 where: {
+    //                     name: departmentName
+    //                 }
+    //             });
+    //         }
 
-                            if (element[startIndex] === 'COTEC/INFRA/ANEXO') {
-                                departmentOriginName = 'COTEC/INFRA';
-                            }
-                            else if (element[startIndex] === 'GAB. ADJUNTO') {
-                                departmentOriginName = 'GABINETE ADJUNTO';
-                            }
-                            else if (element[startIndex] === 'GAB.EXECUTIVO') {
-                                departmentOriginName = 'GABINETE EXECUTIVO';
-                            }
-                            else {
-                                departmentOriginName = element[startIndex];
-                            }
+    //         if (type && department) {
+    //             Hardware.create({
+    //                 code: element[0],
+    //                 type_id: type.id,
+    //                 description: element[2],
+    //                 warranty: element[4] === null ? new Date().toLocaleDateString() : element[4],
+    //                 has_office: element[5] === null ? 'SEM OFFICE' : element[5],
+    //                 department_id: department.id,
+    //                 brand: 'MARCA',
+    //                 auction: false,
+    //                 date_auction: null
+    //             });
+    //         }
+    //     });
+    // })
+    // .then(async (rows) => {
+    //     await rows.forEach(async (element) => {
+    //         let startIndex = 7;
 
-                            if (element[startIndex + 1] === 'COTEC/INFRA/ANEXO') {
-                                departmentDestinationName = 'COTEC/INFRA';
-                            }
-                            else if (element[startIndex + 1] === 'GAB. ADJUNTO') {
-                                departmentDestinationName = 'GABINETE ADJUNTO';
-                            }
-                            else if (element[startIndex + 1] === 'GAB.EXECUTIVO') {
-                                departmentDestinationName = 'GABINETE EXECUTIVO';
-                            }
-                            else {
-                                departmentDestinationName = element[startIndex + 1];
-                            }
+    //         while (element[startIndex] !== null && element[startIndex] !== undefined) {
+    //             if (element[startIndex + 1] !== null && element[startIndex + 1] !== undefined) {
+    //                 let departmentOriginName = '';
+    //                 let departmentDestinationName = '';
 
-                            const departmentOrigin = await Department.findOne({
-                                where: {
-                                    name: departmentOriginName
-                                }
-                            });
+    //                 if (element[startIndex] === 'COTEC/INFRA/ANEXO') {
+    //                     departmentOriginName = 'COTEC/INFRA';
+    //                 }
+    //                 else if (element[startIndex] === 'GAB. ADJUNTO') {
+    //                     departmentOriginName = 'GABINETE ADJUNTO';
+    //                 }
+    //                 else if (element[startIndex] === 'GAB.EXECUTIVO') {
+    //                     departmentOriginName = 'GABINETE EXECUTIVO';
+    //                 }
+    //                 else if (element[startIndex] === 'COTEC/DESENVOLV') {
+    //                     departmentOriginName = 'COTEC/DESENVOLVIMENTO';
+    //                 }
+    //                 else if (element[startIndex] === 'COAFI/COPA E SELADORIA') {
+    //                     departmentOriginName = 'COAFI/COPA E ZELADORIA';
+    //                 }
+    //                 else {
+    //                     departmentOriginName = element[startIndex];
+    //                 }
 
-                            const departmentDestination = await Department.findOne({
-                                where: {
-                                    name: departmentDestinationName
-                                }
-                            });
+    //                 if (element[startIndex + 1] === 'COTEC/INFRA/ANEXO') {
+    //                     departmentDestinationName = 'COTEC/INFRA';
+    //                 }
+    //                 else if (element[startIndex + 1] === 'GAB. ADJUNTO') {
+    //                     departmentDestinationName = 'GABINETE ADJUNTO';
+    //                 }
+    //                 else if (element[startIndex + 1] === 'GAB.EXECUTIVO') {
+    //                     departmentDestinationName = 'GABINETE EXECUTIVO';
+    //                 }
+    //                 else if (element[startIndex + 1] === 'COTEC/DESENVOLV') {
+    //                     departmentDestinationName = 'COTEC/DESENVOLVIMENTO';
+    //                 }
+    //                 else if (element[startIndex + 1] === 'COAFI/COPA E SELADORIA') {
+    //                     departmentDestinationName = 'COAFI/COPA E ZELADORIA';
+    //                 }
+    //                 else {
+    //                     departmentDestinationName = element[startIndex + 1];
+    //                 }
 
-                            if (departmentOrigin && departmentDestination) {
-                                await Movement.create({
-                                    date_movement: new Date().toLocaleDateString(),
-                                    origin_department_id: departmentOrigin.id,
-                                    destination_department_id: departmentDestination.id,
-                                    responsible_id: 1
-                                }).then(async (movement) => {
-                                    const type = await Type.findOne({
-                                        where: {
-                                            name: element[1]
-                                        }
-                                    });
+    //                 const departmentOrigin = await Department.findOne({
+    //                     where: {
+    //                         name: departmentOriginName
+    //                     }
+    //                 });
 
-                                    const hardware = await Hardware.findOne({
-                                        where: {
-                                            code: element[0],
-                                            type_id: type.id,
-                                        }
-                                    })
+    //                 const departmentDestination = await Department.findOne({
+    //                     where: {
+    //                         name: departmentDestinationName
+    //                     }
+    //                 });
 
-                                    if (hardware) {
-                                        hardware.department_id = departmentDestination.id;
-                                        await hardware.save();
-                                        await movement.addHardware(hardware);
-                                    };
-                                });
-                            }
-                            startIndex += 1;
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                });;
-            });
+    //                 if (await departmentOrigin && await departmentDestination) {
+    //                     await Movement.create({
+    //                         date_movement: new Date().toLocaleDateString(),
+    //                         origin_department_id: departmentOrigin.id,
+    //                         destination_department_id: departmentDestination.id,
+    //                         responsible_id: 1
+    //                     }).then(async (movement) => {
+    //                         const type = await Type.findOne({
+    //                             where: {
+    //                                 name: element[1]
+    //                             }
+    //                         });
+
+    //                         const hardware = await Hardware.findOne({
+    //                             where: {
+    //                                 code: element[0],
+    //                                 type_id: type.id,
+    //                             }
+    //                         });
+
+    //                         if (hardware) {
+    //                             hardware.department_id = departmentDestination.id;
+    //                             await hardware.save();
+    //                             await movement.addHardware(hardware);
+    //                         };
+    //                     });
+    //                 }
+    //                 startIndex += 1;
+    //             }
+    //             else {
+    //                 break;
+    //             }
+    //         }
+    //     });
+        // });
     // });
 
 module.exports = connection;

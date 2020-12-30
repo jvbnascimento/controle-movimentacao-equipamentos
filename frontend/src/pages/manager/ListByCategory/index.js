@@ -33,14 +33,8 @@ export default function ListByCategory() {
 	const [pageSize, setPageSize] = useState(10);
 	const [pagesCount, setPageCounts] = useState(0);
 	const [currentPage, setCurrentPage] = useState(0);
-    const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
     const [modalEditCategory, setModalEditCategory] = useState(false);
-    const [modalDeleteCategory, setModalDeleteCategory] = useState(false);
     const [validCategoryName, setValidCategoryName] = useState(true);
-    const [categoryToDelete, setCategoryToDelete] = useState([-1, -1]);
-	
-	const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
-	
 	const [visible, setVisible] = useState(false);
     const { message, setMessage, colorMessage } = useContext(AuthContext);
 
@@ -94,17 +88,6 @@ export default function ListByCategory() {
 		verifyMessage();
 	}, [message]);
 
-	const toggleModalDeleteHardware = (e) => {
-		setModalDeleteHardware(!modalDeleteHardware)
-
-		if (toggleModalDeleteHardware) {
-			setHardwareToDelete([e.target.value, e.target.name]);
-		}
-		else {
-			setHardwareToDelete([-1, -1]);
-		}
-	};
-
 	const handleSizePage = (e) => {
 		setPageSize(parseInt(e.target.value));
 		setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
@@ -113,12 +96,6 @@ export default function ListByCategory() {
 	const handleCurrentPage = (e, index) => {
 		e.preventDefault();
 		setCurrentPage(index);
-	}
-
-	const deleteHardware = async () => {
-		await api.delete(`/hardwares/${hardwareToDelete[0]}`);
-
-		window.location.reload();
 	}
 
 	const onDismiss = () => {
@@ -131,17 +108,6 @@ export default function ListByCategory() {
         setCategoryName(category.name);
         setValidCategoryName(true);
     }
-	
-	const toggleModalDeleteCategory = (e) => {
-        setModalDeleteCategory(!modalDeleteCategory)
-
-        if (toggleModalDeleteCategory) {
-            setCategoryToDelete([e.target.value, e.target.name]);
-        }
-        else {
-            setCategoryToDelete([-1, -1]);
-        }
-    };
 
     const handleCategoryName = (e) => {
         if (e.target.value === '') {
@@ -192,36 +158,17 @@ export default function ListByCategory() {
         }
     }
 
-    const deleteCategory = async () => {
-        await api.delete(`/types/${categoryToDelete[0]}`);
-
-        setMessage(['Categoria deletada com sucesso!', 204]);
-        setModalDeleteCategory(!modalDeleteCategory);
-        history.push('/');
-	}
-	
-	// console.log(listCategory.rows.length)
-
 	return (
-		<div className={
-			listCategory.rows !== undefined &&
-				listCategory.rows.length <= 1 ?
-				"height_content" : "padding_all_10"
-		}>
+		<div className="padding_all_10">
             <Container className="width_30 position_absolute margin_left_35_por">
-                <Alert color={
-                    colorMessage[message[1]]
-                }
+                <Alert color={colorMessage[message[1]]}
                     isOpen={visible}
-                    toggle={onDismiss}
-                >
+                    toggle={onDismiss}>
                     {message[0]}
                 </Alert>
             </Container>
 
-            <h1 className="text-center">
-                Informações da categoria
-            </h1>
+            <h1 className="text-center">Informações da categoria</h1>
             
 			<Container fluid={true} className="width_70 margin_top_bottom_20">
                 <ListGroupItem className="">
@@ -250,16 +197,6 @@ export default function ListByCategory() {
                                 onClick={toggleModalEditCategory}
                             >
                                 Editar
-                            </Button>
-                        </Col>
-                        <Col sm="auto" className="center">
-                            <Button
-								color="danger"
-								onClick={toggleModalDeleteCategory}
-								value={category.id}
-								name={category.name}
-                            >
-                                Deletar
                             </Button>
                         </Col>
                     </Row>
@@ -389,7 +326,7 @@ export default function ListByCategory() {
                                             center
                                             border_color_gray
                                         "
-										sm="4"
+										sm="6"
 									>
 										<strong>Descrição</strong>
 									</Col>
@@ -408,7 +345,7 @@ export default function ListByCategory() {
                                             padding_all_10
                                             center
                                         "
-										sm="4"
+										sm="2"
 									>
 										<strong>Ações</strong>
 									</Col>
@@ -442,7 +379,7 @@ export default function ListByCategory() {
                                                             padding_all_10 center_vertical
                                                             border_color_gray
                                                         "
-														sm="4"
+														sm="6"
 													>{element.description}</Col>
 													<Col
 														className="
@@ -454,29 +391,13 @@ export default function ListByCategory() {
 														sm="2"
 													>{element.category.name}</Col>
 													<Col
-														className="
-                                                            border_only_right
-                                                            padding_all_10
-                                                            center
-                                                            border_color_gray
-                                                        "
+														className="padding_all_10 center"
 														sm="2"
 													>
 														<Link
 															className="font_color_verde_zimbra_hover"
 															to={`/hardware/edit/${element.id}`}
 														>Editar</Link>
-													</Col>
-													<Col
-														className="padding_all_10 center"
-														sm="2"
-													>
-														<Button
-															onClick={toggleModalDeleteHardware}
-															color="danger"
-															value={element.id}
-															name={element.code}
-														>Deletar</Button>
 													</Col>
 												</Row>
 											</ListGroupItem>
@@ -548,20 +469,6 @@ export default function ListByCategory() {
 								</Pagination>
 								: ''
 						}
-
-						<Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
-							<ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>
-							<ModalBody>
-								Tem certeza que desejar&nbsp;
-								<strong className="font_color_danger">DELETAR</strong>
-								&nbsp;o equipamento de tombo&nbsp;
-								<strong className="font_color_danger">{hardwareToDelete[1]}</strong>
-							</ModalBody>
-							<ModalFooter>
-								<Button color="danger" onClick={deleteHardware}>Sim</Button>
-								<Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteHardware}>Cancelar</Button>
-							</ModalFooter>
-						</Modal>
 					</>
 					:
 					<Row className="center no_margin">
@@ -628,20 +535,6 @@ export default function ListByCategory() {
                     >
                         Cancelar
 					</Button>
-                </ModalFooter>
-            </Modal>
-
-			<Modal isOpen={modalDeleteCategory} toggle={toggleModalDeleteCategory}>
-                <ModalHeader toggle={toggleModalDeleteCategory}>Deletar categoria</ModalHeader>
-                <ModalBody>
-                    Tem certeza que desejar&nbsp;
-					<strong className="font_color_danger">DELETAR</strong>
-					&nbsp;a categoria&nbsp;
-					<strong className="font_color_danger">{categoryToDelete[1]}</strong>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="danger" onClick={deleteCategory}>Sim</Button>
-                    <Button className="bg_color_verde_zimbra" onClick={toggleModalDeleteCategory}>Cancelar</Button>
                 </ModalFooter>
             </Modal>
 		</div>

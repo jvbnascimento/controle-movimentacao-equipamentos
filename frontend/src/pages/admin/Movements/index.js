@@ -7,9 +7,6 @@ import {
     Col,
     ListGroupItem,
     ListGroup,
-    Pagination,
-    PaginationItem,
-    PaginationLink,
     Input,
     ButtonGroup,
     Button,
@@ -204,75 +201,74 @@ export default function Movements() {
                 </Row>
             </Container>
 
-            {movements.rows !== undefined && movements.rows.length !== 0 ?
-                <Container className="margin_bottom_30">
-                    <Row>
-                        <Col className="center">
-                            <ButtonGroup className="margin_bottom_20">
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('code')}
-                                    active={cSelected.includes('code')}
-                                    title="Filtrar por tombamento"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Tombamento
+            <Container className="margin_bottom_30">
+                <Row>
+                    <Col className="center">
+                        <ButtonGroup className="margin_bottom_20">
+                            <Button
+                                onClick={() => onCheckboxBtnClick('code')}
+                                active={cSelected.includes('code')}
+                                title="Filtrar por tombamento"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Tombamento
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('brand')}
-                                    active={cSelected.includes('brand')}
-                                    title="Filtrar por marca"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Marca
+                            <Button
+                                onClick={() => onCheckboxBtnClick('brand')}
+                                active={cSelected.includes('brand')}
+                                title="Filtrar por marca"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Marca
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('warranty')}
-                                    active={cSelected.includes('warranty')}
-                                    title="Filtrar por garantia"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Garantia
+                            <Button
+                                onClick={() => onCheckboxBtnClick('warranty')}
+                                active={cSelected.includes('warranty')}
+                                title="Filtrar por garantia"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Garantia
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('has_office')}
-                                    active={cSelected.includes('has_office')}
-                                    title="Filtrar por ferramenta office"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Office
+                            <Button
+                                onClick={() => onCheckboxBtnClick('has_office')}
+                                active={cSelected.includes('has_office')}
+                                title="Filtrar por ferramenta office"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Office
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('auction')}
-                                    active={cSelected.includes('auction')}
-                                    title="Filtrar por máquinas leiloadas"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Leilão
+                            <Button
+                                onClick={() => onCheckboxBtnClick('auction')}
+                                active={cSelected.includes('auction')}
+                                title="Filtrar por máquinas leiloadas"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Leilão
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('category')}
-                                    active={cSelected.includes('category')}
-                                    title="Filtrar por categoria"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Categoria
+                            <Button
+                                onClick={() => onCheckboxBtnClick('category')}
+                                active={cSelected.includes('category')}
+                                title="Filtrar por categoria"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Categoria
                                 </Button>
 
-                                <Button
-                                    onClick={() => onCheckboxBtnClick('belongs')}
-                                    active={cSelected.includes('belongs')}
-                                    title="Filtrar por departamento"
-                                    className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                                >
-                                    Departamento
+                            <Button
+                                onClick={() => onCheckboxBtnClick('belongs')}
+                                active={cSelected.includes('belongs')}
+                                title="Filtrar por departamento"
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
+                            >
+                                Departamento
                                 </Button>
 
-                                {/* <Button
+                            {/* <Button
                                 className="
 									margin_left_right_05
 									border_color_verde_zimbra_hover
@@ -282,43 +278,41 @@ export default function Movements() {
                                 active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
                             >Data</Button> */}
-                            </ButtonGroup>
-                        </Col>
-                    </Row>
+                        </ButtonGroup>
+                    </Col>
+                </Row>
 
-                    <Row>
-                        <Col>
-                            <Container>
-                                <Row>
-                                    <Col className="center">
-                                        <Input
-                                            type="text"
-                                            name="filter"
-                                            placeholder="Procurar"
-                                            className="background_color_white_zimbra"
-                                            onChange={handleValueInput}
-                                        />
-                                    </Col>
-                                    <Col sm="1" className="center">
-                                        <span id="TooltipExample">
-                                            <AiFillQuestionCircle size="30" />
-                                        </span>
-                                        <Tooltip
-                                            placement="right"
-                                            isOpen={tooltipOpen}
-                                            target="TooltipExample"
-                                            toggle={toggle}
-                                        >
-                                            Separe os campos por ';' (ponto e vírgula) e sem espaços.
+                <Row>
+                    <Col>
+                        <Container>
+                            <Row>
+                                <Col className="center">
+                                    <Input
+                                        type="text"
+                                        name="filter"
+                                        placeholder="Procurar"
+                                        className="background_color_white_zimbra"
+                                        onChange={handleValueInput}
+                                    />
+                                </Col>
+                                <Col sm="1" className="center">
+                                    <span id="TooltipExample">
+                                        <AiFillQuestionCircle size="30" />
+                                    </span>
+                                    <Tooltip
+                                        placement="right"
+                                        isOpen={tooltipOpen}
+                                        target="TooltipExample"
+                                        toggle={toggle}
+                                    >
+                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.
 									</Tooltip>
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </Col>
-                    </Row>
-                </Container>
-                : ''
-            }
+                                </Col>
+                            </Row>
+                        </Container>
+                    </Col>
+                </Row>
+            </Container>
 
             {
                 movements.rows !== undefined && movements.rows.length !== 0 ?
@@ -625,66 +619,17 @@ export default function Movements() {
             </ListGroup>
 
             {
-                movements.rows !== undefined && movements.rows.length !== 0 ?
-                    <Pagination
-                        className="margin_top_bottom_20 center"
-                        aria-label="Page navigation example"
-                    >
-                        <PaginationItem disabled={currentPage <= 0}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                first
-                                href="#"
-                                onClick={e => handleCurrentPage(e, 0)}
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage <= 0}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                previous
-                                href="#"
-                                onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-                            />
-                        </PaginationItem>
-
-                        {
-                            [...Array(pagesCount)].map((page, i) => {
-                                return (
-                                    <PaginationItem key={i}>
-                                        <PaginationLink
-                                            className={
-                                                (i * pageSize) === (currentPage) ?
-                                                    "bg_color_cinza_zimbra_active" :
-                                                    "bg_color_cinza_zimbra"
-                                            }
-                                            href="#"
-                                            onClick={e => handleCurrentPage(e, (i * pageSize))}
-                                        > {i + 1} </PaginationLink>
-                                    </PaginationItem>
-                                );
-                            })
-                        }
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                next
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-                            />
-                        </PaginationItem>
-
-                        <PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-                            <PaginationLink
-                                className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-                                last
-                                href="#"
-                                onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-                            />
-                        </PaginationItem>
-                    </Pagination>
-                    : ''
+                movements.rows !== undefined &&
+                movements.rows.length !== 0 &&
+                <PaginationComponent
+                    pages={pages}
+                    left={LEFT_PAGE}
+                    right={RIGHT_PAGE}
+                    currentPage={currentPage}
+                    handleCurrentPage={handleCurrentPage}
+                    pageNeighbours={pageNeighbours}
+                    pagesCount={pagesCount}
+                />
             }
         </div>
     );

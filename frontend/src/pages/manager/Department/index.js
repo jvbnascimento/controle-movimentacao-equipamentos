@@ -191,11 +191,7 @@ export default function Department() {
     }
 
     return (
-        <div className={
-            listCategory.rows !== undefined &&
-                listCategory.rows.length <= 1 ?
-                "height_content" : "padding_all_10"
-        }>
+        <div className="padding_all_10">
             <Container className="width_30 position_absolute margin_left_35_por">
                 <Alert color={
                     colorMessage[message[1]]
@@ -447,12 +443,7 @@ export default function Department() {
                                                         sm="2"
                                                     >{element.category.name}</Col>
                                                     <Col
-                                                        className="
-                                                            border_only_right
-                                                            padding_all_10
-                                                            center
-                                                            border_color_gray
-                                                        "
+                                                        className="padding_all_10 center"
                                                         sm="4"
                                                     >
                                                         <Link

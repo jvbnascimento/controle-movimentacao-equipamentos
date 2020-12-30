@@ -26,7 +26,7 @@ import AuthContext from '../../../contexts/auth';
 
 export default function Movements() {
     const [movements, setMovements] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
     const [querySearch, setQuerySearch] = useState('');
@@ -37,7 +37,7 @@ export default function Movements() {
     useEffect(() => {
         async function filteredSearch() {
             const response = await api.get(`/movements/${pageSize}/${currentPage}/filters?${querySearch}`);
-            const data = await response.data;
+            const data = await response.data.movements;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
             setMovements(data);
