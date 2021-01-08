@@ -12,6 +12,8 @@ import Movements from '../pages/admin/Movements';
 import CreateMovement from '../pages/admin/CreateMovement';
 import EditMovement from '../pages/admin/EditMovement';
 import Department from '../pages/admin/Department';
+import Users from '../pages/admin/Users';
+import CreateUser from '../pages/admin/CreateUser';
 import Logout from '../pages/Logout';
 
 export default function AdminAuthRoutes() {
@@ -69,6 +71,18 @@ export default function AdminAuthRoutes() {
 				<Route path="/department/:name" exact>
 					<DefaultLayout>
 						<Department />
+					</DefaultLayout>
+				</Route>
+
+				<Route path="/users" exact>
+					<DefaultLayout>
+						<Users />
+					</DefaultLayout>
+				</Route>
+
+				<Route path="/user/create" exact>
+					<DefaultLayout>
+						<CreateUser />
 					</DefaultLayout>
 				</Route>
 

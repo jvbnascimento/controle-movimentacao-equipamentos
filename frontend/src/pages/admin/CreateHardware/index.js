@@ -18,7 +18,7 @@ import {
 import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
 
-export default function EditHardware() {
+export default function CreateHardware() {
 	const [types, setTypes] = useState([]);
 	const [departments, setDepartments] = useState([]);
 	const [code, setCode] = useState('');

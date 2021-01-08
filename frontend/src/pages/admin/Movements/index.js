@@ -17,7 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { AiFillQuestionCircle } from 'react-icons/ai';
-import PaginationComponent from '../../../components/Pagination'
+import PaginationComponent from '../../../components/Pagination';
 
 import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
@@ -359,8 +359,6 @@ export default function Movements() {
                 movements.rows.length !== 0 &&
                 <PaginationComponent
                     pages={pages}
-                    left={LEFT_PAGE}
-                    right={RIGHT_PAGE}
                     currentPage={currentPage}
                     handleCurrentPage={handleCurrentPage}
                     pageNeighbours={pageNeighbours}
@@ -434,7 +432,7 @@ export default function Movements() {
                                                                                                     </Col>
 
                                                                                                     <Col className="center border_only_right border_color_gray">
-                                                                                                        <strong>SAIU DE:&nbsp;</strong>
+                                                                                                        <strong>DE:&nbsp;</strong>
                                                                                                         <span>{element.previous_department.name}</span>
                                                                                                     </Col>
 
@@ -460,7 +458,7 @@ export default function Movements() {
                                                                                             </Col>
 
                                                                                             <Col className="center border_only_right border_color_gray">
-                                                                                                <strong>SAIU DE:&nbsp;</strong>
+                                                                                                <strong>DE:&nbsp;</strong>
                                                                                                 <span>{element.previous_department.name}</span>
                                                                                             </Col>
 
@@ -555,7 +553,7 @@ export default function Movements() {
                                                                                                         </Col>
 
                                                                                                         <Col className="center border_only_right border_color_gray">
-                                                                                                            <strong>SAIU DE:&nbsp;</strong>
+                                                                                                            <strong>DE:&nbsp;</strong>
                                                                                                             <span>{element.previous_department.name}</span>
                                                                                                         </Col>
 
@@ -581,7 +579,7 @@ export default function Movements() {
                                                                                                 </Col>
 
                                                                                                 <Col className="center border_only_right border_color_gray">
-                                                                                                    <strong>SAIU DE:&nbsp;</strong>
+                                                                                                    <strong>DE:&nbsp;</strong>
                                                                                                     <span>{element.previous_department.name}</span>
                                                                                                 </Col>
 
@@ -623,13 +621,11 @@ export default function Movements() {
                 movements.rows.length !== 0 &&
                 <PaginationComponent
                     pages={pages}
-                    left={LEFT_PAGE}
-                    right={RIGHT_PAGE}
                     currentPage={currentPage}
                     handleCurrentPage={handleCurrentPage}
                     pageNeighbours={pageNeighbours}
                     pagesCount={pagesCount}
-                />
+                />  
             }
         </div>
     );

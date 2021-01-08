@@ -12,9 +12,6 @@ import {
 	ModalBody,
 	ModalFooter,
 	Input,
-	Pagination,
-	PaginationItem,
-	PaginationLink,
 	ListGroupItem,
     Alert,
     FormFeedback,
@@ -22,8 +19,25 @@ import {
     Label
 } from 'reactstrap';
 
+import PaginationComponent from '../../../components/Pagination';
+
 import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
+
+const LEFT_PAGE = 'LEFT';
+const RIGHT_PAGE = 'RIGHT';
+
+const range = (from, to, step = 1) => {
+    let i = from;
+    const range = [];
+
+    while (i <= to) {
+        range.push(i);
+        i += step;
+    }
+
+    return range;
+}
 
 export default function ListByCategory() {
 	const search = useParams();
@@ -32,7 +46,9 @@ export default function ListByCategory() {
 	const [listCategory, setListCategory] = useState([]);
 	const [pageSize, setPageSize] = useState(10);
 	const [pagesCount, setPageCounts] = useState(0);
-	const [currentPage, setCurrentPage] = useState(0);
+	const [currentPage, setCurrentPage] = useState(1);
+    const [pageNeighbours, setPageNeighbours] = useState(1);
+    const [pages, setPages] = useState([]);
     const [modalDeleteHardware, setModalDeleteHardware] = useState(false);
     const [modalEditCategory, setModalEditCategory] = useState(false);
     const [modalDeleteCategory, setModalDeleteCategory] = useState(false);
@@ -47,16 +63,57 @@ export default function ListByCategory() {
     const history = useHistory();
 
 	useEffect(() => {
+        const fetchPageNumbers = () => {
+            const totalNumbers = (pageNeighbours * 2) + 3;
+            const totalBlocks = totalNumbers + 2;
+
+            if (pagesCount > totalBlocks) {
+                const startPage = Math.max(2, currentPage - pageNeighbours);
+                const endPage = Math.min(pagesCount - 1, currentPage + pageNeighbours);
+                let pages = range(startPage, endPage);
+
+                const hasLeftSpill = startPage > 2;
+                const hasRightSpill = (pagesCount - endPage) > 1;
+                const spillOffset = totalNumbers - (pages.length + 1);
+
+                switch (true) {
+                    case (hasLeftSpill && !hasRightSpill): {
+                        const extraPages = range(startPage - spillOffset, startPage - 1);
+                        pages = [LEFT_PAGE, ...extraPages, ...pages];
+                        break;
+                    }
+
+                    case (!hasLeftSpill && hasRightSpill): {
+                        const extraPages = range(endPage + 1, endPage + spillOffset);
+                        pages = [...pages, ...extraPages, RIGHT_PAGE];
+                        break;
+                    }
+
+                    case (hasLeftSpill && hasRightSpill):
+                    default: {
+                        pages = [LEFT_PAGE, ...pages, RIGHT_PAGE];
+                        break;
+                    }
+                }
+
+                return [1, ...pages, pagesCount];
+            }
+
+            return range(1, pagesCount);
+        }
+
 		async function getAll() {
 			const response = await api.get(`/hardwares/category/${search.category}/${pageSize}/${currentPage}`);
 			const data = await response.data;
 
-			setPageCounts(Math.ceil((data.count) / pageSize));
+            setPageCounts(Math.ceil((data.count) / pageSize));
+            setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
 			setListCategory(data);
 		}
 
-		getAll();
-    }, [search.category, pageSize, currentPage]);
+        getAll();
+        setPages(fetchPageNumbers());
+    }, [search.category, pageSize, currentPage, pageNeighbours, pagesCount]);
     
     useEffect(() => {
 		async function getCategory() {
@@ -68,7 +125,7 @@ export default function ListByCategory() {
             setValidCategoryName(false);
 		}
 
-		getCategory();
+        getCategory();
     }, [search.category]);
 
     useEffect(() => {
@@ -105,15 +162,16 @@ export default function ListByCategory() {
 		}
 	};
 
-	const handleSizePage = (e) => {
-		setPageSize(parseInt(e.target.value));
-		setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
-	}
+	function handleCurrentPage(e, page) {
+        e.preventDefault();
+        setCurrentPage(Math.max(0, Math.min(page, pagesCount)));
+    }
 
-	const handleCurrentPage = (e, index) => {
-		e.preventDefault();
-		setCurrentPage(index);
-	}
+    function handleSizePage(e) {
+        setPageSize(parseInt(e.target.value));
+        setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
+        setCurrentPage(1);
+    }
 
 	const deleteHardware = async () => {
 		await api.delete(`/hardwares/${hardwareToDelete[0]}`);
@@ -304,68 +362,16 @@ export default function ListByCategory() {
 						</Container>
 
 						{
-							listCategory.rows !== undefined &&
-								listCategory.rows.length !== 0 ?
-								<Pagination
-									className="margin_top_20 center"
-									aria-label="Page navigation example"
-								>
-									<PaginationItem disabled={currentPage <= 0}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											first
-											href="#"
-											onClick={e => handleCurrentPage(e, 0)}
-										/>
-									</PaginationItem>
-
-									<PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											previous
-											href="#"
-											onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-										/>
-									</PaginationItem>
-
-									{
-										[...Array(pagesCount)].map((page, i) => {
-											return (
-												<PaginationItem key={i}>
-													<PaginationLink
-														className={
-															(i * pageSize) === (currentPage) ?
-																"bg_color_cinza_zimbra_active" :
-																"bg_color_cinza_zimbra"
-														}
-														href="#"
-														onClick={e => handleCurrentPage(e, (i * pageSize))}
-													> {i + 1} </PaginationLink>
-												</PaginationItem>
-											);
-										})
-									}
-
-									<PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											next
-											href="#"
-											onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-										/>
-									</PaginationItem>
-
-									<PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											last
-											href="#"
-											onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-										/>
-									</PaginationItem>
-								</Pagination>
-								: ''
-						}
+                            listCategory.rows !== undefined &&
+                            listCategory.rows.length !== 0 &&
+                            <PaginationComponent
+                                pages={pages}
+                                currentPage={currentPage}
+                                handleCurrentPage={handleCurrentPage}
+                                pageNeighbours={pageNeighbours}
+                                pagesCount={pagesCount}
+                            />
+                        }
 
 						<Container className="margin_top_20 width_70" fluid={true}>
 							<ListGroupItem>
@@ -484,68 +490,16 @@ export default function ListByCategory() {
 						</Container>
 
 						{
-							listCategory.rows !== undefined &&
-								listCategory.rows.length !== 0 ?
-								<Pagination
-									className="margin_top_20 center"
-									aria-label="Page navigation example"
-								>
-									<PaginationItem disabled={currentPage <= 0}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											first
-											href="#"
-											onClick={e => handleCurrentPage(e, 0)}
-										/>
-									</PaginationItem>
-
-									<PaginationItem disabled={currentPage <= 0} className="bg_color_cinza_zimbra">
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											previous
-											href="#"
-											onClick={e => handleCurrentPage(e, currentPage - pageSize)}
-										/>
-									</PaginationItem>
-
-									{
-										[...Array(pagesCount)].map((page, i) => {
-											return (
-												<PaginationItem key={i}>
-													<PaginationLink
-														className={
-															(i * pageSize) === (currentPage) ?
-																"bg_color_cinza_zimbra_active" :
-																"bg_color_cinza_zimbra"
-														}
-														href="#"
-														onClick={e => handleCurrentPage(e, (i * pageSize))}
-													> {i + 1} </PaginationLink>
-												</PaginationItem>
-											);
-										})
-									}
-
-									<PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											next
-											href="#"
-											onClick={e => handleCurrentPage(e, (currentPage + pageSize))}
-										/>
-									</PaginationItem>
-
-									<PaginationItem disabled={currentPage >= (pagesCount - 1) * pageSize}>
-										<PaginationLink
-											className="bg_color_cinza_zimbra font_color_verde_zimbra_hover"
-											last
-											href="#"
-											onClick={e => handleCurrentPage(e, (pagesCount - 1) * pageSize)}
-										/>
-									</PaginationItem>
-								</Pagination>
-								: ''
-						}
+                            listCategory.rows !== undefined &&
+                            listCategory.rows.length !== 0 &&
+                            <PaginationComponent
+                                pages={pages}
+                                currentPage={currentPage}
+                                handleCurrentPage={handleCurrentPage}
+                                pageNeighbours={pageNeighbours}
+                                pagesCount={pagesCount}
+                            />
+                        }
 
 						<Modal isOpen={modalDeleteHardware} toggle={toggleModalDeleteHardware}>
 							<ModalHeader toggle={toggleModalDeleteHardware}>Deletar equipamento</ModalHeader>

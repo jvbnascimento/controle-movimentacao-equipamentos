@@ -7,7 +7,6 @@ import {
 	Navbar,
 	Nav,
 	NavItem,
-	NavLink,
 	Dropdown,
 	DropdownItem,
 	DropdownToggle,
@@ -228,12 +227,7 @@ export default function AdminHeader() {
 
 	return (
 		<div className="height_header">
-			<Navbar className="
-					bg_color_verde_zimbra_no_effect
-					no_padding
-					height_header
-				"
-			>
+			<Navbar className="bg_color_verde_zimbra_no_effect no_padding height_header">
 				<Nav className='font_color_white'>
 					<NavItem
 						className="
@@ -467,7 +461,7 @@ export default function AdminHeader() {
 						</DropdownMenu>
 					</Dropdown>
 					<NavItem className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header">
-						<NavLink
+						<Link
 							className="
                                         center
                                         padding_all_20
@@ -475,10 +469,10 @@ export default function AdminHeader() {
                                         center
                                         height_header
                                     "
-							href="#"
+							to={'/users'}
 						>
 							Usuários
-                                </NavLink>
+                                </Link>
 					</NavItem>
 
 					<NavItem className="

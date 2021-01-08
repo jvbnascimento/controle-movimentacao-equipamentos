@@ -8,12 +8,15 @@ import {
 	PaginationLink
 } from 'reactstrap';
 
+const LEFT_PAGE = 'LEFT';
+const RIGHT_PAGE = 'RIGHT';
+
 const PaginationComponent = (props) => {
 	return (
 		<Pagination className="margin_top_20 center">
 			{
 				props.pages.map((page, index) => {
-					if (page === props.left) {
+					if (page === LEFT_PAGE) {
 						return (
 							<PaginationItem key={index}>
 								<PaginationLink
@@ -26,7 +29,7 @@ const PaginationComponent = (props) => {
 						);
 					}
 
-					if (page === props.right) {
+					if (page === RIGHT_PAGE) {
 						return (
 							<PaginationItem key={index}>
 								<PaginationLink
