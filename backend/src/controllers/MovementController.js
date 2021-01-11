@@ -40,8 +40,8 @@ module.exports = {
             ],
             limit,
             offset,
-			distinct: true,
-			subQuery: false
+            distinct: true,
+            subQuery: false
         });
 
         return res.json(movements);
@@ -175,6 +175,13 @@ module.exports = {
             let belongsFilters = {}
             let categoryFilters = {}
 
+            const format_date = (date) => {
+                const new_date = date.split('/');
+                new_date = new_date[2] + "-" + new_date[1] + "-" + new_date[0];
+                console.log(new_date);
+                return new_date;
+            }
+
             if (filters.code) {
                 hardwareFilters.code = {
                     [Op.like]: `%${filters.code}%`
@@ -182,7 +189,7 @@ module.exports = {
             }
             if (filters.brand) {
                 hardwareFilters.brand = {
-                    [Op.like]: `%${filters.brand}%`
+                    [Op.like]: `%${filters.brand.toUpperCase()}%`
                 }
             }
             if (filters.warranty) {
@@ -202,7 +209,7 @@ module.exports = {
             }
             if (filters.category) {
                 categoryFilters.name = {
-                    [Op.like]: `%${filters.category}%`
+                    [Op.like]: `%${filters.category.toUpperCase()}%`
                 }
             }
             if (filters.belongs) {
@@ -210,34 +217,36 @@ module.exports = {
                     [Op.like]: `%${filters.belongs.toUpperCase()}%`
                 }
             }
-            // if (filters.date_movement) {
-            //     movementFilters.date_movement = {
-            //         [Op.like]: `%${filters.date_movement}%`
-            //     }
-            // }
+            if (filters.date_movement) {
+                const date_movement = format_date(filters.date_movement);
+
+                movementFilters.date_movement = {
+                    [Op.eq]: `${date_movement}`
+                }
+            }
 
             const movements = await Movement.findAndCountAll({
                 include: [
                     {
                         model: Department,
-						as: "previous_department",
-						required: false,
+                        as: "previous_department",
+                        required: false,
                     },
                     {
                         model: Department,
-						as: "next_department",
-						required: false,
+                        as: "next_department",
+                        required: false,
                     },
                     {
                         model: User,
-						as: "responsible",
-						required: false,
+                        as: "responsible",
+                        required: false,
                     },
                     {
                         model: Hardware,
                         as: "hardwares",
                         required: true,
-						where: hardwareFilters,
+                        where: hardwareFilters,
                         through: {
                             attributes: []
                         },
@@ -245,26 +254,26 @@ module.exports = {
                             {
                                 model: Type,
                                 as: "category",
-                                required: false,
-								where: categoryFilters,
+                                required: true,
+                                where: categoryFilters,
                             },
                             {
                                 model: Department,
                                 as: "belongs",
                                 required: true,
-								where: belongsFilters,
+                                where: belongsFilters,
                             },
                         ]
                     }
-				],
-				where: movementFilters,
+                ],
+                where: movementFilters,
                 order: [
                     ['id', 'DESC']
                 ],
                 limit,
                 offset: (offset - 1) * limit,
-				distinct: true,
-				subQuery: false,
+                distinct: true,
+                subQuery: false,
             });
 
             return res.json({ movements });
@@ -282,7 +291,7 @@ module.exports = {
             destination_department_id,
             responsible_id,
             hardwares,
-		} = req.body;
+        } = req.body;
 
         const movement = Movement.create({
             date_movement,
@@ -290,18 +299,18 @@ module.exports = {
             destination_department_id,
             responsible_id
         }).then(async (movement) => {
-			hardwares.map(async (element) => {
-				const hardware = await Hardware.findByPk(element.id);
+            hardwares.map(async (element) => {
+                const hardware = await Hardware.findByPk(element.id);
 
-				if (hardware) {
-					hardware.department_id = destination_department_id;
-					await hardware.save();
-					await movement.addHardware(hardware);
-				}
-			});
-		}).catch((err) => {
-			return err;
-		});
+                if (hardware) {
+                    hardware.department_id = destination_department_id;
+                    await hardware.save();
+                    await movement.addHardware(hardware);
+                }
+            });
+        }).catch((err) => {
+            return err;
+        });
 
         return res.json(movement);
     },
@@ -352,10 +361,10 @@ module.exports = {
                 const hardware = await Hardware.findByPk(element.id);
 
                 if (hardware) {
-					hardware.department_id = destination_department_id;
-					await hardware.save();
-					await movement.addHardware(hardware);
-				}
+                    hardware.department_id = destination_department_id;
+                    await hardware.save();
+                    await movement.addHardware(hardware);
+                }
             });
 
             movement.date_movement = date_movement;

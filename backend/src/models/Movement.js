@@ -3,7 +3,7 @@ const { Model, DataTypes } = require('sequelize');
 class Movement extends Model {
 	static init(sequelize) {
 		super.init({
-			date_movement: DataTypes.DATE,
+			date_movement: DataTypes.DATEONLY,
 		}, {
 			sequelize,
 		});

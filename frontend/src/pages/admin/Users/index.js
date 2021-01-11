@@ -48,7 +48,7 @@ export default function Users() {
     }
 
     return (
-        <div className={users !== undefined && users.length >= 2 ? '' : 'height_content'}>
+        <div className={users !== undefined && users.length >= 3 ? '' : 'height_content'}>
             <Container className="width_30">
                 <Alert
                     color={colorMessage[message[1]]}
@@ -89,7 +89,7 @@ export default function Users() {
             }
 
             {users !== undefined && users.length !== 0 ?
-                <Container fluid={true} className="margin_top_20 width_60 padding_all_10">
+                <Container fluid={true} className="margin_top_20 width_70 padding_all_10">
                     <ListGroupItem>
                         <Row>
                             <Col sm="2" className="border_only_right padding_all_10 center border_color_gray">
@@ -110,7 +110,7 @@ export default function Users() {
                 : ''
             }
 
-            <Container className="width_60 padding_all_10" fluid={true}>
+            <Container className="width_70 padding_all_10" fluid={true}>
                 {
                     users !== undefined && users.length !== 0 ?
                         users.map(user => {

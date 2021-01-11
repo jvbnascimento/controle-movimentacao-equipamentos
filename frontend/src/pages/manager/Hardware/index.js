@@ -339,13 +339,13 @@ export default function Hardware() {
                             <Col sm="2" className="border_only_right padding_all_10 center border_color_gray">
                                 <strong>Tombamento</strong>
                             </Col>
-                            <Col sm="4" className="border_only_right padding_all_10 center border_color_gray">
+                            <Col sm="6" className="border_only_right padding_all_10 center border_color_gray">
                                 <strong>Descrição</strong>
                             </Col>
                             <Col sm="2" className="border_only_right padding_all_10 center border_color_gray">
                                 <strong>Categoria</strong>
                             </Col>
-                            <Col sm="4" className="padding_all_10 center">
+                            <Col sm="2" className="padding_all_10 center">
                                 <strong>Ações</strong>
                             </Col>
                         </Row>
@@ -364,23 +364,23 @@ export default function Hardware() {
                                         {element.code}
                                     </Col>
                                     {element.auction ?
-                                        <Col sm="4" className="border padding_all_10 center_vertical border_color_vermelho_danger">
+                                        <Col sm="6" className="border padding_all_10 center_vertical border_color_vermelho_danger">
                                             {element.description}
                                         </Col>
                                         :
                                         element.belongs.name === "COTEC/INFRA" ?
-                                            <Col sm="4" className="border border_color_azul_info padding_all_10 center_vertical">
+                                            <Col sm="6" className="border border_color_azul_info padding_all_10 center_vertical">
                                                 {element.description}
                                             </Col>
                                             :
-                                            <Col sm="4" className="border padding_all_10 center_vertical border_color_amarelo_warning">
+                                            <Col sm="6" className="border padding_all_10 center_vertical border_color_amarelo_warning">
                                                 {element.description}
                                             </Col>
                                     }
                                     <Col sm="2" className="border_only_right padding_all_10 center_vertical border_color_gray">
                                         {element.category !== null && element.category.name}
                                     </Col>
-                                    <Col sm="4" className="padding_all_10 center">
+                                    <Col sm="2" className="padding_all_10 center">
                                         <Link to={`/hardware/edit/${element.id}`} className="font_color_verde_zimbra_hover">
                                             Editar
                                         </Link>

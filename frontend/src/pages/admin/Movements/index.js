@@ -93,9 +93,11 @@ export default function Movements() {
             const response = await api.get(`/movements/${pageSize}/${currentPage}/filters?${querySearch}`);
             const data = await response.data.movements;
 
-            setPageCounts(Math.ceil((data.count) / pageSize));
-            setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
-            setMovements(data);
+            if (data) {
+                setPageCounts(Math.ceil((data.count) / pageSize));
+                setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
+                setMovements(data);
+            }
         }
 
         filteredSearch();
@@ -156,7 +158,7 @@ export default function Movements() {
 
     function handleValueInput(e) {
         const body = e.target.value.split(";").map(element => {
-            return (element)
+            return (element);
         });
 
         const parameters = cSelected.map(element => {
@@ -176,6 +178,8 @@ export default function Movements() {
 
         setQuerySearch(string);
     }
+
+    console.log(querySearch)
 
     return (
         <div className={movements.rows !== undefined && movements.rows.length !== 0 ? '' : 'height_content'}>
@@ -209,154 +213,149 @@ export default function Movements() {
                                 onClick={() => onCheckboxBtnClick('code')}
                                 active={cSelected.includes('code')}
                                 title="Filtrar por tombamento"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Tombamento
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('brand')}
                                 active={cSelected.includes('brand')}
                                 title="Filtrar por marca"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Marca
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('warranty')}
                                 active={cSelected.includes('warranty')}
                                 title="Filtrar por garantia"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Garantia
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('has_office')}
                                 active={cSelected.includes('has_office')}
                                 title="Filtrar por ferramenta office"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Office
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('auction')}
                                 active={cSelected.includes('auction')}
                                 title="Filtrar por máquinas leiloadas"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Leilão
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('category')}
                                 active={cSelected.includes('category')}
                                 title="Filtrar por categoria"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Categoria
-                                </Button>
+                            </Button>
 
                             <Button
                                 onClick={() => onCheckboxBtnClick('belongs')}
                                 active={cSelected.includes('belongs')}
                                 title="Filtrar por departamento"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-                            >
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
                                 Departamento
-                                </Button>
+                            </Button>
 
-                            {/* <Button
-                                className="
-									margin_left_right_05
-									border_color_verde_zimbra_hover
-									bg_color_verde_zimbra
-								"
+                            <Button
                                 onClick={() => onCheckboxBtnClick('date_movement')}
                                 active={cSelected.includes('date_movement')}
                                 title="Filtrar por data"
-                            >Data</Button> */}
+                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+                                Data
+                            </Button>
                         </ButtonGroup>
                     </Col>
                 </Row>
 
                 <Row>
-                    <Col>
-                        <Container>
-                            <Row>
-                                <Col className="center">
-                                    <Input
-                                        type="text"
-                                        name="filter"
-                                        placeholder="Procurar"
-                                        className="background_color_white_zimbra"
-                                        onChange={handleValueInput}
-                                    />
+                    {cSelected && cSelected.length !== 0 &&
+                        cSelected.map((element, index) => {
+                            return (
+                                <Col key={index}>
+                                    <Container>
+                                        <Row>
+                                            <Col className="center">
+                                                <Input
+                                                    type="text"
+                                                    name={element}
+                                                    placeholder={element.toUpperCase()}
+                                                    className="background_color_white_zimbra"
+                                                    onChange={handleValueInput}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </Container>
                                 </Col>
-                                <Col sm="1" className="center">
-                                    <span id="TooltipExample">
-                                        <AiFillQuestionCircle size="30" />
-                                    </span>
-                                    <Tooltip
-                                        placement="right"
-                                        isOpen={tooltipOpen}
-                                        target="TooltipExample"
-                                        toggle={toggle}
-                                    >
-                                        Separe os campos por ';' (ponto e vírgula) e sem espaços.
+                            );
+                        })
+                    }
+                    {/* <Col sm="1" className="center">
+                        <span id="TooltipExample">
+                            <AiFillQuestionCircle size="30" />
+                        </span>
+                        <Tooltip
+                            placement="right"
+                            isOpen={tooltipOpen}
+                            target="TooltipExample"
+                            toggle={toggle}>
+                            Separe os campos por ';' (ponto e vírgula) e sem espaços.
 									</Tooltip>
-                                </Col>
-                            </Row>
-                        </Container>
                     </Col>
                 </Row>
-            </Container>
+            </Container> */}
+                    {/* </Col> */}
+                </Row >
+            </Container >
 
             {
-                movements.rows !== undefined && movements.rows.length !== 0 ?
-                    <Container className="center margin_top_30">
-                        <Row>
-                            <Col>
-                                <Container>
-                                    <Row>
-                                        <Col sm="16">
-                                            <h1 className="text-center">
-                                                Últimas movimentações ({movements.count})
-									</h1>
-                                        </Col>
-                                    </Row>
+                movements.rows !== undefined && movements.rows.length !== 0 &&
+                <Container className="center margin_top_30">
+                    <Row>
+                        <Col>
+                            <Container>
+                                <Row>
+                                    <Col sm="16">
+                                        <h1 className="text-center">
+                                            Últimas movimentações ({movements.count})
+									    </h1>
+                                    </Col>
+                                </Row>
 
-                                    <Row className="right margin_top_10">
-                                        <Col>
-                                            <span>Quantidade de itens mostrados</span>
-                                        </Col>
-                                        <Col sm="auto">
-                                            <Input
-                                                type="select"
-                                                name="pageSize"
-                                                id="labelPageSize"
-                                                value={pageSize}
-                                                onChange={handleSizePage}
-                                            >
-                                                <option key={0} value={5}>5</option>
-                                                <option key={1} value={10}>10</option>
-                                                <option key={2} value={20}>20</option>
-                                                <option key={3} value={movements.count}>Tudo</option>
-                                            </Input>
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            </Col>
-                        </Row>
-                    </Container>
-                    : ''
+                                <Row className="right margin_top_10">
+                                    <Col>
+                                        <span>Quantidade de itens mostrados</span>
+                                    </Col>
+                                    <Col sm="auto">
+                                        <Input
+                                            type="select"
+                                            name="pageSize"
+                                            id="labelPageSize"
+                                            value={pageSize}
+                                            onChange={handleSizePage}>
+                                            <option key={0} value={5}>5</option>
+                                            <option key={1} value={10}>10</option>
+                                            <option key={2} value={20}>20</option>
+                                            <option key={3} value={movements.count}>Tudo</option>
+                                        </Input>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                    </Row>
+                </Container>
             }
 
             {
-                movements.rows !== undefined &&
-                movements.rows.length !== 0 &&
+                movements.rows !== undefined && movements.rows.length !== 0 &&
                 <PaginationComponent
                     pages={pages}
                     currentPage={currentPage}
@@ -367,87 +366,56 @@ export default function Movements() {
             }
 
             <ListGroup className="padding_all_10">
-                {
-                    movements.rows !== undefined && movements.rows.length !== 0 ?
-                        movements.rows.map(element => {
-                            return (
-                                <Container key={element.id}>
-                                    <Row className="center margin_top_bottom_20">
-                                        <Col>
-                                            <Link
-                                                to={
-                                                    `/movement/edit/${element.id}`
-                                                }
-                                                className="font_color_black_hover no_padding"
-                                            >
-                                                <ListGroupItem>
-                                                    <Row>
-                                                        <Col
-                                                            sm="auto"
-                                                            className="center border_only_right border_color_gray"
-                                                        >{element.id}</Col>
-                                                        <Col>
-                                                            <Row className="margin_bottom_20">
-                                                                <Col>
-                                                                    <Row>
-                                                                        <Col className="center border_only_right border_color_gray">
-                                                                            <Row>
-                                                                                <Col
-                                                                                    sm="auto"
-                                                                                >{format_date(element.date_movement)}</Col>
-                                                                            </Row>
-                                                                        </Col>
+                {movements.rows !== undefined && movements.rows.length !== 0 ?
+                    movements.rows.map(element => {
+                        return (
+                            <Container key={element.id}>
+                                <Row className="center margin_top_bottom_20">
+                                    <Col>
+                                        <Link
+                                            to={`/movement/edit/${element.id}`}
+                                            className="font_color_black_hover no_padding">
+                                            <ListGroupItem>
+                                                <Row>
+                                                    <Col
+                                                        sm="auto"
+                                                        className="center border_only_right border_color_gray">
+                                                        {element.id}
+                                                    </Col>
+                                                    <Col>
+                                                        <Row className="margin_bottom_20">
+                                                            <Col>
+                                                                <Row>
+                                                                    <Col className="center border_only_right border_color_gray">
+                                                                        <Row>
+                                                                            <Col sm="auto">
+                                                                                {format_date(element.date_movement)}
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Col>
 
-                                                                        <Col className="center">
-                                                                            <Row>
-                                                                                <Col sm="auto">
-                                                                                    <strong>{element.responsible.name}</strong>
-                                                                                </Col>
-                                                                            </Row>
-                                                                        </Col>
-                                                                    </Row>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Col className="center">
+                                                                        <Row>
+                                                                            <Col sm="auto">
+                                                                                <strong>{element.responsible.name}</strong>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Col>
+                                                                </Row>
+                                                            </Col>
+                                                        </Row>
 
-                                                            <DropdownItem divider />
+                                                        <DropdownItem divider />
 
-                                                            <Row className="margin_top_20">
-                                                                <Col>
-
-                                                                    <Row>
-                                                                        <Col>
-                                                                            {
-                                                                                element.hardwares.map((hardware, index) => {
-                                                                                    if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
-                                                                                        return (
-                                                                                            <div key={hardware.id}>
-                                                                                                <Row className="margin_top_10">
-                                                                                                    <Col className="text-center border_only_right border_color_gray">
-                                                                                                        <Row>
-                                                                                                            <Col>{hardware.category.name}</Col>
-                                                                                                        </Row>
-                                                                                                        <Row>
-                                                                                                            <Col>{hardware.code}</Col>
-                                                                                                        </Row>
-                                                                                                    </Col>
-
-                                                                                                    <Col className="center border_only_right border_color_gray">
-                                                                                                        <strong>DE:&nbsp;</strong>
-                                                                                                        <span>{element.previous_department.name}</span>
-                                                                                                    </Col>
-
-                                                                                                    <Col className="center">
-                                                                                                        <strong>PARA:&nbsp;</strong>
-                                                                                                        <span>{element.next_department.name}</span>
-                                                                                                    </Col>
-                                                                                                </Row>
-
-                                                                                                <DropdownItem divider />
-                                                                                            </div>
-                                                                                        )
-                                                                                    }
-                                                                                    return (
-                                                                                        <Row key={hardware.id} className="margin_top_10">
+                                                        <Row className="margin_top_20">
+                                                            <Col>
+                                                                <Row>
+                                                                    <Col>
+                                                                        {element.hardwares.map((hardware, index) => {
+                                                                            if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
+                                                                                return (
+                                                                                    <div key={hardware.id}>
+                                                                                        <Row className="margin_top_10">
                                                                                             <Col className="text-center border_only_right border_color_gray">
                                                                                                 <Row>
                                                                                                     <Col>{hardware.category.name}</Col>
@@ -467,108 +435,99 @@ export default function Movements() {
                                                                                                 <span>{element.next_department.name}</span>
                                                                                             </Col>
                                                                                         </Row>
-                                                                                    );
-                                                                                })
+
+                                                                                        <DropdownItem divider />
+                                                                                    </div>
+                                                                                )
                                                                             }
+                                                                            return (
+                                                                                <Row key={hardware.id} className="margin_top_10">
+                                                                                    <Col className="text-center border_only_right border_color_gray">
+                                                                                        <Row>
+                                                                                            <Col>{hardware.category.name}</Col>
+                                                                                        </Row>
+                                                                                        <Row>
+                                                                                            <Col>{hardware.code}</Col>
+                                                                                        </Row>
+                                                                                    </Col>
+
+                                                                                    <Col className="center border_only_right border_color_gray">
+                                                                                        <strong>DE:&nbsp;</strong>
+                                                                                        <span>{element.previous_department.name}</span>
+                                                                                    </Col>
+
+                                                                                    <Col className="center">
+                                                                                        <strong>PARA:&nbsp;</strong>
+                                                                                        <span>{element.next_department.name}</span>
+                                                                                    </Col>
+                                                                                </Row>
+                                                                            );
+                                                                        })
+                                                                        }
+                                                                    </Col>
+                                                                </Row>
+                                                            </Col>
+                                                        </Row>
+                                                    </Col>
+                                                </Row>
+                                            </ListGroupItem>
+                                        </Link>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        )
+                    })
+                    :
+                    movements.rows !== undefined && movements.rows.length !== 0 ?
+                        movements.rows.map(element => {
+                            return (
+                                <Container key={element.id}>
+                                    <Row className="center margin_top_bottom_20">
+                                        <Col>
+                                            <Link
+                                                to={`/movement/edit/${element.id}`}
+                                                className="font_color_black_hover no_padding">
+                                                <ListGroupItem>
+                                                    <Row>
+                                                        <Col
+                                                            sm="auto"
+                                                            className="center border_only_right border_color_gray">
+                                                            {element.id}
+                                                        </Col>
+                                                        <Col>
+                                                            <Row className="margin_bottom_20">
+                                                                <Col>
+                                                                    <Row>
+                                                                        <Col className="center border_only_right border_color_gray">
+                                                                            <Row>
+                                                                                <Col sm="auto">
+                                                                                    {format_date(element.date_movement)}
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+
+                                                                        <Col className="center">
+                                                                            <Row>
+                                                                                <Col sm="auto">
+                                                                                    <strong>{element.responsible_name}</strong>
+                                                                                </Col>
+                                                                            </Row>
                                                                         </Col>
                                                                     </Row>
                                                                 </Col>
                                                             </Row>
-                                                        </Col>
-                                                    </Row>
-                                                </ListGroupItem>
-                                            </Link>
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            )
-                        }) :
-                        movements.rows !== undefined && movements.rows.length !== 0 ?
-                            movements.rows.map(element => {
-                                return (
-                                    <Container key={element.id}>
-                                        <Row className="center margin_top_bottom_20">
-                                            <Col>
-                                                <Link
-                                                    to={
-                                                        `/movement/edit/${element.id}`
-                                                    }
-                                                    className="font_color_black_hover no_padding"
-                                                >
-                                                    <ListGroupItem>
-                                                        <Row>
-                                                            <Col
-                                                                sm="auto"
-                                                                className="
-                                                                    center
-                                                                    border_only_right
-                                                                    border_color_gray
-                                                                "
-                                                            >
-                                                                {element.id}
-                                                            </Col>
-                                                            <Col>
-                                                                <Row className="margin_bottom_20">
-                                                                    <Col>
-                                                                        <Row>
-                                                                            <Col className="center border_only_right border_color_gray">
-                                                                                <Row>
-                                                                                    <Col
-                                                                                        sm="auto"
-                                                                                    >{format_date(element.date_movement)}</Col>
-                                                                                </Row>
-                                                                            </Col>
 
-                                                                            <Col className="center">
-                                                                                <Row>
-                                                                                    <Col sm="auto">
-                                                                                        <strong>{element.responsible_name}</strong>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </Col>
-                                                                </Row>
+                                                            <DropdownItem divider />
 
-                                                                <DropdownItem divider />
-
-                                                                <Row className="margin_top_20">
-                                                                    <Col>
-
-                                                                        <Row>
-                                                                            <Col>
-                                                                                {
-                                                                                    element.hardwares.map((hardware, index) => {
-                                                                                        if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
-                                                                                            return (
-                                                                                                <div key={hardware.id}>
-                                                                                                    <Row className="margin_top_10">
-                                                                                                        <Col className="text-center border_only_right border_color_gray">
-                                                                                                            <Row>
-                                                                                                                <Col>{hardware.category.name}</Col>
-                                                                                                            </Row>
-                                                                                                            <Row>
-                                                                                                                <Col>{hardware.code}</Col>
-                                                                                                            </Row>
-                                                                                                        </Col>
-
-                                                                                                        <Col className="center border_only_right border_color_gray">
-                                                                                                            <strong>DE:&nbsp;</strong>
-                                                                                                            <span>{element.previous_department.name}</span>
-                                                                                                        </Col>
-
-                                                                                                        <Col className="center">
-                                                                                                            <strong>PARA:&nbsp;</strong>
-                                                                                                            <span>{element.next_department.name}</span>
-                                                                                                        </Col>
-                                                                                                    </Row>
-
-                                                                                                    <DropdownItem divider />
-                                                                                                </div>
-                                                                                            )
-                                                                                        }
-                                                                                        return (
-                                                                                            <Row key={hardware.id} className="margin_top_10">
+                                                            <Row className="margin_top_20">
+                                                                <Col>
+                                                                    <Row>
+                                                                        <Col>
+                                                                            {element.hardwares.map((hardware, index) => {
+                                                                                if (element.hardwares.length > 1 && index < element.hardwares.length - 1) {
+                                                                                    return (
+                                                                                        <div key={hardware.id}>
+                                                                                            <Row className="margin_top_10">
                                                                                                 <Col className="text-center border_only_right border_color_gray">
                                                                                                     <Row>
                                                                                                         <Col>{hardware.category.name}</Col>
@@ -588,45 +547,68 @@ export default function Movements() {
                                                                                                     <span>{element.next_department.name}</span>
                                                                                                 </Col>
                                                                                             </Row>
-                                                                                        );
-                                                                                    })
+
+                                                                                            <DropdownItem divider />
+                                                                                        </div>
+                                                                                    )
                                                                                 }
-                                                                            </Col>
-                                                                        </Row>
+                                                                                return (
+                                                                                    <Row key={hardware.id} className="margin_top_10">
+                                                                                        <Col className="text-center border_only_right border_color_gray">
+                                                                                            <Row>
+                                                                                                <Col>{hardware.category.name}</Col>
+                                                                                            </Row>
+                                                                                            <Row>
+                                                                                                <Col>{hardware.code}</Col>
+                                                                                            </Row>
+                                                                                        </Col>
 
-                                                                    </Col>
-                                                                </Row>
+                                                                                        <Col className="center border_only_right border_color_gray">
+                                                                                            <strong>DE:&nbsp;</strong>
+                                                                                            <span>{element.previous_department.name}</span>
+                                                                                        </Col>
 
-                                                            </Col>
-                                                        </Row>
-                                                    </ListGroupItem>
-                                                </Link>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                )
-                            })
-                            :
-                            <Row className="margin_top_bottom_20 width_100 center">
-                                <Col sm="auto" className="text-center">
-                                    <h3>Não há movimentações registradas ainda</h3>
-                                </Col>
-                            </Row>
+                                                                                        <Col className="center">
+                                                                                            <strong>PARA:&nbsp;</strong>
+                                                                                            <span>{element.next_department.name}</span>
+                                                                                        </Col>
+                                                                                    </Row>
+                                                                                );
+                                                                            })
+                                                                            }
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Col>
+                                                            </Row>
+                                                        </Col>
+                                                    </Row>
+                                                </ListGroupItem>
+                                            </Link>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            )
+                        })
+                        :
+                        <Row className="margin_top_bottom_20 width_100 center">
+                            <Col sm="auto" className="text-center">
+                                <h3>Não há movimentações registradas ainda</h3>
+                            </Col>
+                        </Row>
                 }
 
             </ListGroup>
 
             {
-                movements.rows !== undefined &&
-                movements.rows.length !== 0 &&
+                movements.rows !== undefined && movements.rows.length !== 0 &&
                 <PaginationComponent
                     pages={pages}
                     currentPage={currentPage}
                     handleCurrentPage={handleCurrentPage}
                     pageNeighbours={pageNeighbours}
                     pagesCount={pagesCount}
-                />  
+                />
             }
-        </div>
+        </div >
     );
 }

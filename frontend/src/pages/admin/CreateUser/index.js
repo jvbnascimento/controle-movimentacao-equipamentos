@@ -87,31 +87,19 @@ export default function CreateUser() {
     }
 
     // VERIFY IF ALL INPUTS ARE VALID
-    // const verifyAllInputsValid = () => {
-    // 	if (
-    // 		emailValidator(email) &&
-    // 		emptyFieldValidator(password) &&
-    // 		emptyFieldValidator(confirmPassword) &&
-    // 		emptyFieldValidator(roles) &&
-    // 		auction === 'true' &&
-    // 		date_auction !== null &&
-    // 		emptyFieldValidator(date_auction) &&
-    // 		name.length !== 0
-    // 	) {
-    // 		return true;
-    // 	}
-    // 	else if (
-    // 		emailValidator(email) &&
-    // 		emptyFieldValidator(password) &&
-    // 		emptyFieldValidator(confirmPassword) &&
-    // 		emptyFieldValidator(roles) &&
-    // 		auction === 'false' &&
-    // 		name.length !== 0
-    // 	) {
-    // 		return true;
-    // 	}
-    // 	return false;
-    // }
+    const verifyAllInputsValid = () => {
+        if (
+            emptyFieldValidator(name) &&
+            emailValidator(email) &&
+            sizePasswordValidator(confirmPassword) &&
+            verifySpecialChar(confirmPassword) &&
+            confirmPassword === password &&
+            listRoles.length !== 0
+        ) {
+            return true;
+        }
+        return false;
+    }
 
     // MODIFY THE NAME FIELD VALUE
     const handleName = (e) => {
@@ -197,6 +185,25 @@ export default function CreateUser() {
             }
 
             getRole(idRole);
+        }
+    }
+
+    const createUser = async () => {
+        if (verifyAllInputsValid()) {
+            const user = {
+                name,
+                email: email + '@sepog.fortaleza.ce.gov.br',
+                password,
+                roles: listRoles
+            }
+
+            const response = await api.post('/users', user);
+
+            if (response.status === 201) {
+                setMessage(['Usuário criado com sucesso.', response.status]);
+
+                history.push('/users');
+            }
         }
     }
 
@@ -564,15 +571,17 @@ export default function CreateUser() {
 												margin_left_right_20
 												bg_color_verde_zimbra
 											"
-                                    // onClick={validateCreation}
-                                    // disabled={
-                                    // verifyAllInputsValid() ? false : true
-                                    // }
-                                    >Cadastrar</Button>
+                                        onClick={createUser}
+                                        disabled={
+                                            verifyAllInputsValid() ? false : true
+                                        }>
+                                            Cadastrar
+                                    </Button>
                                     <Button
                                         className="margin_left_right_20"
-                                        onClick={() => { history.goBack() }}
-                                    >Voltar</Button>
+                                        onClick={() => { history.goBack() }}>
+                                        Voltar
+                                    </Button>
                                 </Col>
                             </Row>
                         </FormGroup>

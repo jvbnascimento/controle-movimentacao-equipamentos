@@ -122,7 +122,7 @@ module.exports = {
 					association: 'category',
 					where: {
 						name: {
-							[Op.iLike]: name_category
+							[Op.iLike]: name_category.toUpperCase()
 						}
 					}
 				},
@@ -134,12 +134,12 @@ module.exports = {
 				['code']
 			],
 			limit,
-			offset,
+			offset: (offset - 1) * limit,
 			distinct: true,
 			subQuery: false
 		});
 
-		return res.json(hardwares);
+		return res.json({ hardwares });
 	},
 	
 	async listHardwareByCode(req, res) {
@@ -214,7 +214,7 @@ module.exports = {
 				['code']
 			],
 			limit,
-			offset,
+			offset: (offset - 1) * limit,
 			distinct: true,
 			subQuery: false
         });

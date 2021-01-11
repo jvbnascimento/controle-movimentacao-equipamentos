@@ -45,7 +45,7 @@ module.exports = {
         });
         
         if (email_exists.length != 0) {
-            return res.json({ error: 'Email already exists!', status: 404 });
+            return res.status(400).json({ error: 'Email already exists!' });
         }
 
 		const user = User.create({
@@ -60,9 +60,11 @@ module.exports = {
 					await user.addRole(role);
                 }
             });
+
+            return user;
         });
 
-		return res.json({ user, status: 201 });
+		return res.status(201).json({ user });
     },
 
     async update(req, res) {
@@ -126,6 +128,6 @@ module.exports = {
 
         await user.destroy();
 
-        return res.json({ status: 204 });
+        return res.status(204).json();
 	},
 }

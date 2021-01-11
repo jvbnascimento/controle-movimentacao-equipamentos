@@ -104,7 +104,7 @@ export default function ListByCategory() {
 
 		async function getAll() {
 			const response = await api.get(`/hardwares/category/${search.category}/${pageSize}/${currentPage}`);
-			const data = await response.data;
+			const data = await response.data.hardwares;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
             setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
