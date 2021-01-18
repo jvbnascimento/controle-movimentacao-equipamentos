@@ -10,7 +10,8 @@ module.exports = {
                 through: {
                     attributes: [],
                 }
-            }
+            },
+            order: ['id']
         });
 
 		return res.status(200).json({ users });
@@ -69,28 +70,43 @@ module.exports = {
 
     async update(req, res) {
         const { user_id } = req.params;
-        const { name, email } = req.body;
+        const { name, email, roles } = req.body;
 
-        const user = await User.findByPk(user_id);
         const email_exists = await User.findAll({
             where: {
                 email
             }
         });
 
-        if (!user) {
-            return res.json({ error: 'User not found!', status: 404 });
-        }
         if (email_exists.length != 0 && email_exists[0].email != user.email) {
-            return res.json({ error: 'Email is already being used!', status: 400 });
+            return res.status(400).json({ error: 'Email is already being used!' });
         }
-        
+
+        const user = await User.findByPk(user_id, {
+            include: {
+                association: 'roles'
+            }
+        }).then(user => {
+            user.setRoles([]);
+
+            roles.map(async (role) => {
+                const new_role = await Role.findByPk(role.id);
+                await user.addRole(new_role);
+            });
+
+            return user;
+        });
+
+        if (await !user) {
+            return res.status(400).json({ error: 'User not found!' });
+        }
+
         user.name = name;
         user.email = email;
 
         await user.save();
 
-        return res.json({ user, status: 200 });
+        return res.status(200).json({ user });
     },
     
     async updatePassword(req, res) {

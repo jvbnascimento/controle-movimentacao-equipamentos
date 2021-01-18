@@ -14,6 +14,7 @@ import EditMovement from '../pages/admin/EditMovement';
 import Department from '../pages/admin/Department';
 import Users from '../pages/admin/Users';
 import CreateUser from '../pages/admin/CreateUser';
+import EditUser from '../pages/admin/EditUser';
 import Logout from '../pages/Logout';
 
 export default function AdminAuthRoutes() {
@@ -83,6 +84,12 @@ export default function AdminAuthRoutes() {
 				<Route path="/user/create" exact>
 					<DefaultLayout>
 						<CreateUser />
+					</DefaultLayout>
+				</Route>
+				
+                <Route path="/user/edit/:id" exact>
+					<DefaultLayout>
+						<EditUser />
 					</DefaultLayout>
 				</Route>
 

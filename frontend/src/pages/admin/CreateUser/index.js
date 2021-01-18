@@ -250,9 +250,7 @@ export default function CreateUser() {
                                             className="margin_bottom_20"
                                             invalid
                                         />
-                                        <FormFeedback>
-                                            O campo <strong>NOME</strong> não pode ser vazio.
-											</FormFeedback>
+                                        <FormFeedback>O campo <strong>NOME</strong> não pode ser vazio.</FormFeedback>
                                     </>
                             }
                         </FormGroup>

@@ -291,7 +291,7 @@ export default function Department() {
     return (
         <div className={
             listCategory.rows !== undefined &&
-                listCategory.rows.length <= 1 ?
+                listCategory.rows.length <= 0 ?
                 "height_content" : "padding_all_10"
         }>
             <Container className="width_30 position_absolute margin_left_35_por">
