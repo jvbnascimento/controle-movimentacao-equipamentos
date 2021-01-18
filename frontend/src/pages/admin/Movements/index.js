@@ -11,12 +11,10 @@ import {
     ButtonGroup,
     Button,
     DropdownItem,
-    Tooltip,
     Alert
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
-import { AiFillQuestionCircle } from 'react-icons/ai';
 import PaginationComponent from '../../../components/Pagination';
 
 import api from '../../../services/api';
@@ -46,8 +44,67 @@ export default function Movements() {
     const [pages, setPages] = useState([]);
     const [querySearch, setQuerySearch] = useState('');
     const [cSelected, setCSelected] = useState([]);
-    const [visible, setVisible] = useState(false);
-    const { message, setMessage, colorMessage } = useContext(AuthContext);
+	const [visible, setVisible] = useState(false);
+	
+	const [codeFilter, setCodeFilter] = useState('');
+	const [brandFilter, setBrandFilter] = useState('');
+	const [warrantyFilter, setWarrantyFilter] = useState('');
+	const [hasOfficeFilter, setHasOfficeFilter] = useState('');
+	const [auctionFilter, setAuctionFilter] = useState('');
+	const [categoryFilter, setCategoryFilter] = useState('');
+	const [belongsFilter, setBelongsFilter] = useState('');
+	const [dateMovementFilter, setDateMovementFilter] = useState('');
+
+	const { message, setMessage, colorMessage } = useContext(AuthContext);
+	
+	const filteredTraduction = {
+		code: 'Tombamento',
+		brand: 'Marca',
+		warranty: 'Garantia',
+		has_office: 'Office',
+		auction: 'Leilão',
+		category: 'Categoria',
+		belongs: 'Departamento',
+		date_movement: 'Data'
+	}
+
+	const filteredFunctions = {
+		code: function handleCodeFilter (e) {
+			setCodeFilter(e.target.value);
+		},
+		brand: function handleBrandFilter (e) {
+			setBrandFilter(e.target.value);
+		},
+		warranty: function handleWarrantyFilter (e) {
+			setWarrantyFilter(e.target.value);
+		},
+		has_office: function handleHasOfficeFilter (e) {
+			setHasOfficeFilter(e.target.value);
+		},
+		auction: function handleAuctionFilter (e) {
+			setAuctionFilter(e.target.value);
+		},
+		category: function handleCategoryFilter (e) {
+			setCategoryFilter(e.target.value);
+		},
+		belongs: function handleDepartmentFilter (e) {
+			setBelongsFilter(e.target.value);
+		},
+		date_movement: function handleDateFilte (e) {
+			setDateMovementFilter(e.target.value);
+		}
+	}
+
+	const filteredValues = {
+		code: codeFilter,
+		brand: brandFilter,
+		warranty: warrantyFilter,
+		has_office: hasOfficeFilter,
+		auction: auctionFilter,
+		category: categoryFilter,
+		belongs: belongsFilter,
+		date_movement: dateMovementFilter
+	}
 
     useEffect(() => {
         const fetchPageNumbers = () => {
@@ -112,7 +169,43 @@ export default function Movements() {
         }
 
         verifyMessage();
-    }, [message]);
+	}, [message]);
+	
+	useEffect(() => {
+        function handleQuerySearch() {
+            const body = cSelected.map(element => {
+				return (filteredValues[element]);
+			});
+	
+			const parameters = cSelected.map(element => {
+				return (element);
+			});
+	
+			let string = '';
+	
+			parameters.map((element, index) => {
+				if (index > 0) {
+					return (string += "&" + element + "=" + body[index]);
+				}
+				else {
+					return (string += element + "=" + body[index]);
+				}
+			});
+	
+			setQuerySearch(string);
+        }
+
+        handleQuerySearch();
+	}, [cSelected,
+		filteredValues,
+		codeFilter,
+		brandFilter,
+		warrantyFilter,
+		hasOfficeFilter,
+		auctionFilter,
+		categoryFilter,
+		belongsFilter,
+		dateMovementFilter]);
 
     const onDismiss = () => {
         setVisible(false);
@@ -150,36 +243,6 @@ export default function Movements() {
 
         setCSelected([...cSelected]);
     }
-
-    const [tooltipOpen, setTooltipOpen] = useState(false);
-
-    const toggle = () => setTooltipOpen(!tooltipOpen);
-
-
-    function handleValueInput(e) {
-        const body = e.target.value.split(";").map(element => {
-            return (element);
-        });
-
-        const parameters = cSelected.map(element => {
-            return (element);
-        });
-
-        let string = '';
-
-        parameters.map((element, index) => {
-            if (index > 0) {
-                return (string += "&" + element + "=" + body[index]);
-            }
-            else {
-                return (string += element + "=" + body[index]);
-            }
-        });
-
-        setQuerySearch(string);
-    }
-
-    console.log(querySearch)
 
     return (
         <div className={movements.rows !== undefined && movements.rows.length !== 0 ? '' : 'height_content'}>
@@ -287,9 +350,9 @@ export default function Movements() {
                                                 <Input
                                                     type="text"
                                                     name={element}
-                                                    placeholder={element.toUpperCase()}
+                                                    placeholder={filteredTraduction[element]}
                                                     className="background_color_white_zimbra"
-                                                    onChange={handleValueInput}
+													onChange={filteredFunctions[element]}
                                                 />
                                             </Col>
                                         </Row>
@@ -298,21 +361,6 @@ export default function Movements() {
                             );
                         })
                     }
-                    {/* <Col sm="1" className="center">
-                        <span id="TooltipExample">
-                            <AiFillQuestionCircle size="30" />
-                        </span>
-                        <Tooltip
-                            placement="right"
-                            isOpen={tooltipOpen}
-                            target="TooltipExample"
-                            toggle={toggle}>
-                            Separe os campos por ';' (ponto e vírgula) e sem espaços.
-									</Tooltip>
-                    </Col>
-                </Row>
-            </Container> */}
-                    {/* </Col> */}
                 </Row >
             </Container >
 

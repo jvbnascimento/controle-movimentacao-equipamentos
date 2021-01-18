@@ -8,5 +8,5 @@ module.exports = {
 		timestamps: true,
 		underscored: true,
     },
-    logging: false
+    // logging: false
 }

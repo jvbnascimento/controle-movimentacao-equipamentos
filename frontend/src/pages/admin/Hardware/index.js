@@ -12,13 +12,11 @@ import {
 	ModalHeader,
 	ModalBody,
 	ModalFooter,
-	Tooltip,
 	ListGroupItem,
 	Alert
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
-import { AiFillQuestionCircle } from 'react-icons/ai';
 import PaginationComponent from '../../../components/Pagination'
 
 import api from '../../../services/api';
@@ -51,8 +49,66 @@ export default function Hardware() {
 	const [modal, setModal] = useState(false);
 	const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
 	const [visible, setVisible] = useState(false);
-	const [tooltipOpen, setTooltipOpen] = useState(false);
+
+	const [codeFilter, setCodeFilter] = useState('');
+	const [brandFilter, setBrandFilter] = useState('');
+	const [warrantyFilter, setWarrantyFilter] = useState('');
+	const [hasOfficeFilter, setHasOfficeFilter] = useState('');
+	const [auctionFilter, setAuctionFilter] = useState('');
+	const [categoryFilter, setCategoryFilter] = useState('');
+	const [belongsFilter, setBelongsFilter] = useState('');
+	const [dateMovementFilter, setDateMovementFilter] = useState('');
+
 	const { message, setMessage, colorMessage } = useContext(AuthContext);
+
+	const filteredTraduction = {
+		code: 'Tombamento',
+		brand: 'Marca',
+		warranty: 'Garantia',
+		has_office: 'Office',
+		auction: 'Leilão',
+		category: 'Categoria',
+		belongs: 'Departamento',
+		date_movement: 'Data'
+	}
+
+	const filteredFunctions = {
+		code: function handleCodeFilter(e) {
+			setCodeFilter(e.target.value);
+		},
+		brand: function handleBrandFilter(e) {
+			setBrandFilter(e.target.value);
+		},
+		warranty: function handleWarrantyFilter(e) {
+			setWarrantyFilter(e.target.value);
+		},
+		has_office: function handleHasOfficeFilter(e) {
+			setHasOfficeFilter(e.target.value);
+		},
+		auction: function handleAuctionFilter(e) {
+			setAuctionFilter(e.target.value);
+		},
+		category: function handleCategoryFilter(e) {
+			setCategoryFilter(e.target.value);
+		},
+		belongs: function handleDepartmentFilter(e) {
+			setBelongsFilter(e.target.value);
+		},
+		date_movement: function handleDateFilte(e) {
+			setDateMovementFilter(e.target.value);
+		}
+	}
+
+	const filteredValues = {
+		code: codeFilter,
+		brand: brandFilter,
+		warranty: warrantyFilter,
+		has_office: hasOfficeFilter,
+		auction: auctionFilter,
+		category: categoryFilter,
+		belongs: belongsFilter,
+		date_movement: dateMovementFilter
+	}
 
 	useEffect(() => {
 		const fetchPageNumbers = () => {
@@ -96,11 +152,13 @@ export default function Hardware() {
 
 		async function getAllHardwares() {
 			const response = await api.get(`/hardwares/${pageSize}/${currentPage}/filters?${querySearch}`);
-			const data = await response.data;
+			const data = await response.data.hardwares;
 
-			setPageCounts(Math.ceil((data.count) / pageSize));
-			setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
-			setHardwares(data);
+			if (data) {
+				setPageCounts(Math.ceil((data.count) / pageSize));
+				setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
+				setHardwares(data);
+			}
 		}
 
 		getAllHardwares();
@@ -117,6 +175,42 @@ export default function Hardware() {
 		verifyMessage();
 	}, [message]);
 
+	useEffect(() => {
+		function handleQuerySearch() {
+			const body = cSelected.map(element => {
+				return (filteredValues[element]);
+			});
+
+			const parameters = cSelected.map(element => {
+				return (element);
+			});
+
+			let string = '';
+
+			parameters.map((element, index) => {
+				if (index > 0) {
+					return (string += "&" + element + "=" + body[index]);
+				}
+				else {
+					return (string += element + "=" + body[index]);
+				}
+			});
+
+			setQuerySearch(string);
+		}
+
+		handleQuerySearch();
+	}, [cSelected,
+		filteredValues,
+		codeFilter,
+		brandFilter,
+		warrantyFilter,
+		hasOfficeFilter,
+		auctionFilter,
+		categoryFilter,
+		belongsFilter,
+		dateMovementFilter]);
+
 	const onDismiss = () => {
 		setVisible(false);
 		setMessage(['', -1]);
@@ -132,8 +226,6 @@ export default function Hardware() {
 			setHardwareToDelete([-1, -1]);
 		}
 	};
-
-	const toggleNotification = () => setTooltipOpen(!tooltipOpen);
 
 	const handleCurrentPage = (e, page) => {
 		e.preventDefault();
@@ -164,31 +256,6 @@ export default function Hardware() {
 		setModal(!modal);
 	}
 
-	const handleValueInput = (e) => {
-		const body = e.target.value.split(";").map(element => {
-			return (element)
-		});
-
-		const parameters = cSelected.map(element => {
-			return (element);
-		});
-
-		let string = '';
-
-		parameters.map((element, index) => {
-			if (index > 0) {
-				return (string += "&" + element + "=" + body[index]);
-			}
-			else {
-				return (string += element + "=" + body[index]);
-			}
-		});
-
-		setQuerySearch(string);
-	}
-
-	if (!hardware.count || pagesCount === 1) return null;
-
 	return (
 		<div className={hardware.rows !== undefined && hardware.rows.length !== 0 ? "" : "height_content"}>
 			<Container className="width_30">
@@ -216,110 +283,93 @@ export default function Hardware() {
 				</Row>
 			</Container>
 
-			{hardware.rows !== undefined && hardware.rows.length !== 0 ?
-				<Container className="margin_bottom_30">
-					<Row>
-						<Col className="center">
-							<ButtonGroup className="margin_bottom_20">
-								<Button
-									onClick={() => onCheckboxBtnClick('heritage')}
-									active={cSelected.includes('heritage')}
-									title="Filtrar por tombamento"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Tombamento
+			<Container className="margin_bottom_30">
+				<Row>
+					<Col className="center">
+						<ButtonGroup className="margin_bottom_20">
+							<Button
+								onClick={() => onCheckboxBtnClick('code')}
+								active={cSelected.includes('code')}
+								title="Filtrar por tombamento"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Tombamento
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('brand')}
-									active={cSelected.includes('brand')}
-									title="Filtrar por marca"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Marca
+							<Button
+								onClick={() => onCheckboxBtnClick('brand')}
+								active={cSelected.includes('brand')}
+								title="Filtrar por marca"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Marca
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('warranty')}
-									active={cSelected.includes('warranty')}
-									title="Filtrar por garantia"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Garantia
+							<Button
+								onClick={() => onCheckboxBtnClick('warranty')}
+								active={cSelected.includes('warranty')}
+								title="Filtrar por garantia"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Garantia
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('has_office')}
-									active={cSelected.includes('has_office')}
-									title="Filtrar por ferramenta office"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Office
+							<Button
+								onClick={() => onCheckboxBtnClick('has_office')}
+								active={cSelected.includes('has_office')}
+								title="Filtrar por ferramenta office"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Office
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('auction')}
-									active={cSelected.includes('auction')}
-									title="Filtrar por máquinas leiloadas"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Leilão
+							<Button
+								onClick={() => onCheckboxBtnClick('auction')}
+								active={cSelected.includes('auction')}
+								title="Filtrar por máquinas leiloadas"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Leilão
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('category')}
-									active={cSelected.includes('category')}
-									title="Filtrar por categoria"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Categoria
+							<Button
+								onClick={() => onCheckboxBtnClick('category')}
+								active={cSelected.includes('category')}
+								title="Filtrar por categoria"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Categoria
                             </Button>
 
-								<Button
-									onClick={() => onCheckboxBtnClick('belongs')}
-									active={cSelected.includes('belongs')}
-									title="Filtrar por departamento"
-									className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra"
-								>
-									Departamento
+							<Button
+								onClick={() => onCheckboxBtnClick('belongs')}
+								active={cSelected.includes('belongs')}
+								title="Filtrar por departamento"
+								className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
+								Departamento
                             </Button>
-							</ButtonGroup>
-						</Col>
-					</Row>
+						</ButtonGroup>
+					</Col>
+				</Row>
 
-					<Row>
-						<Col>
-							<Container>
-								<Row>
-									<Col className="center">
-										<Input
-											type="text"
-											name="filter"
-											placeholder="Procurar"
-											className="background_color_white_zimbra"
-											onChange={handleValueInput}
-										/>
-									</Col>
-									<Col sm="1" className="center">
-										<span id="TooltipExample">
-											<AiFillQuestionCircle size="30" />
-										</span>
-										<Tooltip
-											placement="right"
-											isOpen={tooltipOpen}
-											target="TooltipExample"
-											toggle={toggleNotification}
-										>
-											Separe os campos por ';' (ponto e vírgula) e sem espaços.
-									</Tooltip>
-									</Col>
-								</Row>
-							</Container>
-						</Col>
-					</Row>
-				</Container>
-				: ''
-			}
+				<Row>
+					{cSelected && cSelected.length !== 0 &&
+						cSelected.map((element, index) => {
+							return (
+								<Col key={index}>
+									<Container>
+										<Row>
+											<Col className="center">
+												<Input
+													type="text"
+													name={element}
+													placeholder={filteredTraduction[element]}
+													className="background_color_white_zimbra"
+													onChange={filteredFunctions[element]}
+												/>
+											</Col>
+										</Row>
+									</Container>
+								</Col>
+							);
+						})
+					}
+				</Row>
+			</Container>
 
 			{hardware.rows !== undefined && hardware.rows.length !== 0 ?
 				<Container className="center margin_top_30">
@@ -359,7 +409,7 @@ export default function Hardware() {
 				</Container>
 				: ''
 			}
- 
+
 			{
 				hardware.rows !== undefined &&
 				hardware.rows.length !== 0 &&
@@ -432,7 +482,7 @@ export default function Hardware() {
 											onClick={toggle}
 											color="danger"
 											value={element.id}
-											name={element.heritage}
+											name={element.code}
 										>
 											Deletar
                                         </Button>

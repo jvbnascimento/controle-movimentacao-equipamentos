@@ -199,7 +199,7 @@ module.exports = {
             }
             if (filters.has_office) {
                 hardwareFilters.has_office = {
-                    [Op.like]: `%${filters.has_office}%`
+                    [Op.like]: `%${filters.has_office.toUpperCase()}%`
                 }
             }
             if (filters.auction) {

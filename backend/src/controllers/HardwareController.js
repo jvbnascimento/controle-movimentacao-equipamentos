@@ -6,74 +6,79 @@ const Department = require("../models/Department");
 
 module.exports = {
 	async listAllDetailedHardwares(req, res) {
-        const { limit, offset } = req.params;
+		try {
+			const { limit, offset } = req.params;
 
-        const filters = req.query;
+			const filters = req.query;
 
-        let hardwareFilters = {}
-        let belongsFilters = {}
-        let categoryFilters = {}
+			let hardwareFilters = {}
+			let belongsFilters = {}
+			let categoryFilters = {}
 
-        if (filters.code) {
-            hardwareFilters.code = {
-                [Op.like]: `%${filters.code}%`
-            }
-        }
-        if (filters.brand) {
-            hardwareFilters.brand = {
-                [Op.like]: `%${filters.brand.toUpperCase()}%`
-            }
-        }
-        if (filters.warranty) {
-            hardwareFilters.warranty = {
-                [Op.like]: `%${filters.warranty.toUpperCase()}%`
-            }
-        }
-        if (filters.has_office) {
-            hardwareFilters.has_office = {
-                [Op.like]: `%${filters.has_office.toUpperCase()}%`
-            }
-        }
-        if (filters.auction) {
-            hardwareFilters.auction = {
-                [Op.eq]: `${filters.auction}`
-            }
-        }
-        if (filters.category) {
-            categoryFilters.name = {
-                [Op.like]: `%${filters.category.toUpperCase()}%`
-            }
-        }
-        if (filters.belongs) {
-            belongsFilters.name = {
-                [Op.like]: `%${filters.belongs.toUpperCase()}%`
-            }
+			if (filters.code) {
+				hardwareFilters.code = {
+					[Op.like]: `%${filters.code}%`
+				}
+			}
+			if (filters.brand) {
+				hardwareFilters.brand = {
+					[Op.like]: `%${filters.brand.toUpperCase()}%`
+				}
+			}
+			if (filters.warranty) {
+				hardwareFilters.warranty = {
+					[Op.like]: `%${filters.warranty.toUpperCase()}%`
+				}
+			}
+			if (filters.has_office) {
+				hardwareFilters.has_office = {
+					[Op.like]: `%${filters.has_office.toUpperCase()}%`
+				}
+			}
+			if (filters.auction) {
+				hardwareFilters.auction = {
+					[Op.eq]: `${filters.auction}`
+				}
+			}
+			if (filters.category) {
+				categoryFilters.name = {
+					[Op.like]: `%${filters.category.toUpperCase()}%`
+				}
+			}
+			if (filters.belongs) {
+				belongsFilters.name = {
+					[Op.like]: `%${filters.belongs.toUpperCase()}%`
+				}
+			}
+
+			const hardwares = await Hardware.findAndCountAll({
+				include: [
+					{
+						association: 'category',
+						required: true,
+						where: categoryFilters,
+					},
+					{
+						association: 'belongs',
+						required: true,
+						where: belongsFilters,
+					},
+				],
+				where: hardwareFilters,
+				order: [
+					['code']
+				],
+				limit,
+				offset: (offset - 1) * limit,
+				distinct: true,
+				subQuery: false
+			});
+
+			return res.json({ hardwares });
 		}
-
-		const hardwares = await Hardware.findAndCountAll({
-            include: [
-                {
-                    association: 'category',
-                    required: true,
-                    where: categoryFilters,
-                },
-                {
-                    association: 'belongs',
-                    required: true,
-                    where: belongsFilters,
-                },
-            ],
-            where: hardwareFilters,
-            order: [
-                ['code']
-            ],
-            limit,
-            offset: (offset - 1) * limit,
-			distinct: true,
-			subQuery: false
-        });
-
-		return res.json(hardwares);
+		catch (e) {
+			return res.json({ error: "Não foi possível realizar a execução da Query" });
+		}
 	},
 
 	async listAllHardwares(req, res) {
@@ -141,7 +146,7 @@ module.exports = {
 
 		return res.json({ hardwares });
 	},
-	
+
 	async listHardwareByCode(req, res) {
 		const { code } = req.params;
 
@@ -149,7 +154,7 @@ module.exports = {
 			where: {
 				code: {
 					[Op.iLike]: `%${code}%`
-                }
+				}
 			},
 			include: [
 				{
@@ -166,9 +171,9 @@ module.exports = {
 		}
 
 		return res.json(hardware);
-    },
+	},
 
-    async listHardwareByDepartment(req, res) {
+	async listHardwareByDepartment(req, res) {
 		const { department_id } = req.params;
 
 		const hardware = await Hardware.findAll({
@@ -177,11 +182,11 @@ module.exports = {
 					association: 'category',
 				},
 				{
-                    association: 'belongs',
-                    where: {
-                        id: parseInt(department_id)
-                    },
-                },
+					association: 'belongs',
+					where: {
+						id: parseInt(department_id)
+					},
+				},
 			],
 			order: [
 				['code']
@@ -193,22 +198,22 @@ module.exports = {
 		}
 
 		return res.json(hardware);
-    },
+	},
 
-    async listHardwareByDepartmentName(req, res) {
-        const { department_name, limit, offset } = req.params;
+	async listHardwareByDepartmentName(req, res) {
+		const { department_name, limit, offset } = req.params;
 
 		const hardwares = await Hardware.findAndCountAll({
 			include: [
 				{
-                    association: 'category',
+					association: 'category',
 				},
 				{
-                    association: 'belongs',
-                    where: {
-                        name: department_name.replace("-", "/")
-                    },
-                },
+					association: 'belongs',
+					where: {
+						name: department_name.replace("-", "/")
+					},
+				},
 			],
 			order: [
 				['code']
@@ -217,15 +222,15 @@ module.exports = {
 			offset: (offset - 1) * limit,
 			distinct: true,
 			subQuery: false
-        });
+		});
 
 		if (!hardwares) {
 			return res.status(404).json({ error: 'Hardwares not found' });
 		}
 
-        return res.json(hardwares);
-    },
-    
+		return res.json(hardwares);
+	},
+
 	async listHardwareById(req, res) {
 		const { hardware_id } = req.params;
 
@@ -245,7 +250,7 @@ module.exports = {
 		}
 
 		return res.json(hardware);
-    },
+	},
 
 	async create(req, res) {
 		const { type_id } = req.params;
