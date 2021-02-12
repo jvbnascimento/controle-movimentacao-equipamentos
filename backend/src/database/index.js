@@ -6,8 +6,9 @@ const User = require("../models/User");
 const Type = require("../models/Type");
 const Department = require("../models/Department");
 const Hardware = require("../models/Hardware");
-const Movement = require("../models/Movement");
 const Role = require("../models/Role");
+const TypeMovement = require("../models/TypeMovement");
+const Movement = require("../models/Movement");
 
 const connection = new Sequelize(dbConfig);
 
@@ -15,15 +16,17 @@ User.init(connection);
 Type.init(connection);
 Department.init(connection);
 Hardware.init(connection);
-Movement.init(connection);
 Role.init(connection);
+TypeMovement.init(connection);
+Movement.init(connection);
 
 User.associate(connection.models);
 Type.associate(connection.models);
 Department.associate(connection.models);
 Hardware.associate(connection.models);
-Movement.associate(connection.models);
 Role.associate(connection.models);
+TypeMovement.associate(connection.models);
+Movement.associate(connection.models);
 
 // connection.sync({ force: true })
 // 	.then(async () => {
@@ -33,18 +36,14 @@ Role.associate(connection.models);
 // 		const mngrRole = await Role.create({
 // 			name: "GERENTE"
 // 		});
-// 		const userRole = await Role.create({
-// 			name: "USUÁRIO"
-// 		});
 
 // 		await User.create({
-// 			name: 'admin',
-// 			email: 'admin@email.com',
+// 			name: 'Administrador',
+// 			email: 'suporte.sepog@sepog.fortaleza.ce.gov.br',
 // 			password: 'admin@123',
 // 		}).then((user) => {
 // 			user.addRole(admnRole)
 // 			user.addRole(mngrRole)
-// 			user.addRole(userRole)
 // 		});
 
 // 		await Type.create({
@@ -66,7 +65,7 @@ Role.associate(connection.models);
 // 			name: "IMPRESSÃO"
 // 		});
 // 		await Type.create({
-// 			name: "MONITOR"
+// 			name: "IMAGEM"
 // 		});
 // 		await Type.create({
 // 			name: "QUADRO BRANCO"
@@ -182,7 +181,7 @@ Role.associate(connection.models);
 // 			boss: "TESTE"
 // 		});
 // 		await Department.create({
-// 			name: "COGESP/CPCCS",
+// 			name: "COGESP/CEPCCS",
 // 			boss: "TESTE"
 // 		});
 // 		await Department.create({
@@ -198,7 +197,7 @@ Role.associate(connection.models);
 // 			boss: "TESTE"
 // 		});
 // 		await Department.create({
-// 			name: "COTEC II",
+// 			name: "COTEC/COTEC II",
 // 			boss: "TESTE"
 // 		});
 // 		await Department.create({
@@ -238,158 +237,189 @@ Role.associate(connection.models);
 // 			boss: "TESTE"
 // 		});
 
-		// Movement.sync({ force: true })
+//         await TypeMovement.create({
+//             description: "EMPRÉSTIMO INTERNO"
+//         });
+//         await TypeMovement.create({
+//             description: "EMPRÉSTIMO EXTERNO"
+//         });
+//         await TypeMovement.create({
+//             description: "DVO - INSERVÍVEL"
+//         });
+//         await TypeMovement.create({
+//             description: "TRANSFERÊNCIA/DOAÇÃO"
+//         });
 
-		// xlsxFile('../CONTROLE PARQUE 2021.xlsx', { sheet: 'PARQUE' })
-			// .then((rows) => {
-			// 	rows.forEach(async (element) => {
-			// 		let type = '';
-			// 		let department = ''
+// Movement.sync({ force: true })
 
-			// 		if (element[1]) {
-			// 			type = await Type.findOne({
-			// 				where: {
-			// 					name: element[1]
-			// 				}
-			// 			});
-			// 		}
-			// 		if (element[7]) {
-			// 			let departmentName = '';
-			// 			if (element[7] === 'COTEC/INFRA/ANEXO') {
-			// 				departmentName = 'COTEC/INFRA';
-			// 			}
-			// 			else if (element[7] === 'GAB. ADJUNTO') {
-			// 				departmentName = 'GABINETE ADJUNTO';
-			// 			}
-			// 			else if (element[7] === 'GAB.EXECUTIVO') {
-			// 				departmentName = 'GABINETE EXECUTIVO';
-			// 			}
-			// 			else if (element[7] === 'COTEC/DESENVOLV') {
-			// 				departmentName = 'COTEC/DESENVOLVIMENTO';
-			// 			}
-			// 			else if (element[7] === 'COAFI/COPA E SELADORIA') {
-			// 				departmentName = 'COAFI/COPA E ZELADORIA';
-			// 			}
-			// 			else {
-			// 				departmentName = element[7];
-			// 			}
+// xlsxFile('../CONTROLE PARQUE 2021.xlsx', { sheet: 'PARQUE' })
+    // .then((rows) => {
+    // 	rows.forEach(async (element) => {
+    // 		let type = '';
+    // 		let department = ''
 
-			// 			department = await Department.findOne({
-			// 				where: {
-			// 					name: departmentName
-			// 				}
-			// 			});
-			// 		}
+    // 		if (element[1]) {
+    // 			type = await Type.findOne({
+    // 				where: {
+    // 					name: element[1] === "MONITOR" ? "IMAGEM" : element[1]
+    // 				}
+    // 			});
+    // 		}
+    // 		if (element[7]) {
+    // 			let departmentName = '';
+    // 			if (element[7] === 'COTEC/INFRA/ANEXO') {
+    // 				departmentName = 'COTEC/INFRA';
+    // 			}
+    //             else if (element[7] === 'COTEC II') {
+    // 				departmentName = 'COTEC/COTEC II';
+    // 			}
+    //             else if (element[7] === 'COGESP/CPCCS') {
+    // 				departmentName = 'COGESP/CEPCCS';
+    // 			}
+    // 			else if (element[7] === 'GAB. ADJUNTO') {
+    // 				departmentName = 'GABINETE ADJUNTO';
+    // 			}
+    // 			else if (element[7] === 'GAB.EXECUTIVO') {
+    // 				departmentName = 'GABINETE EXECUTIVO';
+    // 			}
+    // 			else if (element[7] === 'COTEC/DESENVOLV') {
+    // 				departmentName = 'COTEC/DESENVOLVIMENTO';
+    // 			}
+    // 			else if (element[7] === 'COAFI/COPA E SELADORIA') {
+    // 				departmentName = 'COAFI/COPA E ZELADORIA';
+    // 			}
+    // 			else {
+    // 				departmentName = element[7];
+    // 			}
 
-			// 		if (type && department) {
-			// 			Hardware.create({
-			// 				code: element[0],
-			// 				type_id: type.id,
-			// 				description: element[2],
-			// 				warranty: element[4] === null ? new Date().toLocaleDateString() : element[4],
-			// 				has_office: element[5] === null ? 'SEM OFFICE' : element[5],
-			// 				department_id: department.id,
-			// 				brand: 'MARCA',
-			// 				auction: false,
-			// 				date_auction: null
-			// 			});
-			// 		}
-			// 	});
-			// })
-		// .then(async (rows) => {
-		//     await rows.forEach(async (element) => {
-		//         let startIndex = 7;
+    // 			department = await Department.findOne({
+    // 				where: {
+    // 					name: departmentName
+    // 				}
+    // 			});
+    // 		}
 
-		//         while (element[startIndex] !== null && element[startIndex] !== undefined) {
-		//             if (element[startIndex + 1] !== null && element[startIndex + 1] !== undefined) {
-		//                 let departmentOriginName = '';
-		//                 let departmentDestinationName = '';
+    // 		if (type && department) {
+    // 			Hardware.create({
+    // 				code: element[0],
+    // 				type_id: type.id,
+    // 				description: element[2],
+    // 				warranty: element[4] === null ? new Date().toLocaleDateString() : element[4],
+    // 				has_office: element[5] === null ? 'SEM OFFICE' : element[5],
+    // 				department_id: department.id,
+    // 				brand: 'MARCA',
+    // 				auction: false,
+    // 				date_auction: null
+    // 			});
+    // 		}
+    // 	});
+    // })
+        // .then(async (rows) => {
+        //     await rows.forEach(async (element) => {
+        //         let startIndex = 7;
 
-		//                 if (element[startIndex] === 'COTEC/INFRA/ANEXO') {
-		//                     departmentOriginName = 'COTEC/INFRA';
-		//                 }
-		//                 else if (element[startIndex] === 'GAB. ADJUNTO') {
-		//                     departmentOriginName = 'GABINETE ADJUNTO';
-		//                 }
-		//                 else if (element[startIndex] === 'GAB.EXECUTIVO') {
-		//                     departmentOriginName = 'GABINETE EXECUTIVO';
-		//                 }
-		//                 else if (element[startIndex] === 'COTEC/DESENVOLV') {
-		//                     departmentOriginName = 'COTEC/DESENVOLVIMENTO';
-		//                 }
-		//                 else if (element[startIndex] === 'COAFI/COPA E SELADORIA') {
-		//                     departmentOriginName = 'COAFI/COPA E ZELADORIA';
-		//                 }
-		//                 else {
-		//                     departmentOriginName = element[startIndex];
-		//                 }
+        //         while (element[startIndex] !== null && element[startIndex] !== undefined) {
+        //             if (element[startIndex + 1] !== null && element[startIndex + 1] !== undefined) {
+        //                 let departmentOriginName = '';
+        //                 let departmentDestinationName = '';
 
-		//                 if (element[startIndex + 1] === 'COTEC/INFRA/ANEXO') {
-		//                     departmentDestinationName = 'COTEC/INFRA';
-		//                 }
-		//                 else if (element[startIndex + 1] === 'GAB. ADJUNTO') {
-		//                     departmentDestinationName = 'GABINETE ADJUNTO';
-		//                 }
-		//                 else if (element[startIndex + 1] === 'GAB.EXECUTIVO') {
-		//                     departmentDestinationName = 'GABINETE EXECUTIVO';
-		//                 }
-		//                 else if (element[startIndex + 1] === 'COTEC/DESENVOLV') {
-		//                     departmentDestinationName = 'COTEC/DESENVOLVIMENTO';
-		//                 }
-		//                 else if (element[startIndex + 1] === 'COAFI/COPA E SELADORIA') {
-		//                     departmentDestinationName = 'COAFI/COPA E ZELADORIA';
-		//                 }
-		//                 else {
-		//                     departmentDestinationName = element[startIndex + 1];
-		//                 }
+        //                 if (element[startIndex] === 'COTEC/INFRA/ANEXO') {
+        //                     departmentOriginName = 'COTEC/INFRA';
+        //                 }
+        //                 else if (element[startIndex] === 'COTEC II') {
+        //                     departmentOriginName = 'COTEC/COTEC II';
+        //                 }
+        //                 else if (element[startIndex] === 'COGESP/CPCCS') {
+        //                     departmentOriginName = 'COGESP/CEPCCS';
+        //                 }
+        //                 else if (element[startIndex] === 'GAB. ADJUNTO') {
+        //                     departmentOriginName = 'GABINETE ADJUNTO';
+        //                 }
+        //                 else if (element[startIndex] === 'GAB.EXECUTIVO') {
+        //                     departmentOriginName = 'GABINETE EXECUTIVO';
+        //                 }
+        //                 else if (element[startIndex] === 'COTEC/DESENVOLV') {
+        //                     departmentOriginName = 'COTEC/DESENVOLVIMENTO';
+        //                 }
+        //                 else if (element[startIndex] === 'COAFI/COPA E SELADORIA') {
+        //                     departmentOriginName = 'COAFI/COPA E ZELADORIA';
+        //                 }
+        //                 else {
+        //                     departmentOriginName = element[startIndex];
+        //                 }
 
-		//                 const departmentOrigin = await Department.findOne({
-		//                     where: {
-		//                         name: departmentOriginName
-		//                     }
-		//                 });
+        //                 if (element[startIndex + 1] === 'COTEC/INFRA/ANEXO') {
+        //                     departmentDestinationName = 'COTEC/INFRA';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'COTEC II') {
+        //                     departmentDestinationName = 'COTEC/COTEC II';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'COGESP/CPCCS') {
+        //                     departmentDestinationName = 'COGESP/CEPCCS';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'GAB. ADJUNTO') {
+        //                     departmentDestinationName = 'GABINETE ADJUNTO';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'GAB.EXECUTIVO') {
+        //                     departmentDestinationName = 'GABINETE EXECUTIVO';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'COTEC/DESENVOLV') {
+        //                     departmentDestinationName = 'COTEC/DESENVOLVIMENTO';
+        //                 }
+        //                 else if (element[startIndex + 1] === 'COAFI/COPA E SELADORIA') {
+        //                     departmentDestinationName = 'COAFI/COPA E ZELADORIA';
+        //                 }
+        //                 else {
+        //                     departmentDestinationName = element[startIndex + 1];
+        //                 }
 
-		//                 const departmentDestination = await Department.findOne({
-		//                     where: {
-		//                         name: departmentDestinationName
-		//                     }
-		//                 });
+        //                 const departmentOrigin = await Department.findOne({
+        //                     where: {
+        //                         name: departmentOriginName
+        //                     }
+        //                 });
 
-		//                 if (await departmentOrigin && await departmentDestination) {
-		//                     await Movement.create({
-		//                         date_movement: new Date().toLocaleDateString(),
-		//                         origin_department_id: departmentOrigin.id,
-		//                         destination_department_id: departmentDestination.id,
-		//                         responsible_id: 1
-		//                     }).then(async (movement) => {
-		//                         const type = await Type.findOne({
-		//                             where: {
-		//                                 name: element[1]
-		//                             }
-		//                         });
+        //                 const departmentDestination = await Department.findOne({
+        //                     where: {
+        //                         name: departmentDestinationName
+        //                     }
+        //                 });
 
-		//                         const hardware = await Hardware.findOne({
-		//                             where: {
-		//                                 code: element[0],
-		//                                 type_id: type.id,
-		//                             }
-		//                         });
+        //                 if (await departmentOrigin && await departmentDestination) {
+        //                     await Movement.create({
+        //                         date_movement: new Date().toLocaleDateString(),
+        //                         origin_department_id: departmentOrigin.id,
+        //                         destination_department_id: departmentDestination.id,
+        //                         responsible_id: 1
+        //                     }).then(async (movement) => {
+        //                         const type = await Type.findOne({
+        //                             where: {
+        //                                 name: element[1] === "MONITOR" ? "IMAGEM" : element[1]
+        //                             }
+        //                         });
 
-		//                         if (hardware) {
-		//                             hardware.department_id = departmentDestination.id;
-		//                             await hardware.save();
-		//                             await movement.addHardware(hardware);
-		//                         };
-		//                     });
-		//                 }
-		//                 startIndex += 1;
-		//             }
-		//             else {
-		//                 break;
-		//             }
-		//         }
-		//     });
-		// });
-	// });
+        //                         const hardware = await Hardware.findOne({
+        //                             where: {
+        //                                 code: element[0],
+        //                                 type_id: type.id,
+        //                             }
+        //                         });
+
+        //                         if (hardware) {
+        //                             hardware.department_id = departmentDestination.id;
+        //                             await hardware.save();
+        //                             await movement.addHardware(hardware);
+        //                         };
+        //                     });
+        //                 }
+        //                 startIndex += 1;
+        //             }
+        //             else {
+        //                 break;
+        //             }
+        //         }
+        //     });
+        // });
+// });
 
 module.exports = connection;

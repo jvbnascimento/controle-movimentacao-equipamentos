@@ -3,18 +3,18 @@ import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
-	Form,
-	FormGroup,
-	Label,
-	Input,
-	Container,
-	Row,
-	Col,
-	Button,
-	ListGroup,
-	ListGroupItem,
-	Alert,
-	FormFeedback,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    Container,
+    Row,
+    Col,
+    Button,
+    ListGroup,
+    ListGroupItem,
+    Alert,
+    FormFeedback,
 } from 'reactstrap';
 import { BsPlusCircleFill } from 'react-icons/bs';
 
@@ -22,471 +22,468 @@ import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
 
 export default function CreateMovement() {
-	const [hardwares, setHardwares] = useState([]);
-	const [departments, setDepartments] = useState([]);
-	const [listHardwares, setListHardwares] = useState([]);
-	const [date_movement, setDateMovement] = useState('');
-	const [responsible, setReponsible] = useState(1);
-	const [destination_department, setDestinationDepartment] = useState(1);
-	const [origin_department, setOriginDepartment] = useState(1);
-	const [dateMovementValid, setDateMovementValid] = useState(false);
-	const [visible, setVisible] = useState(false);
-	const history = useHistory();
-	const { user, message, setMessage, colorMessage } = useContext(AuthContext);
+    const [typeMovement, setTypeMovement] = useState([]);
+    const [hardwares, setHardwares] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [listHardwares, setListHardwares] = useState([]);
+    const [date_movement, setDateMovement] = useState('');
+    const [responsible, setReponsible] = useState(1);
+    const [destination_department, setDestinationDepartment] = useState(1);
+    const [origin_department, setOriginDepartment] = useState(1);
+    const [dateMovementValid, setDateMovementValid] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const history = useHistory();
+    const { user, message, setMessage, colorMessage } = useContext(AuthContext);
 
 
-	useEffect(() => {
-		async function getAllHardwares() {
-			const response = await api.get(`/hardwares/department/${origin_department}`);
-			const data = await response.data;
+    useEffect(() => {
+        async function getAllHardwares() {
+            const response = await api.get(`/hardwares/department/${origin_department}`);
+            const data = await response.data.hardware;
 
-			setHardwares(data);
-		}
+            if (data) {
+                setHardwares(data);
+            }
+        }
 
-		getAllHardwares();
-	}, [origin_department]);
+        getAllHardwares();
+    }, [origin_department]);
 
-	useEffect(() => {
-		setReponsible(user.name);
-	}, [user.name]);
+    useEffect(() => {
+        async function getAllTypeMovements() {
+            const response = await api.get(`/type_movements`);
+            const data = await response.data.typeMovements;
 
-	useEffect(() => {
-		async function getAllDepartments() {
-			const response = await api.get('/departments');
-			const data = await response.data;
+            setTypeMovement(data);
+        }
 
-			if (data.length < 2) {
-				history.goBack();
-			}
-			else {
-				setDestinationDepartment(data[0].id);
-				setOriginDepartment(data[1].id);
-				setDepartments(data);
-			}
-		}
+        getAllTypeMovements();
+    }, [origin_department]);
 
-		getAllDepartments();
-	}, [history]);
+    useEffect(() => {
+        setReponsible(user.name);
+    }, [user.name]);
 
-	useEffect(() => {
-		function verifyMessage() {
-			if (message[0] !== '') {
-				setVisible(true);
-			}
-		}
+    useEffect(() => {
+        async function getAllDepartments() {
+            const response = await api.get('/departments');
+            const data = await response.data;
 
-		verifyMessage();
-	}, [message]);
+            if (data.length < 2) {
+                history.goBack();
+            }
+            else {
+                setDestinationDepartment(data[0].id);
+                setOriginDepartment(data[1].id);
+                setDepartments(data);
+                
+                let date = new Date().toLocaleDateString().split("/");
+                date = date[2] + "-" + date[1] + "-" + date[0];
 
-	// CLOSE MODAL
-	const onDismiss = () => {
-		setVisible(false);
-	}
+                setDateMovement(date);
+                setDateMovementValid(true);
+            }
+        }
 
-	const emptyFieldValidator = (data) => {
-		return (/^\S.*/gm.test(data));
-	}
+        getAllDepartments();
+    }, [history]);
 
-	const addHardware = (e) => {
-		e.preventDefault();
+    useEffect(() => {
+        function verifyMessage() {
+            if (message[0] !== '') {
+                setVisible(true);
+            }
+        }
 
-		if (parseInt(e.target.hardwares.value) !== 0) {
-			async function getHardware(index) {
-				const hardware = await api.get(`/hardwares/${index}`);
+        verifyMessage();
+    }, [message]);
 
-				const newListHardwares = [...listHardwares, hardware.data];
+    console.log(new Date().toLocaleDateString())
 
-				setListHardwares(newListHardwares);
-			}
+    // CLOSE MODAL
+    const onDismiss = () => {
+        setVisible(false);
+    }
 
-			getHardware(e.target.hardwares.value);
-		}
-	}
+    const emptyFieldValidator = (data) => {
+        return (/^\S.*/gm.test(data));
+    }
 
-	const removeHardware = (e) => {
-		e.preventDefault();
+    const addHardware = (e) => {
+        e.preventDefault();
 
-		if (parseInt(e.target.value) !== 0) {
-			async function getHardware(index) {
+        if (parseInt(e.target.hardwares.value) !== 0) {
+            async function getHardware(index) {
+                const hardware = await api.get(`/hardwares/${index}`);
 
-				const newListHardwares = listHardwares.filter((element) => {
-					return element.id !== parseInt(index)
-				});
+                const newListHardwares = [...listHardwares, hardware.data];
 
-				setListHardwares(newListHardwares);
-			}
+                setListHardwares(newListHardwares);
+            }
 
-			getHardware(e.target.value);
-		}
-	}
+            getHardware(e.target.hardwares.value);
+        }
+    }
 
-	const handleDateMovement = (e) => {
-		const verifyDateMovement = e.target.value;
+    const removeHardware = (e) => {
+        e.preventDefault();
 
-		if (emptyFieldValidator(verifyDateMovement)) {
-			setDateMovementValid(true);
-		}
-		else {
-			setDateMovementValid(false);
-		}
+        if (parseInt(e.target.value) !== 0) {
+            async function getHardware(index) {
 
-		setDateMovement(verifyDateMovement);
-	}
+                const newListHardwares = listHardwares.filter((element) => {
+                    return element.id !== parseInt(index)
+                });
 
-	const handleResponsible = (e) => {
-		setReponsible(parseInt(e.target.value));
-	}
+                setListHardwares(newListHardwares);
+            }
 
-	const handleDestinationDepartment = (e) => {
-		setDestinationDepartment(parseInt(e.target.value));
+            getHardware(e.target.value);
+        }
+    }
 
-	}
-	const handleOriginDepartment = (e) => {
-		setOriginDepartment(parseInt(e.target.value));
+    const handleDateMovement = (e) => {
+        const verifyDateMovement = e.target.value;
 
-		const destinationDepartmentId = departments.filter(department => {
-			return (
-				department &&
-				department.id !== parseInt(e.target.value)
-			);
-		});
+        if (emptyFieldValidator(verifyDateMovement)) {
+            setDateMovementValid(true);
+        }
+        else {
+            setDateMovementValid(false);
+        }
 
-		setDestinationDepartment(destinationDepartmentId[0].id);
-	}
+        setDateMovement(verifyDateMovement);
+    }
 
-	// VERIFY IF ALL INPUTS ARE VALID
-	const verifyAllInputsValid = () => {
-		if (
-			emptyFieldValidator(date_movement) &&
-			listHardwares.length !== 0
-		) {
-			return true;
-		}
-		return false;
-	}
+    const handleResponsible = (e) => {
+        setReponsible(parseInt(e.target.value));
+    }
 
-	const validateCreation = () => {
-		const validation = verifyAllInputsValid();
+    const handleDestinationDepartment = (e) => {
+        setDestinationDepartment(parseInt(e.target.value));
 
-		if (validation) {
-			createMovement();
-		}
-		else {
-			setMessage(["Existem campos não preenchidos corretamente", 400]);
-		}
-	}
+    }
+    const handleOriginDepartment = (e) => {
+        setOriginDepartment(parseInt(e.target.value));
 
-	const createMovement = async () => {
-		const id_hardwares = listHardwares.map(element => {
-			return { "id": element.id }
-		});
+        const destinationDepartmentId = departments.filter(department => {
+            return (
+                department &&
+                department.id !== parseInt(e.target.value)
+            );
+        });
 
-		const data = {
-			date_movement,
-			responsible_id: parseInt(user.id),
-			destination_department_id: destination_department,
-			origin_department_id: origin_department,
-			hardwares: id_hardwares
-		}
+        setDestinationDepartment(destinationDepartmentId[0].id);
+    }
 
-		await api.post('/movements', data);
+    // VERIFY IF ALL INPUTS ARE VALID
+    const verifyAllInputsValid = () => {
+        if (
+            emptyFieldValidator(date_movement) &&
+            listHardwares.length !== 0
+        ) {
+            return true;
+        }
+        return false;
+    }
 
-		setMessage(['Movimentação criada com sucesso!', 200]);
+    const validateCreation = () => {
+        const validation = verifyAllInputsValid();
 
-		history.goBack();
-	}
+        if (validation) {
+            createMovement();
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+        }
+    }
 
-	return (
-		<div
-			className={
-				listHardwares.length === 0 ?
-					"height_content" :
-					""
-			}
-		>
-			<Container className="width_30">
-				<Alert color={
-					colorMessage[message[1]]
-				}
-					isOpen={visible}
-					toggle={onDismiss}
-				>
-					{message[0]}
-				</Alert>
-			</Container>
+    const createMovement = async () => {
+        const id_hardwares = listHardwares.map(element => {
+            return { "id": element.id }
+        });
 
-			<h1 className="text-center"> Criar uma nova movimentação </h1>
+        const data = {
+            date_movement,
+            responsible_id: parseInt(user.id),
+            destination_department_id: destination_department,
+            origin_department_id: origin_department,
+            hardwares: id_hardwares
+        }
 
-			<Container className="width_40">
-				<Row>
-					<Col>
-						<FormGroup>
-							<Label
-								className="margin_top_10"
-								for="labelDate"
-							>
-								Data da movimentação
+        await api.post('/movements', data);
+
+        setMessage(['Movimentação criada com sucesso!', 200]);
+
+        history.goBack();
+    }
+
+    return (
+        <div>
+            <Container className="width_30">
+                <Alert color={colorMessage[message[1]]} isOpen={visible} toggle={onDismiss}>
+                    {message[0]}
+                </Alert>
+            </Container>
+
+            <h1 className="text-center"> Criar uma nova movimentação </h1>
+
+            <Container className="width_40">
+                <Row>
+                    <Col>
+                        <FormGroup>
+                            <Label className="margin_top_10" for="labelTypeMovement">
+                                Tipo de movimentação
+						    </Label>
+
+                            <Input
+                                type="select"
+                                name="type_movement_id"
+                                id="labelTypeMovement"
+                                value={typeMovement}
+                                onChange={() => {}}
+                                className="margin_bottom_20"
+                                required>
+                                {
+                                    typeMovement !== undefined &&
+                                    typeMovement.length !== 0 &&
+                                    typeMovement.map(element => {
+                                        return (
+                                            <option key={element.id} value={element.id}>
+                                                {element.description}
+                                            </option>
+                                        );
+                                    })
+                                }
+                            </Input>
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label className="margin_top_10" for="labelDate">
+                                Data da movimentação
 							</Label>
 
-							{
-								dateMovementValid ?
-									<>
-										<Input
-											type="date"
-											name="date_movement"
-											id="labelDate"
-											placeholder="Data"
-											value={date_movement}
-											onChange={handleDateMovement}
-											className="margin_bottom_20"
-											valid
-										/>
-										<FormFeedback valid>Data de movimentação válida</FormFeedback>
-									</>
-									:
-									<>
-										<Input
-											type="date"
-											name="date_movement"
-											id="labelDate"
-											placeholder="Data"
-											value={date_movement}
-											onChange={handleDateMovement}
-											className="margin_bottom_20"
-											invalid
-										/>
-										<FormFeedback>O campo <strong>DATA DA MOVIMENTAÇÃO</strong> não pode ser vazio.</FormFeedback>
-									</>
-							}
-						</FormGroup>
+                            {
+                                dateMovementValid ?
+                                    <>
+                                        <Input
+                                            type="date"
+                                            name="date_movement"
+                                            id="labelDate"
+                                            placeholder="Data"
+                                            value={date_movement}
+                                            onChange={handleDateMovement}
+                                            className="margin_bottom_20"
+                                            valid />
+                                        <FormFeedback valid>Data de movimentação válida</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input
+                                            type="date"
+                                            name="date_movement"
+                                            id="labelDate"
+                                            placeholder="Data"
+                                            value={date_movement}
+                                            onChange={handleDateMovement}
+                                            className="margin_bottom_20"
+                                            invalid />
+                                        <FormFeedback>O campo <strong>DATA DA MOVIMENTAÇÃO</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                            }
+                        </FormGroup>
 
-						<FormGroup>
-							<Label
-								className="margin_top_10"
-								for="labelResponsible"
-							>
-								Responsável
-						</Label>
-							<Input
-								type="text"
-								name="responsible_id"
-								id="labelResponsible"
-								placeholder="Responsável"
-								value={responsible}
-								onChange={handleResponsible}
-								className="margin_bottom_20"
-								readOnly
-							/>
-						</FormGroup>
+                        <FormGroup>
+                            <Label className="margin_top_10" for="labelResponsible">
+                                Responsável
+						    </Label>
 
-						<FormGroup>
-							<Label
-								className="margin_top_10"
-								for="labelNextDepartment"
-							>
-								Departamento destino
-						</Label>
-							<Input
-								type="select"
-								name="destination_department_id"
-								id="labelNextDepartment"
-								value={destination_department}
-								onChange={handleDestinationDepartment}
-								className="margin_bottom_20"
-								required
-							>
-								{
-									departments !== undefined &&
-										departments.length !== 0 ?
-										departments.filter(department => {
-											return (
-												department &&
-												department.id !== origin_department
-											);
-										}).map(element => {
-											return (
-												<option
-													key={element.id}
-													value={element.id}
-												>
-													{element.name}
-												</option>
-											);
-										})
-										: ''
-								}
-							</Input>
-						</FormGroup>
+                            <Input
+                                type="text"
+                                name="responsible_id"
+                                id="labelResponsible"
+                                placeholder="Responsável"
+                                value={responsible}
+                                onChange={handleResponsible}
+                                className="margin_bottom_20"
+                                readOnly />
+                        </FormGroup>
 
-						<FormGroup>
-							<Label
-								className="margin_top_10"
-								for="labelPreviousDepartment"
-							>
-								Departamento original
-						</Label>
-							<Input
-								type="select"
-								name="origin_department_id"
-								id="labelPreviousDepartment"
-								value={origin_department}
-								onChange={handleOriginDepartment}
-								className="margin_bottom_20"
-							>
-								{
-									departments !== undefined &&
-										departments.length !== 0 ?
-										departments.map(element => {
-											return (
-												<option
-													key={element.id}
-													value={element.id}
-												>
-													{element.name}
-												</option>
-											);
-										})
-										: ''
-								}
-							</Input>
-						</FormGroup>
+                        <FormGroup>
+                            <Label className="margin_top_10" for="labelPreviousDepartment">
+                                Departamento original
+						    </Label>
 
+                            <Input
+                                type="select"
+                                name="origin_department_id"
+                                id="labelPreviousDepartment"
+                                value={origin_department}
+                                onChange={handleOriginDepartment}
+                                className="margin_bottom_20">
+                                {
+                                    departments !== undefined &&
+                                    departments.length !== 0 &&
+                                    departments.map(element => {
+                                        return (
+                                            <option key={element.id} value={element.id}>
+                                                {element.name}
+                                            </option>
+                                        );
+                                    })
+                                }
+                            </Input>
+                        </FormGroup>
 
-						<Form onSubmit={addHardware}>
-							<FormGroup>
-								<Label
-									className="margin_top_10"
-									for="labelAddHardware"
-								>
-									Adicionar equipamentos
+                        <FormGroup>
+                            <Label className="margin_top_10" for="labelNextDepartment">
+                                Departamento destino
+						    </Label>
+
+                            <Input
+                                type="select"
+                                name="destination_department_id"
+                                id="labelNextDepartment"
+                                value={destination_department}
+                                onChange={handleDestinationDepartment}
+                                className="margin_bottom_20"
+                                required>
+                                {
+                                    departments !== undefined &&
+                                    departments.length !== 0 &&
+                                    departments.filter(department => {
+                                        return (department && department.id !== origin_department);
+                                    }).map(element => {
+                                        return (
+                                            <option key={element.id} value={element.id}>
+                                                {element.name}
+                                            </option>
+                                        );
+                                    })
+                                }
+                            </Input>
+                        </FormGroup>
+
+                        <Form onSubmit={addHardware}>
+                            <FormGroup>
+                                <Label
+                                    className="margin_top_10"
+                                    for="labelAddHardware"
+                                >
+                                    Adicionar equipamentos
 								</Label>
-								<Row className="center_between">
-									<Col sm="9">
-										<Input
-											type="select"
-											name="hardwares"
-											id="labelAddHardware"
-											className="margin_bottom_20"
-										>
-											<option
-												key={0}
-												value={0}
-											>SELECIONAR EQUIPAMENTO</option>
-											{
-												hardwares !== undefined &&
-													hardwares.length !== 0 ?
-													hardwares.filter(
-														({ id: id1 }) =>
-															!listHardwares.some(
-																({ id: id2 }) => (id1 === id2)
-															)
-													).map(element => {
-														return (
-															<option
-																key={element.id}
-																value={element.id}
-															>
-																{element.code.replace("-", "")} | {' '}
-																{element.description}
-															</option>
-														);
-													})
-													: ''
-											}
-										</Input>
-									</Col>
+                                <Row className="center_between">
+                                    <Col sm="9">
+                                        <Input type="select" name="hardwares" id="labelAddHardware" className="margin_bottom_20">
+                                            <option key={0} value={0}>SELECIONAR EQUIPAMENTO</option>
+                                            {
+                                                hardwares !== undefined &&
+                                                hardwares.length !== 0 &&
+                                                hardwares.filter(({ id: id1 }) =>
+                                                    !listHardwares.some(({ id: id2 }) => (id1 === id2))
+                                                ).map(element => {
+                                                    return (
+                                                        <option key={element.id} value={element.id}>
+                                                            {element.code.replace("-", "")} | {' '}
+                                                            {element.description}
+                                                        </option>
+                                                    );
+                                                })
+                                            }
+                                        </Input>
+                                    </Col>
 
-									<Col sm="auto">
-										<Button
-											className="
+                                    <Col sm="auto">
+                                        <Button
+                                            className="
 												bg_color_transparent
 												font_color_verde_zimbra_hover
 												no_border
 											"
-											title="Adicionar equipamento"
-										><BsPlusCircleFill size="30" /></Button>
-									</Col>
-								</Row>
-							</FormGroup>
-						</Form>
+                                            title="Adicionar equipamento"
+                                        ><BsPlusCircleFill size="30" /></Button>
+                                    </Col>
+                                </Row>
+                            </FormGroup>
+                        </Form>
 
-						{
-							listHardwares !== undefined &&
-								listHardwares.length !== 0 ?
-								<>
-									<Label
-										className="margin_top_10"
-										for="labelDepartment"
-									>
-										Lista de equipamentos para movimentação
+                        {
+                            listHardwares !== undefined &&
+                                listHardwares.length !== 0 ?
+                                <>
+                                    <Label
+                                        className="margin_top_10"
+                                        for="labelDepartment"
+                                    >
+                                        Lista de equipamentos para movimentação
 									</Label>
-									<ListGroup>
-										<div className="max_height_100">
-											{
-												listHardwares.map(hardware => {
-													return (
-														<ListGroupItem key={hardware.id}>
-															<Row>
-																<Col
-																	sm="auto"
-																	className="
+                                    <ListGroup>
+                                        <div className="max_height_100">
+                                            {
+                                                listHardwares.map(hardware => {
+                                                    return (
+                                                        <ListGroupItem key={hardware.id}>
+                                                            <Row>
+                                                                <Col
+                                                                    sm="auto"
+                                                                    className="
 																		center
 																		border_only_right
 																	"
-																>
-																	{hardware.code}
-																</Col>
-																<Col className="center_vertical">
-																	{hardware.description}
-																</Col>
-																<Col
-																	sm="auto"
-																	className="center"
-																>
-																	<Button
-																		value={hardware.id}
-																		onClick={removeHardware}
-																	>
-																		Remover
+                                                                >
+                                                                    {hardware.code}
+                                                                </Col>
+                                                                <Col className="center_vertical">
+                                                                    {hardware.description}
+                                                                </Col>
+                                                                <Col
+                                                                    sm="auto"
+                                                                    className="center"
+                                                                >
+                                                                    <Button
+                                                                        value={hardware.id}
+                                                                        onClick={removeHardware}
+                                                                    >
+                                                                        Remover
 																	</Button>
-																</Col>
-															</Row>
-														</ListGroupItem>
-													)
-												})
-											}
-										</div>
-									</ListGroup>
-								</>
-								: ''
-						}
+                                                                </Col>
+                                                            </Row>
+                                                        </ListGroupItem>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </ListGroup>
+                                </>
+                                : ''
+                        }
 
-						<Row>
-							<Col className="center margin_top_bottom_20">
-								<Button
-									className="
+                        <Row>
+                            <Col className="center margin_top_bottom_20">
+                                <Button
+                                    className="
 										margin_left_right_20
 										bg_color_verde_zimbra
 									"
-									onClick={validateCreation}
-									disabled={
-										verifyAllInputsValid() ? false : true
-									}
-								>
-									Criar
+                                    onClick={validateCreation}
+                                    disabled={
+                                        verifyAllInputsValid() ? false : true
+                                    }
+                                >
+                                    Criar
 								</Button>
-								<Button
-									color="secondary"
-									className="margin_left_right_20"
-									onClick={() => { history.goBack() }}
-								>
-									Voltar
+                                <Button
+                                    color="secondary"
+                                    className="margin_left_right_20"
+                                    onClick={() => { history.goBack() }}
+                                >
+                                    Voltar
 								</Button>
-							</Col>
-						</Row>
-					</Col>
-				</Row>
-			</Container >
-		</div>
-	);
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+            </Container >
+        </div>
+    );
 }

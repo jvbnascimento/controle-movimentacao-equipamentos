@@ -1,22 +1,10 @@
 import '../../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
-import {
-    Container,
-    Row,
-    Col,
-    ListGroupItem,
-    ListGroup,
-    Input,
-    ButtonGroup,
-    Button,
-    DropdownItem,
-    Alert
-} from 'reactstrap';
+import { Container, Row, Col, ListGroupItem, ListGroup, Input, ButtonGroup, Button, DropdownItem, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import PaginationComponent from '../../../components/Pagination';
-
 import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
 

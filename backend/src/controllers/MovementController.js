@@ -2,8 +2,10 @@ const Movement = require('../models/Movement');
 const Hardware = require('../models/Hardware');
 const User = require('../models/User');
 const Department = require('../models/Department');
-const { Op } = require('sequelize');
 const Type = require('../models/Type');
+const TypeMovement = require('../models/TypeMovement');
+
+const { Op } = require('sequelize');
 
 module.exports = {
     async listAllMovements(req, res) {
@@ -33,6 +35,9 @@ module.exports = {
                             association: 'belongs'
                         }
                     ],
+                },
+                {
+                    association: 'type'
                 }
             ],
             order: [
@@ -74,6 +79,9 @@ module.exports = {
                             association: 'belongs'
                         }
                     ],
+                },
+                {
+                    association: 'type'
                 }
             ]
         });
@@ -115,6 +123,9 @@ module.exports = {
                             association: 'belongs'
                         }
                     ],
+                },
+                {
+                    association: 'type'
                 }
             ]
         });
@@ -154,6 +165,9 @@ module.exports = {
                             association: 'belongs'
                         }
                     ],
+                },
+                {
+                    association: 'type'
                 }
             ],
             order: [
@@ -264,6 +278,9 @@ module.exports = {
                                 where: belongsFilters,
                             },
                         ]
+                    },
+                    {
+                        association: 'type'
                     }
                 ],
                 where: movementFilters,
@@ -291,13 +308,15 @@ module.exports = {
             destination_department_id,
             responsible_id,
             hardwares,
+            type_movement_id,
         } = req.body;
 
         const movement = Movement.create({
             date_movement,
             origin_department_id,
             destination_department_id,
-            responsible_id
+            responsible_id,
+            type_movement_id
         }).then(async (movement) => {
             hardwares.map(async (element) => {
                 const hardware = await Hardware.findByPk(element.id);
@@ -312,7 +331,7 @@ module.exports = {
             return err;
         });
 
-        return res.json(movement);
+        return res.status(200).json({ movement });
     },
 
     async update(req, res) {
@@ -322,6 +341,7 @@ module.exports = {
             origin_department_id,
             destination_department_id,
             responsible_id,
+            type_movement_id,
             hardwares,
         } = req.body;
 
@@ -336,6 +356,9 @@ module.exports = {
         }
         if (!await User.findByPk(responsible_id)) {
             return res.status(404).json({ error: 'User not found!' });
+        }
+        if (!await TypeMovement.findByPk(type_movement_id)) {
+            return res.status(404).json({ error: 'Type movement not found!' });
         }
         if (hardwares.length === 0) {
             return res.status(400).json({ error: 'Hardware list cannot be empty!' });
@@ -371,10 +394,11 @@ module.exports = {
             movement.origin_department_id = origin_department_id;
             movement.destination_department_id = destination_department_id;
             movement.responsible_id = responsible_id;
+            movement.type_movement_id = type_movement_id;
 
             await movement.save();
 
-            return res.json(movement);
+            return res.status(200).json({ movement });
         });
     },
 

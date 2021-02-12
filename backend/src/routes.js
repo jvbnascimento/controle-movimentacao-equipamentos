@@ -4,6 +4,7 @@ const routes = express.Router();
 
 const UserController = require("./controllers/UserController");
 const TypeController = require("./controllers/TypeController");
+const TypeMovementController = require("./controllers/TypeMovementController");
 const DepartmentController = require("./controllers/DepartmentController");
 const HardwareController = require("./controllers/HardwareController");
 const MovementController = require("./controllers/MovementController");
@@ -24,6 +25,14 @@ routes.get("/types/verify_name/:name", TypeController.nameExists);
 routes.post("/types", TypeController.create);
 routes.put("/types/:type_id", TypeController.update);
 routes.delete("/types/:type_id", TypeController.delete);
+
+routes.get("/type_movements", TypeMovementController.listAllTypeMovement);
+routes.get("/type_movements/:type_movement_id", TypeMovementController.listTypeMovement);
+routes.get("/type_movements/type_movements_description/:description", TypeMovementController.listTypeMovementByDescription);
+routes.get("/type_movements/verify_description/:description", TypeMovementController.nameExists);
+routes.post("/type_movements", TypeMovementController.create);
+routes.put("/type_movements/:type_movement_id", TypeMovementController.update);
+routes.delete("/type_movements/:type_movement_id", TypeMovementController.delete);
 
 routes.get("/roles", RoleController.listAllRoles);
 routes.get("/roles/:role_id", RoleController.listRole);

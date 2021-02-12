@@ -197,7 +197,7 @@ module.exports = {
 			return res.status(404).json({ error: 'Hardware not found' });
 		}
 
-		return res.json(hardware);
+		return res.json({ hardware });
 	},
 
 	async listHardwareByDepartmentName(req, res) {
