@@ -32,14 +32,23 @@ import AuthContext from '../../../contexts/auth';
 export default function AdminHeader() {
     const [listTypes, setTypes] = useState([]);
     const [listDepartments, setDepartments] = useState([]);
+    const [listPublicAgencies, setPublicAgencies] = useState([]);
     const [dropdownDepartments, setDropdownDepartments] = useState(false);
+    const [dropdownPublicAgencies, setDropdownPublicAgencies] = useState(false);
     const [dropdownTypes, setDropdownTypes] = useState(false);
     const [modalCreateDepartment, setModalCreateDepartment] = useState(false);
+    const [modalCreatePublicAgencies, setModalCreatePublicAgencies] = useState(false);
     const [modalCreateCategory, setModalCreateCategory] = useState(false);
     const [departmentName, setDepartmentName] = useState('');
+    const [departmentAcronym, setDepartmentAcronym] = useState('');
+    const [publicAgencyName, setPublicAgencyName] = useState('');
+    const [publicAgencyAcronym, setPublicAgencyAcronym] = useState('');
     const [departmentBoss, setDepartmentBoss] = useState('');
     const [verifyDepartmentName, setVerifyDepartmentName] = useState(false);
+    const [verifyDepartmentAcronym, setVerifyDepartmentAcronym] = useState(false);
     const [verifyDepartmentBoss, setVerifyDepartmentBoss] = useState(false);
+    const [verifyPublicAgencyName, setVerifyPublicAgencyName] = useState(false);
+    const [verifyPublicAgencyAcronym, setVerifyPublicAgencyAcronym] = useState(false);
     const [categoryName, setCategoryName] = useState('');
     const [verifyCategoryName, setVerifyCategoryName] = useState(true);
     const { user, message, setMessage, currentRoleUser, setCurrentRoleUser } = useContext(AuthContext);
@@ -47,7 +56,7 @@ export default function AdminHeader() {
     useEffect(() => {
         async function getAllTypes() {
             const response = await api.get('/types');
-            const data = response.data;
+            const data = response.data.types;
             setTypes(data);
 
             setCategoryName('');
@@ -60,12 +69,14 @@ export default function AdminHeader() {
     useEffect(() => {
         async function getAllDepartments() {
             const response = await api.get('/departments');
-            const data = response.data;
+            const data = response.data.departments;
             setDepartments(data);
 
             setDepartmentName('');
+            setDepartmentAcronym('');
             setDepartmentBoss('');
             setVerifyDepartmentName(false);
+            setVerifyDepartmentAcronym(false);
             setVerifyDepartmentBoss(false);
         }
 
@@ -73,9 +84,24 @@ export default function AdminHeader() {
     }, [message]);
 
     useEffect(() => {
+        async function getAllPublicAgencies() {
+            const response = await api.get('/public_agencies');
+            const data = response.data.public_agencies;
+            setPublicAgencies(data);
+
+            setPublicAgencyName('');
+            setPublicAgencyAcronym('');
+            setVerifyPublicAgencyName(false);
+            setVerifyPublicAgencyAcronym(false);
+        }
+
+        getAllPublicAgencies();
+    }, [message]);
+
+    useEffect(() => {
         async function getDepartment() {
             if (departmentName !== '') {
-                const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
+                const response = await api.get(`/departments/verify_name/${departmentName}`);
                 const data = response.data;
 
                 setVerifyDepartmentName(data.name_exists);
@@ -84,6 +110,45 @@ export default function AdminHeader() {
 
         getDepartment();
     }, [departmentName]);
+
+    useEffect(() => {
+        async function getDepartment() {
+            if (departmentAcronym !== '') {
+                const response = await api.get(`/departments/verify_acronym/${departmentAcronym.toUpperCase().replace("/", "-")}`);
+                const data = response.data;
+
+                setVerifyDepartmentAcronym(data.acronym_exists);
+            }
+        }
+
+        getDepartment();
+    }, [departmentAcronym]);
+
+    useEffect(() => {
+        async function getPublicAgency() {
+            if (publicAgencyName !== '') {
+                const response = await api.get(`/public_agencies/verify_name/${publicAgencyName}`);
+                const data = response.data;
+
+                setVerifyPublicAgencyName(data.acronym_exists);
+            }
+        }
+
+        getPublicAgency();
+    }, [publicAgencyName]);
+
+    useEffect(() => {
+        async function getPublicAgency() {
+            if (publicAgencyAcronym !== '') {
+                const response = await api.get(`/public_agencies/verify_acronym/${publicAgencyAcronym}`);
+                const data = response.data;
+
+                setVerifyPublicAgencyAcronym(data.acronym_exists);
+            }
+        }
+
+        getPublicAgency();
+    }, [publicAgencyAcronym]);
 
     useEffect(() => {
         async function getCategory() {
@@ -101,6 +166,9 @@ export default function AdminHeader() {
     const toggleDepartments = () => {
         setDropdownDepartments(!dropdownDepartments)
     };
+    const togglePublicAgencies = () => {
+        setDropdownPublicAgencies(!dropdownPublicAgencies)
+    };
     const toggleTypes = () => {
         setDropdownTypes(!dropdownTypes)
     };
@@ -108,7 +176,9 @@ export default function AdminHeader() {
     const toggleModalCreateDepartment = () => {
         setModalCreateDepartment(!modalCreateDepartment);
     }
-
+    const toggleModalCreatePublicAgencies = () => {
+        setModalCreatePublicAgencies(!modalCreatePublicAgencies);
+    }
     const toggleModalCreateCategory = () => {
         setModalCreateCategory(!modalCreateCategory);
     }
@@ -129,6 +199,30 @@ export default function AdminHeader() {
         setDepartmentName(e.target.value);
     }
 
+    const handleDepartmentAcronym = (e) => {
+        if (e.target.value === '') {
+            setVerifyDepartmentAcronym(false);
+        }
+
+        setDepartmentAcronym(e.target.value);
+    }
+
+    const handlePublicAgencyName = (e) => {
+        if (e.target.value === '') {
+            setVerifyPublicAgencyName(false);
+        }
+
+        setPublicAgencyName(e.target.value);
+    }
+
+    const handlePublicAgencyAcronym = (e) => {
+        if (e.target.value === '') {
+            setVerifyPublicAgencyAcronym(false);
+        }
+
+        setPublicAgencyAcronym(e.target.value);
+    }
+
     const handleDepartmentBoss = (e) => {
         const validDepartmentBoss = e.target.value;
 
@@ -144,14 +238,31 @@ export default function AdminHeader() {
 
     const cancelCreationDepartment = () => {
         setDepartmentName('');
+        setDepartmentAcronym('');
         setDepartmentBoss('');
         setVerifyDepartmentName(false);
+        setVerifyDepartmentAcronym(false);
         setVerifyDepartmentBoss(false);
         toggleModalCreateDepartment();
     }
 
+    const cancelCreationPublicAgency = () => {
+        setPublicAgencyName('');
+        setPublicAgencyAcronym('');
+        setVerifyPublicAgencyName(false);
+        setVerifyPublicAgencyAcronym(false);
+        toggleModalCreatePublicAgencies();
+    }
+
     const validCreateDepartment = () => {
-        if (!verifyDepartmentName && departmentName !== '' && verifyDepartmentBoss) {
+        if (!verifyDepartmentName && departmentName !== '' && verifyDepartmentBoss && !verifyDepartmentAcronym && departmentAcronym !== '') {
+            return true;
+        }
+        return false;
+    }
+
+    const validCreatePublicAgency = () => {
+        if (!verifyPublicAgencyName && publicAgencyName !== '' && !verifyPublicAgencyAcronym && publicAgencyAcronym !== '') {
             return true;
         }
         return false;
@@ -161,6 +272,7 @@ export default function AdminHeader() {
         if (validCreateDepartment()) {
             const new_data = {
                 name: departmentName,
+                acronym: departmentAcronym,
                 boss: departmentBoss
             }
 
@@ -178,6 +290,30 @@ export default function AdminHeader() {
         else {
             setMessage(["Existem campos não preenchidos corretamente", 400]);
             toggleModalCreateDepartment();
+        }
+    }
+
+    const createPublicAgency = async () => {
+        if (validCreatePublicAgency()) {
+            const new_data = {
+                name: publicAgencyName.toUpperCase(),
+                acronym: publicAgencyAcronym.toUpperCase()
+            }
+
+            const response = await api.post(`public_agencies/`, new_data);
+
+            if (response.data.status === 200) {
+                setMessage(['Órgão cadastrado com sucesso', 200]);
+                toggleModalCreatePublicAgencies();
+            }
+            else {
+                setMessage([response.error, response.status]);
+                toggleModalCreatePublicAgencies();
+            }
+        }
+        else {
+            setMessage(["Existem campos não preenchidos corretamente", 400]);
+            toggleModalCreatePublicAgencies();
         }
     }
 
@@ -258,7 +394,7 @@ export default function AdminHeader() {
                                 <Link
                                     className="center_vertical font_color_white_hover" to="#" onClick={toggleModalCreateDepartment}>
                                     <NavItem className="padding_all_10">
-                                        CRIAR DEPARTAMENTO
+                                        CADASTRAR DEPARTAMENTO
                                     </NavItem>
                                 </Link>
                             </DropdownItem>
@@ -269,9 +405,43 @@ export default function AdminHeader() {
                                 listDepartments.map(element => {
                                     return (
                                         <DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
-                                            <Link className="center_vertical font_color_white_hover" to={`/department/${element.name.replace("/", "-")}`}>
+                                            <Link className="center_vertical font_color_white_hover" to={`/department/${element.acronym.replace("/", "-")}`}>
                                                 <NavItem className="padding_all_10">
-                                                    {element.name}
+                                                    {element.acronym}
+                                                </NavItem>
+                                            </Link>
+                                        </DropdownItem>
+                                    )
+                                })
+                            }
+                        </DropdownMenu>
+                    </Dropdown>
+
+                    <Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownPublicAgencies} toggle={togglePublicAgencies}>
+                        <DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
+                            Órgãos Públicos
+          				</DropdownToggle>
+
+                        <DropdownMenu className="bg_color_verde_zimbra no_padding max_height_500">
+                            <DropdownItem
+                                className="bg_color_verde_zimbra_hover no_padding">
+                                <Link
+                                    className="center_vertical font_color_white_hover" to="#" onClick={toggleModalCreatePublicAgencies}>
+                                    <NavItem className="padding_all_10">
+                                        CADASTRAR ÓRGÃO
+                                    </NavItem>
+                                </Link>
+                            </DropdownItem>
+
+                            <DropdownItem divider className="no_margin" />
+                            {
+                                listPublicAgencies !== undefined &&
+                                listPublicAgencies.map(element => {
+                                    return (
+                                        <DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
+                                            <Link className="center_vertical font_color_white_hover" to={`/public_agency/${element.acronym.replace("/", "-")}`}>
+                                                <NavItem className="padding_all_10">
+                                                    {element.acronym}
                                                 </NavItem>
                                             </Link>
                                         </DropdownItem>
@@ -290,7 +460,7 @@ export default function AdminHeader() {
                             <DropdownItem className="bg_color_verde_zimbra_hover no_padding">
                                 <Link className="center_vertical font_color_white_hover" to="#" onClick={toggleModalCreateCategory}>
                                     <NavItem className="padding_all_10">
-                                        CRIAR CATEGORIA
+                                        CADASTRAR CATEGORIA
                                     </NavItem>
                                 </Link>
                             </DropdownItem>
@@ -326,14 +496,7 @@ export default function AdminHeader() {
                     </NavItem>
                 </Nav>
 
-                <NavbarText
-                    className="
-                        text-right
-                        padding_all_20
-                        center
-                        height_header
-                    "
-                >
+                <NavbarText className="text-right padding_all_20 center height_header">
                     <Container className="center">
                         <Row>
                             <Col className="center">
@@ -342,13 +505,7 @@ export default function AdminHeader() {
 
                             <Col sm="auto" className="center no_padding">
                                 <FormGroup className="no_margin">
-                                    <Input
-                                        type="select"
-                                        name="select"
-                                        id="rolesUser"
-                                        value={currentRoleUser}
-                                        onChange={handlecurrentRoleUser}
-                                    >
+                                    <Input type="select" name="select" id="rolesUser" value={currentRoleUser} onChange={handlecurrentRoleUser}>
                                         {
                                             user.roles.map(element => {
                                                 return (<option key={element.id}>{element.name}</option>);
@@ -364,7 +521,7 @@ export default function AdminHeader() {
 
             <Modal isOpen={modalCreateDepartment} toggle={toggleModalCreateDepartment}>
                 <ModalHeader toggle={toggleModalCreateDepartment}>
-                    Criar departamento
+                    Cadastrar departamento
                 </ModalHeader>
 
                 <ModalBody>
@@ -403,24 +560,38 @@ export default function AdminHeader() {
                     </FormGroup>
 
                     <FormGroup>
+                        <Label>Sigla</Label>
+                        {
+                            !verifyDepartmentAcronym ?
+                                departmentAcronym !== '' ?
+                                    <>
+                                        <Input value={departmentAcronym} onChange={handleDepartmentAcronym} valid />
+                                        <FormFeedback valid>Sigla válida</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input value={departmentAcronym} onChange={handleDepartmentAcronym} invalid />
+                                        <FormFeedback>O campo <strong>SIGLA</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                                :
+                                <>
+                                    <Input value={departmentAcronym} onChange={handleDepartmentAcronym} invalid />
+                                    <FormFeedback>Já existe uma <strong>SIGLA</strong> com os caracteres informados.</FormFeedback>
+                                </>
+                        }
+                    </FormGroup>
+
+                    <FormGroup>
                         <Label>Responsável</Label>
                         {
                             verifyDepartmentBoss ?
                                 <>
-                                    <Input
-                                        value={departmentBoss}
-                                        onChange={handleDepartmentBoss}
-                                        valid
-                                    />
+                                    <Input value={departmentBoss} onChange={handleDepartmentBoss} valid />
                                     <FormFeedback valid>Nome válido</FormFeedback>
                                 </>
                                 :
                                 <>
-                                    <Input
-                                        value={departmentBoss}
-                                        onChange={handleDepartmentBoss}
-                                        invalid
-                                    />
+                                    <Input value={departmentBoss} onChange={handleDepartmentBoss} invalid />
                                     <FormFeedback>O campo <strong>RESPONSÁVEL</strong> não pode ser vazio.</FormFeedback>
                                 </>
                         }
@@ -432,6 +603,67 @@ export default function AdminHeader() {
                         Criar
 					</Button>{' '}
                     <Button color="secondary" onClick={cancelCreationDepartment}>
+                        Cancelar
+					</Button>
+                </ModalFooter>
+            </Modal>
+
+            <Modal isOpen={modalCreatePublicAgencies} toggle={toggleModalCreatePublicAgencies}>
+                <ModalHeader toggle={toggleModalCreatePublicAgencies}>
+                    Cadastrar órgão
+                </ModalHeader>
+
+                <ModalBody>
+                    <FormGroup>
+                        <Label>Órgão</Label>
+                        {
+                            !verifyPublicAgencyName ?
+                                publicAgencyName !== '' ?
+                                    <>
+                                        <Input value={publicAgencyName} onChange={handlePublicAgencyName} valid />
+                                        <FormFeedback valid>Nome válido</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input value={publicAgencyName} onChange={handlePublicAgencyName} invalid />
+                                        <FormFeedback>O campo <strong>ÓRGÃO</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                                :
+                                <>
+                                    <Input value={publicAgencyName} onChange={handlePublicAgencyName} invalid />
+                                    <FormFeedback>Já existe um <strong>ÓRGÃO</strong> com o nome informado.</FormFeedback>
+                                </>
+                        }
+                    </FormGroup>
+
+                    <FormGroup>
+                        <Label>Sigla</Label>
+                        {
+                            !verifyPublicAgencyAcronym ?
+                                publicAgencyAcronym !== '' ?
+                                    <>
+                                        <Input value={publicAgencyAcronym} onChange={handlePublicAgencyAcronym} valid />
+                                        <FormFeedback valid>Sigla válida</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input value={publicAgencyAcronym} onChange={handlePublicAgencyAcronym} invalid />
+                                        <FormFeedback>O campo <strong>SIGLA</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                                :
+                                <>
+                                    <Input value={publicAgencyAcronym} onChange={handlePublicAgencyAcronym} invalid />
+                                    <FormFeedback>Já existe uma <strong>SIGLA</strong> com os caracteres informados.</FormFeedback>
+                                </>
+                        }
+                    </FormGroup>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button className="bg_color_verde_zimbra" onClick={createPublicAgency} disabled={!validCreatePublicAgency() ? true : false}>
+                        Criar
+					</Button>{' '}
+                    <Button color="secondary" onClick={cancelCreationPublicAgency}>
                         Cancelar
 					</Button>
                 </ModalFooter>

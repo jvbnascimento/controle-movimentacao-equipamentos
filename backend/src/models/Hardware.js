@@ -8,8 +8,6 @@ class Hardware extends Model {
 			brand: DataTypes.STRING,
 			warranty: DataTypes.STRING,
 			has_office: DataTypes.STRING,
-			auction: DataTypes.BOOLEAN,
-			date_auction: DataTypes.DATEONLY,
 		}, {
 			sequelize,
 			tableName: 'hardwares'

@@ -4,7 +4,7 @@ module.exports = {
 	async listAllTypes(req, res) {
 		const types = await Type.findAll();
 
-		return res.json(types);
+		return res.status(200).json({ types });
     },
     
 	async listType(req, res) {
@@ -16,7 +16,7 @@ module.exports = {
 			return res.status(404).json({ error: 'Type not found!' });
 		}
 
-		return res.json(type);
+		return res.status(200).json({ type });
     },
     
     async listTypeByName(req, res) {
@@ -29,10 +29,10 @@ module.exports = {
         });
 		
 		if (!type) {
-			return res.json({ error: 'Type not found!', status: 404 });
+			return res.status(404).json({ error: 'Type not found!' });
 		}
 
-		return res.json({ type, status: 200 });
+		return res.status(200).json({ type });
 	},
     
 	async nameExists(req, res) {
@@ -46,13 +46,13 @@ module.exports = {
             });
 			
 			if (type && type.name) {
-                return res.json({ name_exists: true, stauts: 200 });
+                return res.status(200).json({ name_exists: true });
             }
 
-			return res.json({ name_exists: false, status: 200 });
+			return res.status(200).json({ name_exists: false });
 		}
 
-		return res.json({ name_exists: false, status: 200 });
+		return res.status(200).json({ name_exists: false });
 	},
 
 	async create(req, res) {
@@ -63,12 +63,12 @@ module.exports = {
         });
 
         if (name_exists.length != 0) {
-            return res.json({ error: 'Name already exists!', status: 404 });
+            return res.status(404).json({ error: 'Name already exists!' });
         }
 
 		const type = await Type.create({ name: name.toUpperCase() });
 
-		return res.json({ type, status: 201 });
+		return res.status(201).json({ type });
     },
     
     async update(req, res) {
@@ -77,21 +77,21 @@ module.exports = {
         
         const type = await Type.findByPk(type_id);
         const name_exists = await Type.findAll({
-            where: { name } 
+            where: { name: name.toUpperCase() } 
         });
 
         if (!type) {
-            return res.json({ error: 'Type not found!', status: 404 });
+            return res.status(404).json({ error: 'Type not found!' });
         }
         if (name_exists.length != 0) {
-            return res.json({ error: 'Name is already being used!', status: 400 });
+            return res.status(400).json({ error: 'Name is already being used!' });
         }
 
-        type.name = name;
+        type.name = name.toUpperCase();
         
         await type.save();
 
-		return res.json({ type, status: 200 });
+		return res.status(200).json({ type });
     },
     
     async delete(req, res) {

@@ -4,6 +4,7 @@ class Department extends Model {
 	static init(sequelize) {
 		super.init({
 			name: DataTypes.STRING,
+            acronym: DataTypes.STRING,
 			boss: DataTypes.STRING,
 		}, {
 			sequelize,

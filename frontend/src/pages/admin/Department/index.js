@@ -40,10 +40,14 @@ const range = (from, to, step = 1) => {
 }
 
 export default function Department() {
-    const [listCategory, setListCategory] = useState([]);
+    const [listHardwares, setListHardwares] = useState([]);
     const [department, setDepartment] = useState({});
     const [departmentName, setDepartmentName] = useState('');
+    const [departmentAcronym, setDepartmentAcronym] = useState('');
     const [departmentBoss, setDepartmentBoss] = useState('');
+    const [validDepartmentName, setValidDepartmentName] = useState(true);
+    const [validDepartmentAcronym, setValidDepartmentAcronym] = useState(true);
+    const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
     const [pageSize, setPageSize] = useState(10);
     const [pagesCount, setPageCounts] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -54,8 +58,7 @@ export default function Department() {
     const [modalDeleteDepartment, setModalDeleteDepartment] = useState(false);
     const [hardwareToDelete, setHardwareToDelete] = useState([-1, -1]);
     const [departmentToDelete, setDepartmentToDelete] = useState([-1, -1]);
-    const [validDepartmentName, setValidDepartmentName] = useState(true);
-    const [validDepartmentBoss, setValidDepartmentBoss] = useState(true);
+
     const [visible, setVisible] = useState(false);
     const { message, setMessage, colorMessage } = useContext(AuthContext);
 
@@ -103,25 +106,26 @@ export default function Department() {
         }
 
         async function getAll() {
-            const response = await api.get(`/hardwares/department/${search.name}/${pageSize}/${currentPage}`);
-            const data = await response.data;
+            const response = await api.get(`/hardwares/department/department_acronym/${search.name}/${pageSize}/${currentPage}`);
+            const data = await response.data.hardwares;
 
             setPageCounts(Math.ceil((data.count) / pageSize));
             setPageNeighbours(Math.max(0, Math.min(pageNeighbours, 2)));
-            setListCategory(data);
+            setListHardwares(data);
         }
 
         getAll();
         setPages(fetchPageNumbers());
-    }, [search.name, pageSize, currentPage, pagesCount, pageNeighbours]);
+    }, [search.name, pageSize, currentPage, pagesCount, pageNeighbours, message]);
 
     useEffect(() => {
         async function getDepartment() {
-            const response = await api.get(`/departments/name/${search.name}`);
-            const data = await response.data;
+            const response = await api.get(`/departments/acronym/${search.name}`);
+            const data = await response.data.department;
 
             setDepartment(data);
             setDepartmentName(data.name);
+            setDepartmentAcronym(data.acronym);
             setDepartmentBoss(data.boss);
         }
 
@@ -131,7 +135,7 @@ export default function Department() {
     useEffect(() => {
         async function getDepartment() {
             if (departmentName !== '' && departmentName !== undefined) {
-                const response = await api.get(`/departments/verify_name/${departmentName.replace("/", "-")}`);
+                const response = await api.get(`/departments/verify_name/${departmentName}`);
                 const data = response.data;
 
                 if (data.name_exists && departmentName === department.name) {
@@ -148,6 +152,27 @@ export default function Department() {
 
         getDepartment();
     }, [departmentName, department.name]);
+
+    useEffect(() => {
+        async function getDepartment() {
+            if (departmentAcronym !== '' && departmentAcronym !== undefined) {
+                const response = await api.get(`/departments/verify_acronym/${departmentAcronym.replace("/", "-")}`);
+                const data = response.data;
+
+                if (data.acronym_exists && departmentAcronym === department.acronym) {
+                    setValidDepartmentAcronym(true);
+                }
+                else if (data.acronym_exists && departmentAcronym !== department.acronym) {
+                    setValidDepartmentAcronym(false);
+                }
+                else {
+                    setValidDepartmentAcronym(true);
+                }
+            }
+        }
+
+        getDepartment();
+    }, [departmentAcronym, department.acronym]);
 
     useEffect(() => {
         function verifyMessage() {
@@ -196,7 +221,7 @@ export default function Department() {
 
     function handleSizePage(e) {
         setPageSize(parseInt(e.target.value));
-        setPageCounts(Math.ceil(listCategory.count / parseInt(pageSize)));
+        setPageCounts(Math.ceil(listHardwares.count / parseInt(pageSize)));
         setCurrentPage(1);
     }
 
@@ -208,6 +233,16 @@ export default function Department() {
         }
 
         setDepartmentName(verifyDepartmentName);
+    }
+
+    const handleDepartmentAcronym = (e) => {
+        const verifyDepartmentAcronym = e.target.value.toUpperCase();
+
+        if (verifyDepartmentAcronym === '') {
+            setValidDepartmentAcronym(false);
+        }
+
+        setDepartmentAcronym(verifyDepartmentAcronym);
     }
 
     const handleDepartmentBoss = (e) => {
@@ -225,8 +260,10 @@ export default function Department() {
 
     const cancelEdition = () => {
         setDepartmentName(department.name);
+        setDepartmentAcronym(department.acronym);
         setDepartmentBoss(department.boss);
         setValidDepartmentName(true);
+        setValidDepartmentAcronym(true);
         setValidDepartmentBoss(true);
         toggleModalEditDepartment();
     }
@@ -234,8 +271,10 @@ export default function Department() {
     const verifyAllInputsValid = () => {
         if (
             /^\S.*/gm.test(departmentName) &&
+            /^\S.*/gm.test(departmentAcronym) &&
             /^\S.*/gm.test(departmentBoss) &&
             validDepartmentName &&
+            validDepartmentAcronym &&
             validDepartmentBoss
         ) {
             return true;
@@ -249,23 +288,41 @@ export default function Department() {
     }
 
     const deleteHardware = async () => {
-        await api.delete(`/hardwares/${hardwareToDelete[0]}`);
+        const response = await api.delete(`/hardwares/${hardwareToDelete[0]}`);
 
-        window.location.reload();
+        if (response.status === 204) {
+            setMessage([`Equipamento de tombamento: ${hardwareToDelete[0]} foi excluído com sucesso!`, response.status]);
+            setHardwareToDelete([-1, -1]);
+            setModalDeleteHardware(!modalDeleteHardware);
+        }
+        else {
+            setMessage([response.data, response.status]);
+            setHardwareToDelete([-1, -1]);
+            setModalDeleteHardware(!modalDeleteHardware);
+        }
     }
 
     const deleteDepartment = async () => {
-        await api.delete(`/departments/delete/${departmentToDelete[0]}`);
+        const response = await api.delete(`/departments/delete/${departmentToDelete[0]}`);
 
-        setMessage(['Departamento deletado com sucesso!', 200]);
-        setModalDeleteDepartment(!modalDeleteDepartment);
-        history.push('/');
+        if (response.status === 204) {
+            setMessage(['Departamento deletado com sucesso!', 200]);
+            setDepartmentToDelete([-1, -1]);
+            setModalDeleteDepartment(!modalDeleteDepartment);
+            history.push('/');
+        }
+        else {
+            setMessage([response.data, response.status]);
+            setDepartmentToDelete([-1, -1]);
+            setModalDeleteDepartment(!modalDeleteDepartment);
+        }
     }
 
     const saveEditDepartment = async () => {
         if (verifyAllInputsValid()) {
             const new_data = {
                 name: departmentName,
+                acronym: departmentAcronym,
                 boss: departmentBoss
             }
 
@@ -289,25 +346,14 @@ export default function Department() {
     }
 
     return (
-        <div className={
-            listCategory.rows !== undefined &&
-                listCategory.rows.length <= 0 ?
-                "height_content" : "padding_all_10"
-        }>
+        <div className={listHardwares.rows !== undefined && listHardwares.rows.length <= 0 ? "height_content" : "padding_all_10"}>
             <Container className="width_30 position_absolute margin_left_35_por">
-                <Alert color={
-                    colorMessage[message[1]]
-                }
-                    isOpen={visible}
-                    toggle={onDismiss}
-                >
+                <Alert color={colorMessage[message[1]]} isOpen={visible} toggle={onDismiss}>
                     {message[0]}
                 </Alert>
             </Container>
 
-            <h1 className="text-center">
-                Informações do departamento
-            </h1>
+            <h1 className="text-center">Informações do departamento</h1>
 
             <Container fluid={true} className="width_70 margin_top_bottom_20">
                 <ListGroupItem className="">
@@ -316,10 +362,7 @@ export default function Department() {
                             <h6>DEPARTAMENTO:</h6>
                         </Col>
                         <Col sm="auto">
-                            <h6>{
-                                department.name !== undefined &&
-                                department.name.replace("-", "/")
-                            }</h6>
+                            <h6>{department.name !== undefined && department.name + ' - ' + department.acronym}</h6>
                         </Col>
                     </Row>
                 </ListGroupItem>
@@ -330,10 +373,7 @@ export default function Department() {
                             <h6>RESPONSÁVEL:</h6>
                         </Col>
                         <Col sm="auto">
-                            <h6>{
-                                department.boss !== undefined &&
-                                department.boss.toUpperCase()
-                            }</h6>
+                            <h6>{department.boss !== undefined && department.boss.toUpperCase()}</h6>
                         </Col>
                     </Row>
                 </ListGroupItem>
@@ -341,25 +381,12 @@ export default function Department() {
                 <ListGroupItem>
                     <Row className="text_left">
                         <Col sm="auto" className="center">
-                            <Button
-                                className="
-									font_color_verde_zimbra_hover
-									bg_color_transparent
-									no_border
-									text_undeline
-								"
-                                onClick={toggleModalEditDepartment}
-                            >
+                            <Button className="font_color_verde_zimbra_hover bg_color_transparent no_border text_undeline" onClick={toggleModalEditDepartment}>
                                 Editar
                             </Button>
                         </Col>
                         <Col sm="auto" className="center">
-                            <Button
-                                color="danger"
-                                onClick={toggleModalDeleteDepartment}
-                                value={department.id}
-                                name={department.name}
-                            >
+                            <Button color="danger" onClick={toggleModalDeleteDepartment} value={department.id} name={department.name}>
                                 Deletar
                             </Button>
                         </Col>
@@ -367,8 +394,8 @@ export default function Department() {
                 </ListGroupItem>
             </Container>
             {
-                listCategory.rows !== undefined &&
-                    listCategory.rows.length !== 0 ?
+                listHardwares.rows !== undefined &&
+                    listHardwares.rows.length !== 0 ?
                     <>
                         <Container className="center margin_top_100">
                             <Row>
@@ -377,7 +404,7 @@ export default function Department() {
                                         <Row>
                                             <Col sm="16">
                                                 <h1 className="text-center">
-                                                    Lista de equipamentos cadastrados ({listCategory.count})
+                                                    Lista de equipamentos cadastrados ({listHardwares.count})
 												</h1>
                                             </Col>
                                         </Row>
@@ -387,17 +414,11 @@ export default function Department() {
                                                 <span>Quantidade de itens mostrados</span>
                                             </Col>
                                             <Col sm="auto">
-                                                <Input
-                                                    type="select"
-                                                    name="pageSize"
-                                                    id="labelPageSize"
-                                                    value={pageSize}
-                                                    onChange={handleSizePage}
-                                                >
+                                                <Input type="select" name="pageSize" id="labelPageSize" value={pageSize} onChange={handleSizePage}>
                                                     <option key={0} value={5}>5</option>
                                                     <option key={1} value={10}>10</option>
                                                     <option key={2} value={20}>20</option>
-                                                    <option key={3} value={listCategory.count}>Tudo</option>
+                                                    <option key={3} value={listHardwares.count}>Tudo</option>
                                                 </Input>
                                             </Col>
                                         </Row>
@@ -407,8 +428,8 @@ export default function Department() {
                         </Container>
 
                         {
-                            listCategory.rows !== undefined &&
-                            listCategory.rows.length !== 0 &&
+                            listHardwares.rows !== undefined &&
+                            listHardwares.rows.length !== 0 &&
                             <PaginationComponent
                                 pages={pages}
                                 currentPage={currentPage}
@@ -421,122 +442,53 @@ export default function Department() {
                         <Container className="margin_top_20 width_70" fluid={true}>
                             <ListGroupItem>
                                 <Row>
-                                    <Col
-                                        className="
-                                            border_only_right
-                                            padding_all_10 center
-                                            border_color_gray
-                                        "
-                                        sm="2"
-                                    >
+                                    <Col className="border_only_right padding_all_10 center border_color_gray" sm="2">
                                         <strong>Tombamento</strong>
                                     </Col>
-                                    <Col
-                                        className="
-                                            border_only_right
-                                            padding_all_10
-                                            center
-                                            border_color_gray
-                                        "
-                                        sm="4"
-                                    >
+                                    <Col className="border_only_right padding_all_10 center border_color_gray" sm="4">
                                         <strong>Descrição</strong>
                                     </Col>
-                                    <Col
-                                        className="
-                                            border_only_right
-                                            padding_all_10
-                                            center
-                                            border_color_gray
-                                        "
-                                        sm="2">
+                                    <Col className="border_only_right padding_all_10 center border_color_gray" sm="2">
                                         <strong>Categoria</strong>
                                     </Col>
-                                    <Col
-                                        className="
-                                            padding_all_10
-                                            center
-                                        "
-                                        sm="4"
-                                    >
+                                    <Col className="padding_all_10 center" sm="4">
                                         <strong>Ações</strong>
                                     </Col>
                                 </Row>
                             </ListGroupItem>
 
                             {
-                                listCategory.rows !== undefined &&
-                                    listCategory.rows.length !== 0 ?
-                                    listCategory.rows.map(element => {
-                                        return (
-                                            <ListGroupItem
-                                                className="margin_top_bottom_10"
-                                                key={element.id}
-                                            >
-                                                <Row
-                                                    className="no_padding"
-                                                >
-                                                    <Col
-                                                        className="
-                                                            border_only_right
-                                                            padding_all_10
-                                                            center_vertical
-                                                            border_color_gray
-                                                        "
-                                                        sm="2"
-                                                    >{element.code}</Col>
-                                                    <Col
-                                                        className="
-                                                            border_only_right
-                                                            padding_all_10 center_vertical
-                                                            border_color_gray
-                                                        "
-                                                        sm="4"
-                                                    >{element.description}</Col>
-                                                    <Col
-                                                        className="
-                                                            border_only_right
-                                                            padding_all_10
-                                                            center_vertical
-                                                            border_color_gray
-                                                        "
-                                                        sm="2"
-                                                    >{element.category.name}</Col>
-                                                    <Col
-                                                        className="
-                                                            border_only_right
-                                                            padding_all_10
-                                                            center
-                                                            border_color_gray
-                                                        "
-                                                        sm="2"
-                                                    >
-                                                        <Link
-                                                            className="font_color_verde_zimbra_hover"
-                                                            to={`/hardware/edit/${element.id}`}
-                                                        >Editar</Link>
-                                                    </Col>
-                                                    <Col
-                                                        className="padding_all_10 center"
-                                                        sm="2"
-                                                    >
-                                                        <Button
-                                                            onClick={toggleModalDeleteHardware}
-                                                            color="danger"
-                                                            value={element.id}
-                                                            name={element.code}
-                                                        >Deletar</Button>
-                                                    </Col>
-                                                </Row>
-                                            </ListGroupItem>
-                                        );
-                                    }) : ''
+                                listHardwares.rows !== undefined &&
+                                listHardwares.rows.length !== 0 &&
+                                listHardwares.rows.map(element => {
+                                    return (
+                                        <ListGroupItem className="margin_top_bottom_10" key={element.id}>
+                                            <Row className="no_padding">
+                                                <Col className="border_only_right padding_all_10 center_vertical border_color_gray" sm="2">
+                                                    {element.code}
+                                                </Col>
+                                                <Col className="border_only_right padding_all_10 center_vertical border_color_gray" sm="4">
+                                                    {element.description}
+                                                </Col>
+                                                <Col className="border_only_right padding_all_10 center_vertical border_color_gray" sm="2">
+                                                    {element.category.name}
+                                                </Col>
+                                                <Col className="border_only_right padding_all_10 center border_color_gray" sm="2">
+                                                    <Link className="font_color_verde_zimbra_hover" to={`/hardware/edit/${element.id}`}>Editar</Link>
+                                                </Col>
+                                                <Col className="padding_all_10 center" sm="2">
+                                                    <Button onClick={toggleModalDeleteHardware} color="danger" value={element.id} name={element.code}>Deletar</Button>
+                                                </Col>
+                                            </Row>
+                                        </ListGroupItem>
+                                    );
+                                })
                             }
                         </Container>
 
                         {
-                            listCategory.rows !== undefined &&
-                            listCategory.rows.length !== 0 &&
+                            listHardwares.rows !== undefined &&
+                            listHardwares.rows.length !== 0 &&
                             <PaginationComponent
                                 pages={pages}
                                 currentPage={currentPage}
@@ -621,24 +573,60 @@ export default function Department() {
                     </FormGroup>
 
                     <FormGroup>
+                        <Label>Sigla</Label>
+                        {
+                            validDepartmentAcronym ?
+                                departmentAcronym !== '' ?
+                                    <>
+                                        <Input
+                                            value={departmentAcronym}
+                                            onChange={handleDepartmentAcronym}
+                                            valid
+                                        />
+                                        <FormFeedback valid>Sigla válida</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input
+                                            value={departmentAcronym}
+                                            onChange={handleDepartmentAcronym}
+                                            invalid
+                                        />
+                                        <FormFeedback>O campo <strong>SIGLA</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                                :
+                                departmentName !== '' ?
+                                    <>
+                                        <Input
+                                            value={departmentAcronym}
+                                            onChange={handleDepartmentAcronym}
+                                            invalid
+                                        />
+                                        <FormFeedback>Já existe uma <strong>SIGLA</strong> com os caracteres informados.</FormFeedback>
+                                    </>
+                                    :
+                                    <>
+                                        <Input
+                                            value={departmentAcronym}
+                                            onChange={handleDepartmentAcronym}
+                                            invalid
+                                        />
+                                        <FormFeedback>O campo <strong>SIGLA</strong> não pode ser vazio.</FormFeedback>
+                                    </>
+                        }
+                    </FormGroup>
+
+                    <FormGroup>
                         <Label>Responsável</Label>
                         {
                             validDepartmentBoss ?
                                 <>
-                                    <Input
-                                        value={departmentBoss}
-                                        onChange={handleDepartmentBoss}
-                                        valid
-                                    />
+                                    <Input value={departmentBoss} onChange={handleDepartmentBoss} valid />
                                     <FormFeedback valid>Nome válido</FormFeedback>
                                 </>
                                 :
                                 <>
-                                    <Input
-                                        value={departmentBoss}
-                                        onChange={handleDepartmentBoss}
-                                        invalid
-                                    />
+                                    <Input value={departmentBoss} onChange={handleDepartmentBoss} invalid />
                                     <FormFeedback invalid>O campo <strong>RESPONSÁVEL</strong> não pode ser vazio.</FormFeedback>
                                 </>
                         }
@@ -647,16 +635,10 @@ export default function Department() {
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button
-                        className="bg_color_verde_zimbra"
-                        onClick={saveEditDepartment}
-                    >
+                    <Button className="bg_color_verde_zimbra" onClick={saveEditDepartment} disabled={verifyAllInputsValid() ? false : true}>
                         Salvar Alterações
 					</Button>{' '}
-                    <Button
-                        color="secondary"
-                        onClick={cancelEdition}
-                    >
+                    <Button color="secondary" onClick={cancelEdition}>
                         Cancelar
 					</Button>
                 </ModalFooter>

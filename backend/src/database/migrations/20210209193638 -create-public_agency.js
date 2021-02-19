@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('departments', {
+    await queryInterface.createTable('public_agencies', {
 		id: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
@@ -19,10 +19,6 @@ module.exports = {
             allowNull: false,
             unique: true
         },
-		boss: {
-			type: Sequelize.STRING,
-			allowNull: false,
-		},
 		created_at: {
 			type: Sequelize.DATE,
 			allowNull: false,
@@ -35,6 +31,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('departments');
+    await queryInterface.dropTable('public_agencies');
   }
 };

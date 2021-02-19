@@ -1,7 +1,5 @@
 'use strict';
 
-const sequelize = require('sequelize');
-
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
 		await queryInterface.createTable('hardwares', {
@@ -30,14 +28,6 @@ module.exports = {
 			has_office: {
 				type: Sequelize.STRING,
 				allowNull: false
-			},
-			auction: {
-				type: Sequelize.BOOLEAN,
-				allowNull: false,
-			},
-			date_auction: {
-				type: Sequelize.DATEONLY,
-				allowNull: true,
 			},
 			department_id: {
 				type: Sequelize.INTEGER,

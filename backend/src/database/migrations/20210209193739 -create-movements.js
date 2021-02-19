@@ -29,15 +29,15 @@ module.exports = {
             },
             destination_department_id: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 references: { model: 'departments', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
-            responsible_id: {
+            public_agency_id: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
-                references: { model: 'users', key: 'id' },
+                allowNull: true,
+                references: { model: 'public_agencies', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },

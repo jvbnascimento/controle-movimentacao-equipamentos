@@ -44,67 +44,61 @@ export default function Movements() {
     const [pages, setPages] = useState([]);
     const [querySearch, setQuerySearch] = useState('');
     const [cSelected, setCSelected] = useState([]);
-	const [visible, setVisible] = useState(false);
-	
-	const [codeFilter, setCodeFilter] = useState('');
-	const [brandFilter, setBrandFilter] = useState('');
-	const [warrantyFilter, setWarrantyFilter] = useState('');
-	const [hasOfficeFilter, setHasOfficeFilter] = useState('');
-	const [auctionFilter, setAuctionFilter] = useState('');
-	const [categoryFilter, setCategoryFilter] = useState('');
-	const [belongsFilter, setBelongsFilter] = useState('');
-	const [dateMovementFilter, setDateMovementFilter] = useState('');
+    const [visible, setVisible] = useState(false);
 
-	const { message, setMessage, colorMessage } = useContext(AuthContext);
-	
-	const filteredTraduction = {
-		code: 'Tombamento',
-		brand: 'Marca',
-		warranty: 'Garantia',
-		has_office: 'Office',
-		auction: 'Leilão',
-		category: 'Categoria',
-		belongs: 'Departamento',
-		date_movement: 'Data'
-	}
+    const [codeFilter, setCodeFilter] = useState('');
+    const [brandFilter, setBrandFilter] = useState('');
+    const [warrantyFilter, setWarrantyFilter] = useState('');
+    const [hasOfficeFilter, setHasOfficeFilter] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [belongsFilter, setBelongsFilter] = useState('');
+    const [dateMovementFilter, setDateMovementFilter] = useState('');
 
-	const filteredFunctions = {
-		code: function handleCodeFilter (e) {
-			setCodeFilter(e.target.value);
-		},
-		brand: function handleBrandFilter (e) {
-			setBrandFilter(e.target.value);
-		},
-		warranty: function handleWarrantyFilter (e) {
-			setWarrantyFilter(e.target.value);
-		},
-		has_office: function handleHasOfficeFilter (e) {
-			setHasOfficeFilter(e.target.value);
-		},
-		auction: function handleAuctionFilter (e) {
-			setAuctionFilter(e.target.value);
-		},
-		category: function handleCategoryFilter (e) {
-			setCategoryFilter(e.target.value);
-		},
-		belongs: function handleDepartmentFilter (e) {
-			setBelongsFilter(e.target.value);
-		},
-		date_movement: function handleDateFilte (e) {
-			setDateMovementFilter(e.target.value);
-		}
-	}
+    const { message, setMessage, colorMessage } = useContext(AuthContext);
 
-	const filteredValues = {
-		code: codeFilter,
-		brand: brandFilter,
-		warranty: warrantyFilter,
-		has_office: hasOfficeFilter,
-		auction: auctionFilter,
-		category: categoryFilter,
-		belongs: belongsFilter,
-		date_movement: dateMovementFilter
-	}
+    const filteredTraduction = {
+        code: 'Tombamento',
+        brand: 'Marca',
+        warranty: 'Garantia',
+        has_office: 'Office',
+        category: 'Categoria',
+        belongs: 'Departamento',
+        date_movement: 'Data'
+    }
+
+    const filteredFunctions = {
+        code: function handleCodeFilter(e) {
+            setCodeFilter(e.target.value);
+        },
+        brand: function handleBrandFilter(e) {
+            setBrandFilter(e.target.value);
+        },
+        warranty: function handleWarrantyFilter(e) {
+            setWarrantyFilter(e.target.value);
+        },
+        has_office: function handleHasOfficeFilter(e) {
+            setHasOfficeFilter(e.target.value);
+        },
+        category: function handleCategoryFilter(e) {
+            setCategoryFilter(e.target.value);
+        },
+        belongs: function handleDepartmentFilter(e) {
+            setBelongsFilter(e.target.value);
+        },
+        date_movement: function handleDateFilte(e) {
+            setDateMovementFilter(e.target.value);
+        }
+    }
+
+    const filteredValues = {
+        code: codeFilter,
+        brand: brandFilter,
+        warranty: warrantyFilter,
+        has_office: hasOfficeFilter,
+        category: categoryFilter,
+        belongs: belongsFilter,
+        date_movement: dateMovementFilter
+    }
 
     useEffect(() => {
         const fetchPageNumbers = () => {
@@ -169,43 +163,43 @@ export default function Movements() {
         }
 
         verifyMessage();
-	}, [message]);
-	
-	useEffect(() => {
+    }, [message]);
+
+    useEffect(() => {
         function handleQuerySearch() {
             const body = cSelected.map(element => {
-				return (filteredValues[element]);
-			});
-	
-			const parameters = cSelected.map(element => {
-				return (element);
-			});
-	
-			let string = '';
-	
-			parameters.map((element, index) => {
-				if (index > 0) {
-					return (string += "&" + element + "=" + body[index]);
-				}
-				else {
-					return (string += element + "=" + body[index]);
-				}
-			});
-	
-			setQuerySearch(string);
+                return (filteredValues[element]);
+            });
+
+            const parameters = cSelected.map(element => {
+                return (element);
+            });
+
+            let string = '';
+
+            parameters.map((element, index) => {
+                if (index > 0) {
+                    return (string += "&" + element + "=" + body[index]);
+                }
+                else {
+                    return (string += element + "=" + body[index]);
+                }
+            });
+
+            setQuerySearch(string);
         }
 
         handleQuerySearch();
-	}, [cSelected,
-		filteredValues,
-		codeFilter,
-		brandFilter,
-		warrantyFilter,
-		hasOfficeFilter,
-		auctionFilter,
-		categoryFilter,
-		belongsFilter,
-		dateMovementFilter]);
+    }, [cSelected,
+        filteredValues,
+        codeFilter,
+        brandFilter,
+        warrantyFilter,
+        hasOfficeFilter,
+        categoryFilter,
+        belongsFilter,
+        dateMovementFilter
+    ]);
 
     const onDismiss = () => {
         setVisible(false);
@@ -305,14 +299,6 @@ export default function Movements() {
                             </Button>
 
                             <Button
-                                onClick={() => onCheckboxBtnClick('auction')}
-                                active={cSelected.includes('auction')}
-                                title="Filtrar por máquinas leiloadas"
-                                className="margin_left_right_05 border_color_verde_zimbra_hover bg_color_verde_zimbra">
-                                Leilão
-                            </Button>
-
-                            <Button
                                 onClick={() => onCheckboxBtnClick('category')}
                                 active={cSelected.includes('category')}
                                 title="Filtrar por categoria"
@@ -352,7 +338,7 @@ export default function Movements() {
                                                     name={element}
                                                     placeholder={filteredTraduction[element]}
                                                     className="background_color_white_zimbra"
-													onChange={filteredFunctions[element]}
+                                                    onChange={filteredFunctions[element]}
                                                 />
                                             </Col>
                                         </Row>
@@ -372,9 +358,7 @@ export default function Movements() {
                             <Container>
                                 <Row>
                                     <Col sm="16">
-                                        <h1 className="text-center">
-                                            Últimas movimentações ({movements.count})
-									    </h1>
+                                        <h1 className="text-center">Últimas movimentações ({movements.count})</h1>
                                     </Col>
                                 </Row>
 
@@ -383,12 +367,7 @@ export default function Movements() {
                                         <span>Quantidade de itens mostrados</span>
                                     </Col>
                                     <Col sm="auto">
-                                        <Input
-                                            type="select"
-                                            name="pageSize"
-                                            id="labelPageSize"
-                                            value={pageSize}
-                                            onChange={handleSizePage}>
+                                        <Input type="select" name="pageSize" id="labelPageSize" value={pageSize} onChange={handleSizePage}>
                                             <option key={0} value={5}>5</option>
                                             <option key={1} value={10}>10</option>
                                             <option key={2} value={20}>20</option>
@@ -414,20 +393,16 @@ export default function Movements() {
             }
 
             <ListGroup className="padding_all_10">
-                {movements.rows !== undefined && movements.rows.length !== 0 ?
+                {/* {movements.rows !== undefined && movements.rows.length !== 0 ?
                     movements.rows.map(element => {
                         return (
                             <Container key={element.id}>
                                 <Row className="center margin_top_bottom_20">
                                     <Col>
-                                        <Link
-                                            to={`/movement/edit/${element.id}`}
-                                            className="font_color_black_hover no_padding">
+                                        <Link to={`/movement/edit/${element.id}`} className="font_color_black_hover no_padding">
                                             <ListGroupItem>
                                                 <Row>
-                                                    <Col
-                                                        sm="auto"
-                                                        className="center border_only_right border_color_gray">
+                                                    <Col sm="auto" className="center border_only_right border_color_gray">
                                                         {element.id}
                                                     </Col>
                                                     <Col>
@@ -475,12 +450,12 @@ export default function Movements() {
 
                                                                                             <Col className="center border_only_right border_color_gray">
                                                                                                 <strong>DE:&nbsp;</strong>
-                                                                                                <span>{element.previous_department.name}</span>
+                                                                                                <span>{element.previous_department.acronym}</span>
                                                                                             </Col>
 
                                                                                             <Col className="center">
                                                                                                 <strong>PARA:&nbsp;</strong>
-                                                                                                <span>{element.next_department.name}</span>
+                                                                                                <span>{element.next_department.acronym}</span>
                                                                                             </Col>
                                                                                         </Row>
 
@@ -501,12 +476,12 @@ export default function Movements() {
 
                                                                                     <Col className="center border_only_right border_color_gray">
                                                                                         <strong>DE:&nbsp;</strong>
-                                                                                        <span>{element.previous_department.name}</span>
+                                                                                        <span>{element.previous_department.acronym}</span>
                                                                                     </Col>
 
                                                                                     <Col className="center">
                                                                                         <strong>PARA:&nbsp;</strong>
-                                                                                        <span>{element.next_department.name}</span>
+                                                                                        <span>{element.next_department.acronym}</span>
                                                                                     </Col>
                                                                                 </Row>
                                                                             );
@@ -525,21 +500,18 @@ export default function Movements() {
                             </Container>
                         )
                     })
-                    :
+                    : */}
+                {
                     movements.rows !== undefined && movements.rows.length !== 0 ?
                         movements.rows.map(element => {
                             return (
                                 <Container key={element.id}>
                                     <Row className="center margin_top_bottom_20">
                                         <Col>
-                                            <Link
-                                                to={`/movement/edit/${element.id}`}
-                                                className="font_color_black_hover no_padding">
+                                            <Link to={`/movement/edit/${element.id}`} className="font_color_black_hover no_padding">
                                                 <ListGroupItem>
                                                     <Row>
-                                                        <Col
-                                                            sm="auto"
-                                                            className="center border_only_right border_color_gray">
+                                                        <Col sm="auto" className="center border_only_right border_color_gray">
                                                             {element.id}
                                                         </Col>
                                                         <Col>
@@ -557,7 +529,7 @@ export default function Movements() {
                                                                         <Col className="center">
                                                                             <Row>
                                                                                 <Col sm="auto">
-                                                                                    <strong>{element.responsible_name}</strong>
+                                                                                    <strong>{element.responsible.name}</strong>
                                                                                 </Col>
                                                                             </Row>
                                                                         </Col>
@@ -587,12 +559,12 @@ export default function Movements() {
 
                                                                                                 <Col className="center border_only_right border_color_gray">
                                                                                                     <strong>DE:&nbsp;</strong>
-                                                                                                    <span>{element.previous_department.name}</span>
+                                                                                                    <span>{element.previous_department.acronym}</span>
                                                                                                 </Col>
 
                                                                                                 <Col className="center">
                                                                                                     <strong>PARA:&nbsp;</strong>
-                                                                                                    <span>{element.next_department.name}</span>
+                                                                                                    <span>{element.next_department.acronym}</span>
                                                                                                 </Col>
                                                                                             </Row>
 
@@ -613,12 +585,12 @@ export default function Movements() {
 
                                                                                         <Col className="center border_only_right border_color_gray">
                                                                                             <strong>DE:&nbsp;</strong>
-                                                                                            <span>{element.previous_department.name}</span>
+                                                                                            <span>{element.previous_department.acronym}</span>
                                                                                         </Col>
 
                                                                                         <Col className="center">
                                                                                             <strong>PARA:&nbsp;</strong>
-                                                                                            <span>{element.next_department.name}</span>
+                                                                                            <span>{element.next_department.acronym}</span>
                                                                                         </Col>
                                                                                     </Row>
                                                                                 );
@@ -644,7 +616,6 @@ export default function Movements() {
                             </Col>
                         </Row>
                 }
-
             </ListGroup>
 
             {
@@ -657,6 +628,6 @@ export default function Movements() {
                     pagesCount={pagesCount}
                 />
             }
-        </div >
+        </div>
     );
 }

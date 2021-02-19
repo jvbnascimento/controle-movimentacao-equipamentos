@@ -23,6 +23,7 @@ import AuthContext from '../../../contexts/auth';
 
 export default function CreateMovement() {
     const [typeMovement, setTypeMovement] = useState([]);
+    const [currentTypeMovement, setCurrentTypeMovemente] = useState(1);
     const [hardwares, setHardwares] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [listHardwares, setListHardwares] = useState([]);
@@ -67,7 +68,7 @@ export default function CreateMovement() {
     useEffect(() => {
         async function getAllDepartments() {
             const response = await api.get('/departments');
-            const data = await response.data;
+            const data = await response.data.departments;
 
             if (data.length < 2) {
                 history.goBack();
@@ -97,8 +98,6 @@ export default function CreateMovement() {
 
         verifyMessage();
     }, [message]);
-
-    console.log(new Date().toLocaleDateString())
 
     // CLOSE MODAL
     const onDismiss = () => {
