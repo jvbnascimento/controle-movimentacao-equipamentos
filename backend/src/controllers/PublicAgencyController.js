@@ -1,164 +1,146 @@
-const { Op } = require("sequelize");
-
-const PublicAgency = require('../models/PublicAgency');
+const PublicAgency = require("../models/PublicAgency");
 
 module.exports = {
     async listAllPublicAgencies(req, res) {
-        const public_agencies = await PublicAgency.findAll({
-            order: [
-                'name'
-            ]
-        });
+        const public_agencies = await PublicAgency.findAll({ order: ["name"] });
 
-        return res.json({ public_agencies });
+        return res.status(200).json({ public_agencies });
     },
 
-    async listPublicAgency(req, res) {
-        const { public_agency_id } = req.params;
+    async listPublicAgencyById(req, res) {
+        const { publicAgencyId } = req.params;
 
-        const public_agency = await PublicAgency.findByPk(public_agency_id);
+        const publicAgency = await PublicAgency.findByPk(publicAgencyId);
 
-        if (!public_agency) {
-            return res.status(404).json({ error: 'PublicAgency not found!' });
-        }
+        if (!publicAgency)
+            return res.status(404).json({ error: "Public agency not found!" });
 
-        return res.json({ public_agency });
+        return res.status(200).json({ publicAgency });
     },
 
     async listPublicAgencyByName(req, res) {
-        const { public_agency_name } = req.params;
+        const { publicAgencyName } = req.params;
 
-        const public_agency = await PublicAgency.findOne({
-            where: {
-                name: public_agency_name.toUpperCase()
-            },
+        publicAgencyName = publicAgencyName.toUpperCase();
+
+        const publicAgency = await PublicAgency.findOne({
+            where: { name: publicAgencyName }
         });
 
-        if (!public_agency) {
-            return res.status(400).json({ error: 'PublicAgency not found!' });
-        }
+        if (!publicAgency)
+            return res.status(400).json({ error: "Public agency not found!" });
 
-        return res.json({ public_agency });
+        return res.status(200).json({ publicAgency });
     },
 
     async listPublicAgencyByAcronym(req, res) {
-        const { public_agency_acronym } = req.params;
+        const { publicAgencyAcronym } = req.params;
 
-        const public_agency = await PublicAgency.findOne({
-            where: {
-                acronym: public_agency_acronym.toUpperCase().replace("-", "/")
-            },
+        publicAgencyAcronym = publicAgencyAcronym.toUpperCase().replace("-", "/");
+
+        const publicAgency = await PublicAgency.findOne({
+            where: { acronym: publicAgencyAcronym }
         });
 
-        if (!public_agency) {
-            return res.status(400).json({ error: 'PublicAgency not found!' });
-        }
+        if (!publicAgency)
+            return res.status(400).json({ error: "Public agency not found!" });
 
-        return res.json({ public_agency });
+        return res.status(200).json({ publicAgency });
     },
 
-    async nameExists(req, res) {
+    async verifyName(req, res) {
         const { name } = req.params;
 
-        if (name !== null) {
-            const name_exists = await PublicAgency.findOne({
-                where: {
-                    name: name.toUpperCase()
-                }
-            });
+        name = name.toUpperCase();
 
-            if (name_exists && name_exists.name) {
-                return res.status(200).json({ name_exists: true });
-            }
+        if (name) {
+            const nameExists = await Department.findOne({ where: { name } });
 
-            return res.status(200).json({ name_exists: false });
+            if (nameExists && nameExists.name)
+                return res.status(200).json({ nameExists: true });
+
+            return res.status(200).json({ nameExists: false });
         }
 
-        return res.status(200).json({ name_exists: false });
+        return res.status(400).json({ error: "Name to verify it can't be empty!" });
     },
 
-    async acronymExists(req, res) {
+    async verifyAcronym(req, res) {
         const { acronym } = req.params;
 
-        if (acronym !== null) {
-            const acronym_exists = await PublicAgency.findOne({
-                where: {
-                    acronym: acronym.toUpperCase().replace("-", "/")
-                }
-            });
+        acronym = acronym.toUpperCase().replace("-", "/");
 
-            if (acronym_exists && acronym_exists.acronym) {
-                return res.status(200).json({ acronym_exists: true });
-            }
+        if (acronym) {
+            const acronymExists = await PublicAgency.findOne({ where: { acronym } });
 
-            return res.status(200).json({ acronym_exists: false });
+            if (acronymExists && acronymExists.acronym)
+                return res.status(200).json({ acronymExists: true });
+
+            return res.status(200).json({ acronymExists: false });
         }
 
-        return res.status(200).json({ acronym_exists: false });
+        return res.status(400).json({ error: "Acronym to verify it can't be empty!" });
     },
 
     async create(req, res) {
         const { name, acronym } = req.body;
 
-        const name_exists = await PublicAgency.findAll({
-            where: {
-                name: name.toUpperCase()
-            }
-        });
+        name = name.toUpperCase();
+        acronym = acronym.toUpperCase().replace("-", "/");
 
-        if (name_exists.length != 0) {
-            return res.status(400).json({ error: 'Name already exists!' });
-        }
+        const nameExists = await PublicAgency.findOne({ where: { name } });
+        const acronymExists = await PublicAgency.findOne({ where: { acronym } });
 
-        const public_agency = await PublicAgency.create({ name: name.toUpperCase(), acronym: acronym.toUpperCase() });
+        if (nameExists)
+            return res.status(400).json({ error: "Name already exists!" });
 
-        return res.status(201).json({ public_agency });
+        if (acronymExists)
+            return res.status(400).json({ error: "Acronym already exists!" });
+
+        const publicAgency = await PublicAgency.create({ name, acronym });
+
+        return res.status(201).json({ publicAgency });
     },
 
     async update(req, res) {
-        const { public_agency_id } = req.params;
+        const { publicAgencyId } = req.params;
         const { name, acronym } = req.body;
 
-        const public_agency = await PublicAgency.findByPk(public_agency_id);
-        const name_exists = await PublicAgency.findOne({
-            where: {
-                name: name.toUpperCase()
-            }
-        });
-        const acronym_exists = await PublicAgency.findOne({
-            where: {
-                acronym: acronym.toUpperCase().replace('-', '/')
-            }
-        })
+        name = name.toUpperCase();
+        acronym = acronym.toUpperCase().replace("-", "/");
 
-        if (!public_agency) {
-            return res.status(400).json({ error: 'PublicAgency not found!' });
-        }
-        if (name_exists.length != 0 && name_exists[0].name != public_agency.name) {
-            return res.status(400).json({ error: 'Name is already being used!' });
-        }
-        if (acronym_exists.length != 0 && acronym_exists[0].acronym != public_agency.acronym) {
-            return res.status(400).json({ error: 'Name is already being used!' });
-        }
+        const publicAgency = await PublicAgency.findByPk(publicAgencyId);
 
-        public_agency.name = name.toUpperCase();
-        public_agency.acronym = acronym.toUpperCase();
+        if (!publicAgency)
+            return res.status(400).json({ error: "Public agency not found!" });
 
-        await public_agency.save();
+        const nameExists = await PublicAgency.findOne({ where: { name } });
 
-        return res.status(200).json({ public_agency });
+        if (nameExists && nameExists.name != publicAgency.name)
+            return res.status(400).json({ error: "Name is already being used!" });
+
+        const acronymExists = await PublicAgency.findOne({ where: { acronym } })
+
+        if (acronymExists && acronymExists.acronym != publicAgency.acronym)
+            return res.status(400).json({ error: "Acronym is already being used!" });
+
+        publicAgency.name = name;
+        publicAgency.acronym = acronym;
+
+        await publicAgency.save();
+
+        return res.status(200).json({ publicAgency });
     },
 
     async delete(req, res) {
-        const { public_agency_id } = req.params;
+        const { publicAgencyId } = req.params;
 
-        const public_agency = await PublicAgency.findByPk(public_agency_id);
+        const publicAgency = await PublicAgency.findByPk(publicAgencyId);
 
-        if (!public_agency) {
-            return res.status(404).json({ error: 'PublicAgency not found!' });
-        }
+        if (!publicAgency)
+            return res.status(404).json({ error: "Public agency not found!" });
 
-        public_agency.destroy();
+        publicAgency.destroy();
 
         return res.status(204).json();
     },

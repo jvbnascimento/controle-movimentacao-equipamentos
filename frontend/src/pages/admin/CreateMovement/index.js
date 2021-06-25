@@ -26,10 +26,12 @@ export default function CreateMovement() {
     const [currentTypeMovement, setCurrentTypeMovemente] = useState(1);
     const [hardwares, setHardwares] = useState([]);
     const [departments, setDepartments] = useState([]);
+    const [publicAgencies, setPublicAgencies] = useState([]);
     const [listHardwares, setListHardwares] = useState([]);
     const [date_movement, setDateMovement] = useState('');
     const [responsible, setReponsible] = useState(1);
     const [destination_department, setDestinationDepartment] = useState(1);
+    const [destinationPublicAgency, setDestinationPublicAgency] = useState(1);
     const [origin_department, setOriginDepartment] = useState(1);
     const [dateMovementValid, setDateMovementValid] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -77,7 +79,7 @@ export default function CreateMovement() {
                 setDestinationDepartment(data[0].id);
                 setOriginDepartment(data[1].id);
                 setDepartments(data);
-                
+
                 let date = new Date().toLocaleDateString().split("/");
                 date = date[2] + "-" + date[1] + "-" + date[0];
 
@@ -88,6 +90,20 @@ export default function CreateMovement() {
 
         getAllDepartments();
     }, [history]);
+
+    useEffect(() => {
+        async function getAllPublicAgencies() {
+            const response = await api.get('/public_agencies');
+            const data = await response.data.public_agencies;
+
+            if (data && data.length !== 0) {
+                setDestinationPublicAgency(data[0].id);
+                setPublicAgencies(data);
+            }
+        }
+
+        getAllPublicAgencies();
+    }, []);
 
     useEffect(() => {
         function verifyMessage() {
@@ -175,6 +191,10 @@ export default function CreateMovement() {
         setDestinationDepartment(destinationDepartmentId[0].id);
     }
 
+    const handleTypeMovement = (e) => {
+        setCurrentTypeMovemente(parseInt(e.target.value));
+    }
+
     // VERIFY IF ALL INPUTS ARE VALID
     const verifyAllInputsValid = () => {
         if (
@@ -231,16 +251,14 @@ export default function CreateMovement() {
                 <Row>
                     <Col>
                         <FormGroup>
-                            <Label className="margin_top_10" for="labelTypeMovement">
-                                Tipo de movimentação
-						    </Label>
+                            <Label className="margin_top_10" for="labelTypeMovement">Tipo de movimentação</Label>
 
                             <Input
                                 type="select"
                                 name="type_movement_id"
                                 id="labelTypeMovement"
-                                value={typeMovement}
-                                onChange={() => {}}
+                                value={currentTypeMovement}
+                                onChange={handleTypeMovement}
                                 className="margin_bottom_20"
                                 required>
                                 {
@@ -258,9 +276,7 @@ export default function CreateMovement() {
                         </FormGroup>
 
                         <FormGroup>
-                            <Label className="margin_top_10" for="labelDate">
-                                Data da movimentação
-							</Label>
+                            <Label className="margin_top_10" for="labelDate">Data da movimentação</Label>
 
                             {
                                 dateMovementValid ?
@@ -293,9 +309,7 @@ export default function CreateMovement() {
                         </FormGroup>
 
                         <FormGroup>
-                            <Label className="margin_top_10" for="labelResponsible">
-                                Responsável
-						    </Label>
+                            <Label className="margin_top_10" for="labelResponsible">Responsável</Label>
 
                             <Input
                                 type="text"
@@ -309,9 +323,7 @@ export default function CreateMovement() {
                         </FormGroup>
 
                         <FormGroup>
-                            <Label className="margin_top_10" for="labelPreviousDepartment">
-                                Departamento original
-						    </Label>
+                            <Label className="margin_top_10" for="labelPreviousDepartment">Departamento original</Label>
 
                             <Input
                                 type="select"
@@ -334,34 +346,61 @@ export default function CreateMovement() {
                             </Input>
                         </FormGroup>
 
-                        <FormGroup>
-                            <Label className="margin_top_10" for="labelNextDepartment">
-                                Departamento destino
-						    </Label>
+                        {
+                            currentTypeMovement === 1 || currentTypeMovement === 3 ?
+                                <FormGroup>
+                                    <Label className="margin_top_10" for="labelNextDepartment">Departamento destino</Label>
 
-                            <Input
-                                type="select"
-                                name="destination_department_id"
-                                id="labelNextDepartment"
-                                value={destination_department}
-                                onChange={handleDestinationDepartment}
-                                className="margin_bottom_20"
-                                required>
-                                {
-                                    departments !== undefined &&
-                                    departments.length !== 0 &&
-                                    departments.filter(department => {
-                                        return (department && department.id !== origin_department);
-                                    }).map(element => {
-                                        return (
-                                            <option key={element.id} value={element.id}>
-                                                {element.name}
-                                            </option>
-                                        );
-                                    })
-                                }
-                            </Input>
-                        </FormGroup>
+                                    <Input
+                                        type="select"
+                                        name="destination_department_id"
+                                        id="labelNextDepartment"
+                                        value={destination_department}
+                                        onChange={handleDestinationDepartment}
+                                        className="margin_bottom_20"
+                                        required>
+                                        {
+                                            departments !== undefined &&
+                                            departments.length !== 0 &&
+                                            departments.filter(department => {
+                                                return (department && department.id !== origin_department);
+                                            }).map(element => {
+                                                return (
+                                                    <option key={element.id} value={element.id}>
+                                                        {element.name}
+                                                    </option>
+                                                );
+                                            })
+                                        }
+                                    </Input>
+                                </FormGroup>
+                                :
+                                <FormGroup>
+                                    <Label className="margin_top_10" for="labelNextPublicAgency">Órgão de destino</Label>
+
+                                    <Input
+                                        type="select"
+                                        name="destination_department_id"
+                                        id="labelNextPublicAgency"
+                                        value={destinationPublicAgency}
+                                        onChange={handleDestinationDepartment}
+                                        className="margin_bottom_20"
+                                        required>
+                                        {
+                                            publicAgencies !== undefined &&
+                                            publicAgencies.length !== 0 ?
+                                            publicAgencies.map(element => {
+                                                return (
+                                                    <option key={element.id} value={element.id}>{element.name}</option>
+                                                );
+                                            })
+                                            :
+                                            <option>NÃO HÁ ÓRGÃOS CADASTRADOS AINDA</option>
+                                        }
+                                    </Input>
+                                </FormGroup>
+                        }
+
 
                         <Form onSubmit={addHardware}>
                             <FormGroup>

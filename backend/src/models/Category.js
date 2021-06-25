@@ -1,18 +1,17 @@
 const { Model, DataTypes } = require("sequelize");
 
-class Role extends Model {
+class Category extends Model {
 	static init(sequelize) {
 		super.init({
 			name: DataTypes.STRING,
 		}, {
 			sequelize,
-			tableName: "roles",
 		});
 	}
 
 	static associate(models) {
-		this.belongsToMany(models.User, { foreignKey: "role_id", through: "user_roles", as: "users" });
+		this.hasMany(models.Hardware, { foreignKey: "category_id", as: "hardwares" });
 	}
 }
 
-module.exports = Role;
+module.exports = Category;

@@ -30,12 +30,12 @@ import api from '../../../services/api';
 import AuthContext from '../../../contexts/auth';
 
 export default function AdminHeader() {
-    const [listTypes, setTypes] = useState([]);
+    const [listCategories, setCategories] = useState([]);
     const [listDepartments, setDepartments] = useState([]);
     const [listPublicAgencies, setPublicAgencies] = useState([]);
     const [dropdownDepartments, setDropdownDepartments] = useState(false);
     const [dropdownPublicAgencies, setDropdownPublicAgencies] = useState(false);
-    const [dropdownTypes, setDropdownTypes] = useState(false);
+    const [dropdownCategories, setDropdownCategories] = useState(false);
     const [modalCreateDepartment, setModalCreateDepartment] = useState(false);
     const [modalCreatePublicAgencies, setModalCreatePublicAgencies] = useState(false);
     const [modalCreateCategory, setModalCreateCategory] = useState(false);
@@ -54,16 +54,16 @@ export default function AdminHeader() {
     const { user, message, setMessage, currentRoleUser, setCurrentRoleUser } = useContext(AuthContext);
 
     useEffect(() => {
-        async function getAllTypes() {
-            const response = await api.get('/types');
-            const data = response.data.types;
-            setTypes(data);
+        async function getAllCategories() {
+            const response = await api.get('/category');
+            const data = response.data.categories;
+            setCategories(data);
 
             setCategoryName('');
             setVerifyCategoryName(false);
         }
 
-        getAllTypes();
+        getAllCategories();
     }, [message]);
 
     useEffect(() => {
@@ -114,7 +114,8 @@ export default function AdminHeader() {
     useEffect(() => {
         async function getDepartment() {
             if (departmentAcronym !== '') {
-                const response = await api.get(`/departments/verify_acronym/${departmentAcronym.toUpperCase().replace("/", "-")}`);
+                let department = departmentAcronym.toUpperCase().replace("/", "-")
+                const response = await api.get(`/departments/verify_acronym/${department}`);
                 const data = response.data;
 
                 setVerifyDepartmentAcronym(data.acronym_exists);
@@ -153,10 +154,10 @@ export default function AdminHeader() {
     useEffect(() => {
         async function getCategory() {
             if (categoryName !== '') {
-                const response = await api.get(`/types/verify_name/${categoryName}`);
+                const response = await api.get(`/category/verify/${categoryName}`);
                 const data = response.data;
 
-                setVerifyCategoryName(data.name_exists);
+                setVerifyCategoryName(data.nameExists);
             }
         }
 
@@ -169,8 +170,8 @@ export default function AdminHeader() {
     const togglePublicAgencies = () => {
         setDropdownPublicAgencies(!dropdownPublicAgencies)
     };
-    const toggleTypes = () => {
-        setDropdownTypes(!dropdownTypes)
+    const toggleCategories = () => {
+        setDropdownCategories(!dropdownCategories)
     };
 
     const toggleModalCreateDepartment = () => {
@@ -336,7 +337,7 @@ export default function AdminHeader() {
                 name: categoryName
             }
 
-            const response = await api.post(`types/`, new_data);
+            const response = await api.post(`categories/`, new_data);
 
             if (response.data.status === 201) {
                 setMessage(['Categoria criada com sucesso', 201]);
@@ -451,7 +452,7 @@ export default function AdminHeader() {
                         </DropdownMenu>
                     </Dropdown>
 
-                    <Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownTypes} toggle={toggleTypes}>
+                    <Dropdown className="center bg_color_verde_zimbra_hover margin_left_right_1 height_header" nav isOpen={dropdownCategories} toggle={toggleCategories}>
                         <DropdownToggle className="center padding_all_20 font_color_white_hover height_header" nav caret>
                             Tipos
           				</DropdownToggle>
@@ -468,8 +469,8 @@ export default function AdminHeader() {
                             <DropdownItem divider className="no_margin" />
 
                             {
-                                listTypes !== undefined &&
-                                listTypes.map(element => {
+                                listCategories !== undefined &&
+                                listCategories.map(element => {
                                     return (
                                         <DropdownItem className="bg_color_verde_zimbra_hover no_padding" key={element.id}>
                                             <Link className="center_vertical font_color_white_hover" to={`/hardware/${element.name}`}>
@@ -682,7 +683,7 @@ export default function AdminHeader() {
                                 categoryName !== '' ?
                                     <>
                                         <Input value={categoryName} onChange={handleCategoryName} valid />
-                                        <FormFeedback valid>Nome válido</FormFeedback>
+                                        <FormFeedback valid>Nome de <strong>CATEGORIA</strong> válido</FormFeedback>
                                     </>
                                     :
                                     <>
@@ -692,7 +693,7 @@ export default function AdminHeader() {
                                 :
                                 <>
                                     <Input value={categoryName} onChange={handleCategoryName} invalid />
-                                    <FormFeedback>Já existe um <strong>CATEGORIA</strong> com o nome informado.</FormFeedback>
+                                    <FormFeedback>Já existe uma <strong>CATEGORIA</strong> com o nome informado.</FormFeedback>
                                 </>
                         }
                     </FormGroup>

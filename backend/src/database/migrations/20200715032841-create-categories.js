@@ -4,7 +4,7 @@ const sequelize = require('sequelize');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('types', {
+    await queryInterface.createTable('categories', {
 		id: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,

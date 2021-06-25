@@ -1,87 +1,88 @@
 const { Op } = require("sequelize");
 
-const Hardware = require('../models/Hardware');
-const Type = require('../models/Type');
+const Category = require("../models/Category");
+const Hardware = require("../models/Hardware");
 const Department = require("../models/Department");
+const PublicAgency = require("../models/PublicAgency");
 
 module.exports = {
-    async listAllDetailedHardwares(req, res) {
-        try {
-            const { limit, offset } = req.params;
-
-            const filters = req.query;
-
-            let hardwareFilters = {}
-            let belongsFilters = {}
-            let categoryFilters = {}
-
-            if (filters.code) {
-                hardwareFilters.code = {
-                    [Op.like]: `%${filters.code}%`
-                }
-            }
-            if (filters.brand) {
-                hardwareFilters.brand = {
-                    [Op.like]: `%${filters.brand.toUpperCase()}%`
-                }
-            }
-            if (filters.warranty) {
-                hardwareFilters.warranty = {
-                    [Op.like]: `%${filters.warranty.toUpperCase()}%`
-                }
-            }
-            if (filters.has_office) {
-                hardwareFilters.has_office = {
-                    [Op.like]: `%${filters.has_office.toUpperCase()}%`
-                }
-            }
-            if (filters.category) {
-                categoryFilters.name = {
-                    [Op.like]: `%${filters.category.toUpperCase()}%`
-                }
-            }
-            if (filters.belongs) {
-                belongsFilters.name = {
-                    [Op.like]: `%${filters.belongs.toUpperCase()}%`
-                }
-            }
-
-            const hardwares = await Hardware.findAndCountAll({
-                include: [
-                    {
-                        association: 'category',
-                        required: true,
-                        where: categoryFilters,
-                    },
-                    {
-                        association: 'belongs',
-                        required: true,
-                        where: belongsFilters,
-                    },
-                ],
-                where: hardwareFilters,
-                order: [
-                    ['code']
-                ],
-                limit,
-                offset: (offset - 1) * limit,
-                distinct: true,
-                subQuery: false
-            });
-
-            return res.status(200).json({ hardwares });
-        }
-        catch (e) {
-            return res.status(400).json({ error: "Não foi possível realizar a execução da Query" });
-        }
-    },
-
     async listAllHardwares(req, res) {
-        const hardwares = await Hardware.findAll({
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        let hardwareFilters = {}
+        let belongsDepartmentFilters = {}
+        let belongsPublicAgencyFilters = {}
+        let categoryFilters = {}
+
+        if (filters.limit) {
+            limit = filters.limit;
+        }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
+        if (filters.code) {
+            hardwareFilters.code = {
+                [Op.like]: `%${filters.code}%`
+            }
+        }
+        if (filters.brand) {
+            hardwareFilters.brand = {
+                [Op.like]: `%${filters.brand.toUpperCase()}%`
+            }
+        }
+        if (filters.warranty) {
+            hardwareFilters.warranty = {
+                [Op.like]: `%${filters.warranty.toUpperCase()}%`
+            }
+        }
+        if (filters.has_office) {
+            hardwareFilters.has_office = {
+                [Op.like]: `%${filters.has_office.toUpperCase()}%`
+            }
+        }
+        if (filters.category) {
+            categoryFilters.name = {
+                [Op.like]: `%${filters.category.toUpperCase()}%`
+            }
+        }
+        if (filters.belongs_department) {
+            belongsDepartmentFilters.name = {
+                [Op.like]: `%${filters.belongs_department.toUpperCase()}%`
+            }
+        }
+        if (filters.belongs_public_agency) {
+            belongsPublicAgencyFilters.name = {
+                [Op.like]: `%${filters.belongs_public_agency.toUpperCase()}%`
+            }
+        }
+
+        const hardwares = await Hardware.findAndCountAll({
             include: [
-                { association: 'category' },
-                { association: 'belongs' }
+                {
+                    association: "category",
+                    required: true,
+                    where: categoryFilters,
+                },
+                {
+                    association: "belongs_department",
+                    required: true,
+                    where: belongsDepartmentFilters,
+                },
+                {
+                    association: "belongs_public_agency",
+                    required: true,
+                    where: belongsPublicAgencyFilters,
+                },
             ],
+            where: hardwareFilters,
+            order: [["code"]],
+            limit,
+            offset: (offset - 1) * limit,
+            distinct: true,
+            subQuery: false
         });
 
         return res.status(200).json({ hardwares });
@@ -95,8 +96,9 @@ module.exports = {
                 description: { [Op.iLike]: `%${description}%` }
             },
             include: [
-                { association: 'category' },
-                { association: 'belongs' }
+                { association: "category" },
+                { association: "belongs_department" },
+                { association: "belongs_public_agency" }
             ],
         });
 
@@ -104,21 +106,32 @@ module.exports = {
     },
 
     async listAllHardwaresByCategory(req, res) {
-        const { name_category, limit, offset } = req.params;
+        const { categoryName } = req.params;
+
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        if (filters.limit) {
+            limit = filters.limit;
+        }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
 
         const hardwares = await Hardware.findAndCountAll({
             include: [
                 {
-                    association: 'category',
+                    association: "category",
                     where: {
-                        name: { [Op.iLike]: `%${name_category.toUpperCase()}%` }
+                        name: { [Op.iLike]: `%${categoryName.toUpperCase()}%` }
                     }
                 },
-                { association: 'belongs' }
+                { association: "belongs_department" },
+                { association: "belongs_public_agency" }
             ],
-            order: [
-                ['code']
-            ],
+            order: [ ["code"] ],
             limit,
             offset: (offset - 1) * limit,
             distinct: true,
@@ -133,193 +146,346 @@ module.exports = {
 
         const hardware = await Hardware.findAll({
             where: {
-                code: {
-                    [Op.iLike]: `%${code}%`
-                }
+                code: { [Op.iLike]: `%${code}%` }
             },
             include: [
-                { association: 'category' },
-                { association: 'belongs' }
+                { association: "category" },
+                { association: "belongs_department" },
+                { association: "belongs_public_agency" }
             ],
         });
 
-        if (!hardware) {
-            return res.status(404).json({ error: 'Hardware not found' });
-        }
+        if (!hardware) 
+            return res.status(404).json({ error: "Hardware not found" });
 
         return res.status(200).json({ hardware });
     },
 
-    async listHardwareByDepartment(req, res) {
-        const { department_id } = req.params;
+    async listHardwareByDepartmentId(req, res) {
+        const { departmentId } = req.params;
 
-        const hardware = await Hardware.findAll({
+        const hardwares = await Hardware.findAll({
             include: [
-                { association: 'category' },
+                { association: "category" },
                 {
-                    association: 'belongs',
-                    where: { id: parseInt(department_id) },
+                    association: "belongs_department",
+                    where: { id: parseInt(departmentId) },
                 },
+                { association: "belongs_public_agency" },
             ],
-            order: [
-                ['code']
-            ],
+            order: [ ["code"] ],
         });
 
-        if (!hardware) {
-            return res.status(404).json({ error: 'Hardware not found' });
-        }
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardware not found" });
 
-        return res.status(200).json({ hardware });
+        return res.status(200).json({ hardwares });
+    },
+
+    async listHardwareByPublicAgencyId(req, res) {
+        const { publicAgencyId } = req.params;
+
+        const hardwares = await Hardware.findAll({
+            include: [
+                { association: "category" },
+                {
+                    association: "belongs_public_agency",
+                    where: { id: parseInt(publicAgencyId) },
+                },
+                { association: "belongs_department" },
+            ],
+            order: [ ["code"] ],
+        });
+
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardware not found" });
+
+        return res.status(200).json({ hardwares });
     },
 
     async listHardwareByDepartmentName(req, res) {
-        const { department_name, limit, offset } = req.params;
+        const { departmentName } = req.params;
+
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        if (filters.limit) {
+            limit = filters.limit;
+        }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
+
+        departmentName = departmentName.toUpperCase();
 
         const hardwares = await Hardware.findAndCountAll({
             include: [
-                { association: 'category' },
+                { association: "category" },
                 {
-                    association: 'belongs',
+                    association: "belongs_department",
                     where: {
-                        name: { [Op.iLike]: `%${department_name.toUpperCase()}%` }
+                        name: { [Op.iLike]: `%${departmentName}%` }
                     },
                 },
+                { association: "belongs_public_agency" },
             ],
-            order: [
-                ['code']
-            ],
+            order: [ ["code"] ],
             limit,
             offset: (offset - 1) * limit,
             distinct: true,
             subQuery: false
         });
 
-        if (!hardwares) {
-            return res.status(404).json({ error: 'Hardwares not found' });
-        }
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardwares not found" });
 
         return res.status(200).json({ hardwares });
     },
 
     async listHardwareByDepartmentAcronym(req, res) {
-        const { department_acronym, limit, offset } = req.params;
+        const { departmentAcronym } = req.params;
+
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        if (filters.limit) {
+            limit = filters.limit;
+        }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
+
+        departmentAcronym = departmentAcronym.toUpperCase().replace("-", "/");
 
         const hardwares = await Hardware.findAndCountAll({
             include: [
-                { association: 'category' },
+                { association: "category" },
                 {
-                    association: 'belongs',
+                    association: "belongs_department",
                     where: {
-                        acronym: { [Op.iLike]: `%${department_acronym.toUpperCase().replace("-", "/")}%` }
+                        acronym: { [Op.iLike]: `%${departmentAcronym}%` }
                     },
                 },
+                { association: "belongs_public_agency" },
             ],
-            order: [
-                ['code']
-            ],
+            order: [ ["code"] ],
             limit,
             offset: (offset - 1) * limit,
             distinct: true,
             subQuery: false
         });
 
-        if (!hardwares) {
-            return res.status(404).json({ error: 'Hardwares not found' });
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardwares not found" });
+
+        return res.status(200).json({ hardwares });
+    },
+
+    async listHardwareByPublicAgencyName(req, res) {
+        const { publicAgencyName } = req.params;
+
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        if (filters.limit) {
+            limit = filters.limit;
         }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
+
+        publicAgencyName = publicAgencyName.toUpperCase();
+
+        const hardwares = await Hardware.findAndCountAll({
+            include: [
+                { association: "category" },
+                {
+                    association: "belongs_public_agency",
+                    where: {
+                        name: { [Op.iLike]: `%${publicAgencyName}%` }
+                    },
+                },
+                { association: "belongs_department" },
+            ],
+            order: [ ["code"] ],
+            limit,
+            offset: (offset - 1) * limit,
+            distinct: true,
+            subQuery: false
+        });
+
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardwares not found" });
+
+        return res.status(200).json({ hardwares });
+    },
+
+    async listHardwareByPublicAgencyAcronym(req, res) {
+        const { publicAgencyAcronym } = req.params;
+
+        const filters = req.query;
+
+        let limit = 10;
+        let offset = 1;
+
+        if (filters.limit) {
+            limit = filters.limit;
+        }
+        if (filters.offset) {
+            offset = filters.offset;
+        }
+
+        publicAgencyAcronym = publicAgencyAcronym.toUpperCase().replace("-", "/");
+
+        const hardwares = await Hardware.findAndCountAll({
+            include: [
+                { association: "category" },
+                {
+                    association: "belongs_public_agency",
+                    where: {
+                        acronym: { [Op.iLike]: `%${publicAgencyAcronym}%` }
+                    },
+                },
+                { association: "belongs_department" },
+            ],
+            order: [ ["code"] ],
+            limit,
+            offset: (offset - 1) * limit,
+            distinct: true,
+            subQuery: false
+        });
+
+        if (!hardwares)
+            return res.status(404).json({ error: "Hardwares not found" });
 
         return res.status(200).json({ hardwares });
     },
 
     async listHardwareById(req, res) {
-        const { hardware_id } = req.params;
+        const { hardwareId } = req.params;
 
-        const hardware = await Hardware.findByPk(hardware_id, {
+        const hardware = await Hardware.findByPk(hardwareId, {
             include: [
-                { association: 'category' },
-                { association: 'belongs' }
+                { association: "category" },
+                { association: "belongs_department" },
+                { association: "belongs_public_agency" }
             ],
         });
 
-        if (!hardware) {
-            return res.status(404).json({ error: 'Hardware not found' });
-        }
+        if (!hardware)
+            return res.status(404).json({ error: "Hardware not found" });
 
         return res.status(200).json({ hardware });
     },
 
     async create(req, res) {
-        const { type_id } = req.params;
+        const { categoryId } = req.params;
         const {
             code,
             description,
             brand,
             warranty,
-            has_office,
-            department_id
+            hasOffice,
+            departmentId,
+            publicAgencyId
         } = req.body;
 
-        const type = await Type.findByPk(type_id);
-        const department = await Department.findByPk(department_id);
+        const category = await Category.findByPk(categoryId);
 
-        if (!type) {
-            return res.status(404).json({ error: 'Type not found' });
+        if (!category)
+            return res.status(404).json({ error: "Category not found" });
+
+        const publicAgency = await PublicAgency.findByPk(publicAgencyId);
+
+        if (!publicAgency)
+            return res.status(404).json({ error: "Public agency not found" });
+
+        let department;
+
+        if (departmentId) {
+            department = await Department.findByPk(departmentId);
+
+            if (!department)
+                return res.status(404).json({ error: "Department not found" });
         }
-        if (!department) {
-            return res.status(404).json({ error: 'Department not found' });
-        }
+
+        description = description.toUpperCase();
+        brand = brand.toUpperCase();
 
         const hardware = await Hardware.create({
             code,
             description,
             brand,
             warranty,
-            has_office,
-            department_id,
-            type_id
+            has_office: hasOffice,
+            department_id: departmentId ? departmentId : null,
+            public_agency_id: publicAgencyId,
+            category_id: categoryId
         });
 
         return res.status(201).json({ hardware });
     },
 
     async update(req, res) {
-        const { hardware_id } = req.params;
+        const { hardwareId } = req.params;
         const {
             code,
             description,
             brand,
             warranty,
-            has_office,
-            department_id,
-            type_id
+            hasOffice,
+            departmentId,
+            publicAgencyId,
+            categoryId
         } = req.body;
 
-        const hardware = await Hardware.findByPk(hardware_id, {
+        const hardware = await Hardware.findByPk(hardwareId, {
             include: [
-                { association: 'category' },
-                { association: 'belongs' }
+                { association: "category" },
+                { association: "belongs_department" },
+                { association: "belongs_public_agency" },
             ],
         });
-        const type = await Type.findByPk(type_id);
-        const department = await Department.findByPk(department_id);
 
-        if (!hardware) {
-            return res.status(404).json({ error: 'Hardware not found' });
+        if (!hardware)
+            return res.status(404).json({ error: "Hardware not found" });
+
+        const category = await Category.findByPk(categoryId);
+
+        if (!category)
+            return res.status(404).json({ error: "Category not found" });
+
+        const publicAgency = await PublicAgency.findByPk(publicAgencyId);
+
+        if (!publicAgency)
+            return res.status(404).json({ error: "Public agency not found" });
+
+        let department;
+
+        if (departmentId) {
+            department = await Department.findByPk(departmentId);
+
+            if (!department)
+                return res.status(404).json({ error: "Department not found" });
         }
-        if (!type) {
-            return res.status(404).json({ error: 'Type not found' });
-        }
-        if (!department) {
-            return res.status(404).json({ error: 'Department not found' });
-        }
+
+        description = description.toUpperCase();
+        brand = brand.toUpperCase();
 
         hardware.code = code;
         hardware.description = description;
         hardware.brand = brand;
         hardware.warranty = warranty;
-        hardware.has_office = has_office;
-        hardware.department_id = department_id;
-        hardware.type_id = type_id;
+        hardware.has_office = hasOffice;
+        hardware.department_id = departmentId ? departmentId : null;
+        hardware.public_agency_id = publicAgencyId;
+        hardware.category_id = categoryId;
 
         await hardware.save();
 
@@ -327,13 +493,12 @@ module.exports = {
     },
 
     async delete(req, res) {
-        const { hardware_id } = req.params;
+        const { hardwareId } = req.params;
 
-        const hardware = await Hardware.findByPk(hardware_id);
+        const hardware = await Hardware.findByPk(hardwareId);
 
-        if (!hardware) {
-            return res.status(404).json({ error: 'Hardware not found' });
-        }
+        if (!hardware)
+            return res.status(404).json({ error: "Hardware not found" });
 
         await hardware.destroy();
 

@@ -9,14 +9,14 @@ module.exports = {
                 primaryKey: true,
                 allowNull: false,
             },
-            date_movement: {
+            movement_date: {
                 type: Sequelize.DATEONLY,
                 allowNull: false,
             },
-            type_movement_id: {
+            movement_type_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                references: { model: 'type_movements', key: 'id' },
+                references: { model: 'movement_types', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
@@ -36,7 +36,7 @@ module.exports = {
             },
             public_agency_id: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
+                allowNull: false,
                 references: { model: 'public_agencies', key: 'id' },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',

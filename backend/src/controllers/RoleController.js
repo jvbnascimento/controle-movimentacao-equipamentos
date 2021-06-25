@@ -1,5 +1,4 @@
-const { response } = require('express');
-const Role = require('../models/Role');
+const Role = require("../models/Role");
 
 module.exports = {
 	async listAllRoles(req, res) {
@@ -9,13 +8,12 @@ module.exports = {
     },
     
 	async listRole(req, res) {
-		const { role_id } = req.params;
+		const { roleId } = req.params;
 
-		const role = await Role.findByPk(role_id);
+		const role = await Role.findByPk(roleId);
 		
-		if (!role) {
-			return res.status(400).json({ error: 'Role not found!' });
-		}
+		if (!role)
+			return res.status(404).json({ error: "Role not found!" });
 
 		return res.status(200).json({ role });
     },
@@ -23,70 +21,62 @@ module.exports = {
     async listRoleByName(req, res) {
 		const { name } = req.params;
 
-		const role = await Role.findOne({
-            where: {
-                name: name.toUpperCase()
-            }
-        });
+        name = name.toUpperCase();
+
+		const role = await Role.findOne({ where: { name } });
 		
-		if (!role) {
-			return res.status(400).json({ error: 'Role not found!' });
-		}
+		if (!role)
+			return res.status(404).json({ error: "Role not found!" });
 
 		return res.status(200).json({ role });
 	},
     
-	async nameExists(req, res) {
+	async verifyName(req, res) {
 		const { name } = req.params;
 
-		if (name !== null) {
-			const role = await Role.findOne({
-				where: {
-					name: name.toUpperCase()
-				}
-            });
-			
-			if (role && role.name) {
-                return res.status(200).json({ name_exists: true });
-            }
+        name = name.toUpperCase();
 
-			return res.status(200).json({ name_exists: false });
+		if (name) {
+			const role = await Role.findOne({ where: { name } });
+			
+			if (role)
+                return res.status(200).json({ nameExists: true });
+
+			return res.status(200).json({ nameExists: false });
 		}
 
-		return res.status(200).json({ name_exists: false });
+		return res.status(400).json({ error: "Name to verify it can't be empty!" });
 	},
 
 	async create(req, res) {
 		const { name } = req.body;
+
+        name = name.toUpperCase();
         
-        const name_exists = await Role.findAll({
-            where: { name: name.toUpperCase() } 
-        });
+        const nameExists = await Role.findOne({ where: { name } });
 
-        if (name_exists.length != 0) {
-            return res.status(400).json({ error: 'Name already exists!' });
-        }
+        if (nameExists)
+            return res.status(400).json({ error: "Name already exists!" });
 
-		const role = await Role.create({ name: name.toUpperCase() });
+		const role = await Role.create({ name });
 
 		return res.status(201).json({ role });
     },
     
     async update(req, res) {
-        const { role_id } = req.params;
+        const { roleId } = req.params;
         const { name } = req.body;
-        
-        const role = await Role.findByPk(role_id);
-        const name_exists = await Role.findAll({
-            where: { name } 
-        });
 
-        if (!role) {
-            return res.status(400).json({ error: 'Role not found!' });
-        }
-        if (name_exists.length != 0) {
-            return res.status(400).json({ error: 'Name is already being used!' });
-        }
+        name = name.toUpperCase();
+        
+        const role = await Role.findByPk(roleId);
+        const nameExists = await Role.findOne({ where: { name } });
+
+        if (!role)
+            return res.status(400).json({ error: "Role not found!" });
+
+        if (nameExists)
+            return res.status(400).json({ error: "Name is already being used!" });
 
         role.name = name;
         
@@ -96,13 +86,12 @@ module.exports = {
     },
     
     async delete(req, res) {
-        const { role_id } = req.params;
+        const { roleId } = req.params;
         
-        const role = await Role.findByPk(role_id);
+        const role = await Role.findByPk(roleId);
 
-        if (!role) {
-            return res.status(404).json({ error : 'Role not found!' });
-        }
+        if (!role)
+            return res.status(404).json({ error : "Role not found!" });
         
         await role.destroy();
 

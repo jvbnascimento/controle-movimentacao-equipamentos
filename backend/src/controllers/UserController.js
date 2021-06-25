@@ -1,105 +1,83 @@
-const User = require('../models/User');
-const Role = require('../models/Role');
-const bcrypt = require('bcrypt');
+const User = require("../models/User");
+const Role = require("../models/Role");
+const bcrypt = require("bcrypt");
 
 module.exports = {
-	async listAllUsers(req, res) {
-		const users = await User.findAll({
+    async listAllUsers(req, res) {
+        const users = await User.findAll({
             include: {
-                association: 'roles',
-                through: {
-                    attributes: [],
-                }
+                association: "roles",
+                through: { attributes: [] }
             },
-            order: ['id']
+            order: ["id"]
         });
 
-		return res.status(200).json({ users });
+        return res.status(200).json({ users });
     },
-    
-    async listUser(req, res) {
-        const { user_id } = req.params;
 
-        const user = await User.findByPk(user_id, {
+    async listUser(req, res) {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId, {
             include: {
-                association: 'roles',
-                through: {
-                    attributes: [],
-                }
+                association: "roles",
+                through: { attributes: [] }
             }
         });
-        
-        if (!user) {
-            return res.status(404).json({ error: 'User not found!' });
-        }
 
-		return res.status(200).json({ user });
-	},
+        if (!user)
+            return res.status(404).json({ error: "User not found!" });
 
-	async create(req, res) {
+        return res.status(200).json({ user });
+    },
+
+    async create(req, res) {
         const { name, email, password, roles } = req.body;
 
-        const email_exists = await User.findAll({
-            where: {
-                email
-            }
-        });
-        
-        if (email_exists.length != 0) {
-            return res.status(400).json({ error: 'Email already exists!' });
-        }
+        const emailExists = await User.findOne({ where: { email } });
 
-		const user = User.create({
-            name,
-            email,
-            password
-        }).then(async (user) => {
+        if (emailExists)
+            return res.status(400).json({ error: "Email already exists!" });
+
+        User.create({
+            name, email, password
+        }).then(user => {
             roles.map(async (element) => {
                 const role = await Role.findByPk(element.id);
 
-                if (role) {
-					await user.addRole(role);
-                }
+                if (role) await user.addRole(role);
             });
 
-            return user;
-        });
+            return res.status(201).json({ user });
+        }).catch((err) => {
+            return res.status(400).json({ error: err });
+        })
 
-		return res.status(201).json({ user });
     },
 
     async update(req, res) {
-        const { user_id } = req.params;
+        const { userId } = req.params;
         const { name, email, roles } = req.body;
 
-        const email_exists = await User.findAll({
-            where: {
-                email
-            }
+        const user = await User.findByPk(userId, {
+            include: { association: "roles" }
         });
 
-        if (email_exists.length != 0 && email_exists[0].email != user.email) {
-            return res.status(400).json({ error: 'Email is already being used!' });
-        }
+        if (!user)
+            return res.status(404).json({ error: "User not found!" });
 
-        const user = await User.findByPk(user_id, {
-            include: {
-                association: 'roles'
-            }
-        }).then(user => {
-            user.setRoles([]);
+        const emailExists = await User.findOne({ where: { email } });
 
-            roles.map(async (role) => {
-                const new_role = await Role.findByPk(role.id);
-                await user.addRole(new_role);
-            });
+        if (emailExists && emailExists.email != user.email)
+            return res.status(400).json({ error: "Email is already being used!" });
 
-            return user;
+        await user.setRoles([]);
+
+        roles.map(async (role) => {
+            const newRole = await Role.findByPk(role.id);
+
+            if (newRole) await user.addRole(newRole);
         });
-
-        if (await !user) {
-            return res.status(400).json({ error: 'User not found!' });
-        }
 
         user.name = name;
         user.email = email;
@@ -108,42 +86,40 @@ module.exports = {
 
         return res.status(200).json({ user });
     },
-    
+
     async updatePassword(req, res) {
-        const { user_id } = req.params;
-        const { password, new_password, confirmed_new_password } = req.body;
+        const { userId } = req.params;
+        const { password, newPassword, confirmedNewPassword } = req.body;
 
-        const user = await User.findByPk(user_id);
+        const user = await User.findByPk(userId);
 
-        if (!user) {
-            return res.json({ error: 'User not found!', status: 404 });
-        }
-        if (!await bcrypt.compare(password, user.password)) {
-            return res.json({ error: 'Previous password is different from the current password!', status: 400 });
-        }
-        if (new_password != confirmed_new_password) {
-            return res.json({ error: 'New password is different from confirmation!', status: 400 });
-        }
+        if (!user)
+            return res.status(404).json({ error: "User not found!" });
+
+        if (!await bcrypt.compare(password, user.password))
+            return res.status(400).json({ error: "Previous password is different from the current password!" });
+
+        if (newPassword != confirmedNewPassword)
+            return res.status(400).json({ error: "New password is different from confirmation!" });
 
         const salt = bcrypt.genSaltSync();
-        user.password = bcrypt.hashSync(new_password, salt);
+        user.password = bcrypt.hashSync(newPassword, salt);
 
         await user.save();
 
-        return res.json({ user, status: 200 });
-	},
-    
-    async delete(req, res) {
-		const { user_id } = req.params;
+        return res.status(200).json({ user });
+    },
 
-        const user = await User.findByPk(user_id);
-        
-        if (!user) {
-            return res.json({ error: 'User not found!', status: 404 });
-        }
+    async delete(req, res) {
+        const { userId } = req.params;
+
+        const user = await User.findByPk(userId);
+
+        if (!user)
+            return res.status(404).json({ error: "User not found!" });
 
         await user.destroy();
 
         return res.status(204).json();
-	},
+    },
 }

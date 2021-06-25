@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 
-const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 module.exports = {
 	async loginAuth(req, res) {
@@ -9,26 +9,20 @@ module.exports = {
 
 		const verifyUser = await User.findOne({
             where: {
-                email: {
-                    [Op.eq]: `${login}`
-                }
+                email: { [Op.eq]: `${login}` }
             },
             include: {
-                association: 'roles',
-                through: {
-                    attributes: [],
-                }
+                association: "roles",
+                through: { attributes: [] }
             }
         });
 
-        if (!verifyUser) {
-            return res.json({ error: "Email não cadastrado.", status: 404 });
-        }
+        if (!verifyUser)
+            return res.status(404).json({ error: "Email not found!" });
 
-        if (!await bcrypt.compare(password, verifyUser.password)) {
-            return res.json({ error: "Senha incorreta!", status: 400 });
-        }
+        if (!await bcrypt.compare(password, verifyUser.password))
+            return res.status(400).json({ error: "Incorrect password" });
 
-        return res.json({ user: verifyUser, status: 200 });
+        return res.status(200).json({ user: verifyUser });
 	},
 }

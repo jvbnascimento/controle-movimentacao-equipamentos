@@ -14,7 +14,7 @@ module.exports = {
 				allowNull: false,
 			},
 			description: {
-				type: Sequelize.STRING,
+				type: Sequelize.STRING(1234),
 				allowNull: false,
 			},
 			brand: {
@@ -31,15 +31,22 @@ module.exports = {
 			},
 			department_id: {
 				type: Sequelize.INTEGER,
-				allowNull: false,
+				allowNull: true,
 				references: { model: 'departments', key: 'id' },
 				onUpdate: 'CASCADE',
 				onDelete: 'CASCADE',
 			},
-			type_id: {
+			public_agency_id: {
 				type: Sequelize.INTEGER,
 				allowNull: false,
-				references: { model: 'types', key: 'id' },
+				references: { model: 'public_agencies', key: 'id' },
+				onUpdate: 'CASCADE',
+				onDelete: 'CASCADE',
+			},
+			category_id: {
+				type: Sequelize.INTEGER,
+				allowNull: false,
+				references: { model: 'categories', key: 'id' },
 				onUpdate: 'CASCADE',
 				onDelete: 'CASCADE',
 			},
